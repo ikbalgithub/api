@@ -95,4 +95,60 @@ import { Aggregate,Document } from 'mongoose'
     )
   }
 
+  recently(_ids:any[],user:Types.ObjectId):Promise<(Result.Message.Recently & {sender:Types.ObjectId,accept:Types.ObjectId})[]>{
+    return this.message.aggregate([
+      {$match:{
+        $or:[
+          {
+            sender:{
+              $in:_ids
+            }
+          },
+          {
+            accept:{
+              $in:_ids
+            }
+          }
+        ]
+      }},
+      {$match:{
+        $or:[
+          {
+            sender:user
+          },
+          {
+            accept:user
+          }
+        ]
+      }},
+      {$group:{
+        _id:'$groupId',
+         sender:{$last:'$sender'}, 
+        value:{$last:'$value'},
+        groupId:{$last:'$groupId'}, 
+        accept:{$last:'$accept'},
+        sendAt:{$last:'$sendAt'}, 
+        read:{$last:'$read'}, 
+        contentType:{$last:'$contentType'}, 
+        description:{$last:'$description'}, 
+        unreadCounter:{
+          $sum:{
+            $cond:{
+              if:{
+                $eq:[
+                  '$read', 
+                  false
+                ]
+              }, 
+              then:1, 
+              else:0
+            }
+          }
+        }
+      }}
+    ])
+  }
 }
+
+
+        

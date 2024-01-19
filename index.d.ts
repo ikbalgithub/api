@@ -59,6 +59,16 @@ export namespace Result{
     }
   }
 
+  namespace Profile{
+    interface Find{
+      _id:Types.ObjectId,
+      profileImage:string,
+      surname:string,
+      firstName:string,
+      usersRef:Types.ObjectId,
+    }
+  }
+
 }
 
 // interface / custom type kriteria aggregate

@@ -3,7 +3,7 @@ import { AppService } from './app.service';
 import { AuthGuard } from './guards/auth.guard'
 
 @Controller() export class AppController {
-  @Get() @UseGuards(AuthGuard) dashboard():string{
+  @Get() getMotherFucker():string{
     return 'hello motherfucker'
   }
 }
