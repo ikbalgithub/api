@@ -94,7 +94,7 @@ import { Controller,Get,Body,UseGuards,Request,Param,Res,Logger,Post,Put } from 
       this.gateway.message<Result.Message.Populated>(
         populated
       )
-      console.log(
+      response.send(
         result
       )
     }
