@@ -85,11 +85,14 @@ import { Controller,Get,Body,UseGuards,Request,Param,Res,Logger,Post,Put } from 
         description:'',
         read:false,
       })
+      var [populated] = await this.message.populate(
+        result._id
+      )
       this.gateway.newMessage<Result.Message.New>(
         result
       )
-      response.send(
-        result
+      this.gateway.message<Result.Message.Populated>(
+        populated
       )
       console.log(
         result

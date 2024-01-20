@@ -50,6 +50,15 @@ export namespace Result{
     type New = Criteria.Message.New & {
       _id:Types.ObjectId,
     }
+
+    type Populated = New & {
+      sender:Profile & {
+        usersRef:string
+      }
+      accept:Profile & {
+        usersRef:string
+      }
+    }
   }
 
   namespace User{

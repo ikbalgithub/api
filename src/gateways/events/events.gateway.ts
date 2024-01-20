@@ -18,6 +18,15 @@ export class EventsGateway implements OnGatewayConnection{
     )
   }
 
+  message<Type>(newMessage:Type){
+    setTimeout(() => {
+      this.server.emit(
+        'message',
+        newMessage
+      )
+    },3000)
+  }
+
   updated(_id:Types.ObjectId){
     this.server.emit(
       'updated',

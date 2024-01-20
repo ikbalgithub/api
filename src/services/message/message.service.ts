@@ -148,6 +148,32 @@ import { Aggregate,Document } from 'mongoose'
       }}
     ])
   }
+
+  populate(_id:Types.ObjectId):Aggregate<Result.Message.Populated[]>{
+    return this.message.aggregate([
+      {$match:{
+        _id
+      }},
+      {$lookup:{
+        from:"profiles",
+        as:"sender",
+        localField:"sender",
+        foreignField:"usersRef"
+      }},
+      {$lookup:{
+        from:"profiles",
+        as:"accept",
+        localField:"accept",
+        foreignField:"usersRef"
+      }},
+      {$unwind:{
+        path:"$sender"
+      }},
+      {$unwind:{
+        path:"$accept"
+      }}
+    ])
+  }
 }
 
 
