@@ -1,6 +1,5 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { join } from 'path'
 import { ValidationPipe } from '@nestjs/common'
 
 (async function(){
@@ -22,7 +21,7 @@ import { ValidationPipe } from '@nestjs/common'
   )
 
   await app.listen(
-    process.env.PORT
+    process.env.PORT || 3000
   );
 
 })()
