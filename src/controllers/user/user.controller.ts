@@ -1,7 +1,7 @@
 import { Response } from 'express'
 import { isEqual,includes } from 'lodash'
 import { Model,Types } from 'mongoose';
-import { Jwt,Result } from '../../../index.d'
+import { Common,Result } from '../../../index.d'
 import { AuthGuard } from '../../guards/auth.guard'
 import { Controller } from '@nestjs/common';
 import { LoginDto } from '../../dtos/login.dto'
@@ -16,12 +16,10 @@ import { Post,Body,Res,Logger,Get,Param,UseGuards,Request } from '@nestjs/common
   @Post('login') async login(@Body() dto:LoginDto,@Res() response:Response):Promise<void>{
     try{
       let [result] = await this.userSvc.login(dto)
-
-      
-
-      let authorization:string = await this.commonSvc.getJwt<Jwt>(
+ 
+      let authorization:string = await this.commonSvc.getJwt<Common.Jwt>(
         {
-          _id:result?._id
+          _id:result._id.toString()
         }
       )
 

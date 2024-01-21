@@ -1,112 +1,72 @@
 import { Types } from 'mongoose'
+import { Message } from './schemas/message.schema'
+import { Profile } from './schemas/profile.schema'
 
-export interface LogMessage {
+export namespace Common{
+  export interface LogMessage {
   delay:number,
   status:number,
   url:string,
   method:string
+  }
+
+  export interface Jwt{
+    _id:string
+  }
+
+  export interface Profile{
+    profileImage:string,
+    surname:string,
+    firstName:string
+    usersRef?:string,
+    _id?:Types.ObjectId
+  }
 }
 
-export interface Jwt{
-  _id:string | undefined
-}
-
-export interface Profile{
-  profileImage:string,
-  surname:string,
-  firstName:string
-}
+// aggregate interface / custom type result
 
 
 export namespace Result{
-  namespace Message{
-    interface Recently{
-      sender:Profile & {
-        usersRef:string
-      },
-      value:string,
-      groupId:Types.ObjectId,
-      accept:Profile & {
-        usersRef:string
-      },
-      sendAt:number,
-      read:boolean,
-      contentType:string,
-      description:string,
-      unreadCounter:number
-    }
-
-    interface All{
-      sender:Types.ObjectId,
-      groupId:Types.ObjectId,
-      accept:Types.ObjectId,
-      value:string,
-      sendAt:number,
-      read:boolean,
-      contentType:string,
-      description:string
-    }
-
-    type New = Criteria.Message.New & {
-      _id:Types.ObjectId,
-    }
-
-    type Populated = New & {
-      sender:Profile & {
-        usersRef:string
-      }
-      accept:Profile & {
-        usersRef:string
-      }
-    }
+  export type Last_Message = Message & {
+    unreadCounter:number,
+    sender:Profile,
+    accept:Profile
   }
 
-  namespace User{
-    interface Login{
-      _id:string,
-      profile:Profile
-    }
-  }
+  export type Populated_Message = Omit<
+    LastMessage,"unreadCounter"
+  >
 
-  namespace Profile{
-    interface Find{
-      _id:Types.ObjectId,
-      profileImage:string,
-      surname:string,
-      firstName:string,
-      usersRef:Types.ObjectId,
-    }
+  interface Oauth{
+    data:Oauth.Data
   }
 
 }
 
-// interface / custom type kriteria aggregate
+// aggregate interface / custom type criteria
 
 export namespace Criteria{
-  namespace Message{
-    interface Recently {
-      sender:Types.ObjectId,
-      accept:Types.ObjectId
-    }
+  interface Message_Filter{
+    sender:Types.ObjectId,
+    accept:Types.ObjectId
+  }
 
-    interface All{
-      sender:Types.ObjectId,
-      accept:Types.ObjectId
-    }
-
-    interface New{
-      _id:Types.ObjectId,
-      sender:Types.ObjectId,
-      accept:Types.ObjectId,
-      groupId:Types.ObjectId,
-      value:string,
-      sendAt:number,
-      read:boolean,
-      contentType:string,
-      description:string
-    }
+  interface Message_Last{
+    sender:Types.ObjectId,
+    accept:Types.ObjectId
   }
 }
 
 
-
+export namespace Oauth{
+  interface Data{
+    id: string,
+    email: string,
+    verified_email: boolean,
+    name: string,
+    given_name: string,
+    family_name: string,
+    picture: string,
+    locale: string
+  }
+}

@@ -1,4 +1,5 @@
 import { Types } from 'mongoose'
+import { Message } from '../../schemas/message.schema'
 import { Criteria,Result } from '../../../index.d'
 import { MessageService } from '../../services/message/message.service'
 import { AuthGuard } from '../../guards/auth.guard'
@@ -15,7 +16,7 @@ import { Controller,Get,Body,UseGuards,Request,Param,Res,Logger,Post,Put } from 
     var [user,otherUser] = [request.user._id,_id].map(user => new Types.ObjectId(user))
 
     try{
-      var result = await this.message.getAll<Criteria.Message.All>(
+      var result = await this.message.getAll<Criteria.Message_Filter>(
         [
           {
             sender: user,
@@ -41,7 +42,7 @@ import { Controller,Get,Body,UseGuards,Request,Param,Res,Logger,Post,Put } from 
   
   @Get('recently') @UseGuards(AuthGuard) async getRecently(@Request()request,@Res() response):Promise<void>{
     try{
-      var result = await this.message.getRecently<Criteria.Message.Recently>(
+      var result = await this.message.getRecently<Criteria.Message_Last>(
         {
           sender:new Types.ObjectId(
             request.user._id
@@ -51,7 +52,7 @@ import { Controller,Get,Body,UseGuards,Request,Param,Res,Logger,Post,Put } from 
           )
         }
       )
-
+      
       response.send(
         result
       )
@@ -75,7 +76,7 @@ import { Controller,Get,Body,UseGuards,Request,Param,Res,Logger,Post,Put } from 
     })
 
     try{
-      var result = await this.message.new<Criteria.Message.New>({
+      var result = await this.message.new({
         ...dto,
         _id,
         sender,
@@ -85,15 +86,16 @@ import { Controller,Get,Body,UseGuards,Request,Param,Res,Logger,Post,Put } from 
         description:'',
         read:false,
       })
+      
       var [populated] = await this.message.populate(
         result._id
       )
-      this.gateway.newMessage<Result.Message.New>(
-        result
-      )
-      this.gateway.message<Result.Message.Populated>(
+      
+      this.gateway.newMessage<Message>(result)
+      this.gateway.message<Result.Populated_Message>(
         populated
       )
+
       response.send(
         result
       )

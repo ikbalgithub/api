@@ -1,7 +1,8 @@
-import { Model } from 'mongoose';
-import { Result } from '../../../index.d'
+import { Model,Types } from 'mongoose';
+import { Result,Oauth } from '../../../index.d'
 import { LoginDto } from '../../dtos/login.dto'
 import { User } from '../../schemas/user.schema'
+import { Profile } from '../../schemas/profile.schema'
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Aggregate } from 'mongoose'
@@ -13,7 +14,7 @@ import { Aggregate } from 'mongoose'
 
   // find user by username and password
 
-  login(credential:LoginDto):Aggregate<Result.User.Login[]>{
+  login(credential:LoginDto):Aggregate<({_id:Types.ObjectId} & Omit<Profile,'_id|usersRef'>)[]>{
     return this.user.aggregate([
       {$match:{
       	...credential,
@@ -36,6 +37,36 @@ import { Aggregate } from 'mongoose'
         }
       }}
     ])
+  }
+
+  findByOauthReference(id:string):Aggregate<({_id:Types.ObjectId} & Omit<Profile,'_id|usersRef'>)[]>{
+    return this.user.aggregate([
+      {$match:{
+        oauthReference:id
+      }},
+      {$lookup:{
+        from:"profiles",
+        localField:"_id",
+        foreignField:"usersRef",
+        as:"profile",
+      }},
+      {$unwind:{
+        path:"$profile",
+      }},
+      {$project:{
+        username:0,
+        password:0,
+        oauthReference:0,
+        profile:{
+          _id:0,
+          usersRef:0
+        }
+      }}
+    ])
+  }
+
+  newAccountByGoogleInfo(newOauthAccount:User):Promise<any>{
+    return new this.user(newOauthAccount).save()
   }
 
 }

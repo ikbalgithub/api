@@ -11,7 +11,7 @@ import { Result } from '../../../index.d'
   
   constructor(@InjectModel(Profile.name) private profile: Model<Profile>){}
 
-  find(v:string,user:Types.ObjectId):Aggregate<Result.Profile.Find[]>{
+  find(v:string,user:Types.ObjectId):Aggregate<Profile[]>{
     return this.profile.aggregate([
        {$match:{
         firstName:{

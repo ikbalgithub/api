@@ -1,6 +1,7 @@
 import { Model,Types } from 'mongoose';
 import { Criteria,Result } from '../../../index.d'
 import { Message } from '../../schemas/message.schema'
+import { Profile } from '../../schemas/profile.schema'
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Aggregate,Document } from 'mongoose'
@@ -9,7 +10,7 @@ import { Aggregate,Document } from 'mongoose'
    
   constructor(@InjectModel(Message.name) private message: Model<Message>){}
 
-  getAll<Filter>($or:[Filter,Filter]):Aggregate<Result.Message.All[]>{
+  getAll<Filter>($or:[Filter,Filter]):Aggregate<Message[]>{
     return this.message.aggregate([
       {$match:{
         $or
@@ -17,7 +18,7 @@ import { Aggregate,Document } from 'mongoose'
     ])
   }
 
-  getRecently<Filter>(filter:Filter):Aggregate<Result.Message.Recently[]>{
+  getRecently<Filter>(filter:Filter):Aggregate<Result.Last_Message[]>{
     var $or = Object.keys(filter).map(key => ({[key]:filter[key]}))
     
     return this.message.aggregate([
@@ -79,11 +80,11 @@ import { Aggregate,Document } from 'mongoose'
     ])
   }
 
-  async new<New>(newMessage:New):Promise<Result.Message.New>{
+  async new(newMessage:Message):Promise<Message>{
     return new this.message(newMessage).save()
   }
 
-  async updateOnRead(_id:Types.ObjectId):Promise<Result.Message.New>{
+  async updateOnRead(_id:Types.ObjectId):Promise<Message>{
     return this.message.findByIdAndUpdate(
       _id,
       {
@@ -95,7 +96,7 @@ import { Aggregate,Document } from 'mongoose'
     )
   }
 
-  recently(_ids:any[],user:Types.ObjectId):Promise<(Result.Message.Recently & {sender:Types.ObjectId,accept:Types.ObjectId})[]>{
+  recently(_ids:any[],user:Types.ObjectId):Promise<(Message & {unreadCounter:number})[]>{
     return this.message.aggregate([
       {$match:{
         $or:[
@@ -149,7 +150,7 @@ import { Aggregate,Document } from 'mongoose'
     ])
   }
 
-  populate(_id:Types.ObjectId):Aggregate<Result.Message.Populated[]>{
+  populate(_id:Types.ObjectId):Aggregate<Result.Populated_Message[]>{
     return this.message.aggregate([
       {$match:{
         _id

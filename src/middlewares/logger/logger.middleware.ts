@@ -1,4 +1,4 @@
-import { LogMessage } from '../../../index.d'
+import { Common } from '../../../index.d'
 import { Request,Response,NextFunction } from 'express'
 import { Injectable, NestMiddleware,Logger } from '@nestjs/common';
 
@@ -17,13 +17,11 @@ import { Injectable, NestMiddleware,Logger } from '@nestjs/common';
   
   }
 
-  createLog({delay,status,url,method}:LogMessage){
-    var log:string = `${status} [${method}]`
-
-    log = `${log} ${url} - ${delay} ms`
-
+  createLog({delay,status,url,method}:Common.LogMessage){
+    var log = `${status} [${method}] ${url} - ${delay}`
+    
     new Logger('HTTP').log(
-      log
+      `${log} ms`
     )
   }
 }
