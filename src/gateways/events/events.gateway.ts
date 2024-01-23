@@ -35,7 +35,7 @@ export class EventsGateway implements OnGatewayConnection{
   }
   
   handleConnection(){
-    console.log('connected')
+    
   }
 }
 
