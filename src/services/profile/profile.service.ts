@@ -3,7 +3,6 @@ import { Aggregate } from 'mongoose'
 import { InjectModel } from '@nestjs/mongoose';
 import { Model,Types } from 'mongoose';
 import { Profile } from '../../schemas/profile.schema'
-import { Result } from '../../../index.d'
 
 
 

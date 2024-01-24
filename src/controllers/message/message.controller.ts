@@ -1,6 +1,5 @@
 import { Types } from 'mongoose'
-import { Message } from '../../schemas/message.schema'
-import { Criteria,Result } from '../../../index.d'
+import { Message,Last_Message } from '../../schemas/message.schema'
 import { MessageService } from '../../services/message/message.service'
 import { AuthGuard } from '../../guards/auth.guard'
 import { MessageDto } from '../../dtos/message.dto'
@@ -16,7 +15,7 @@ import { Controller,Get,Body,UseGuards,Request,Param,Res,Logger,Post,Put } from 
     var [user,otherUser] = [request.user._id,_id].map(user => new Types.ObjectId(user))
 
     try{
-      var result = await this.message.getAll<Criteria.Message_Filter>(
+      var result = await this.message.getAll<{sender:Types.ObjectId,accept:Types.ObjectId}>(
         [
           {
             sender: user,
@@ -42,7 +41,7 @@ import { Controller,Get,Body,UseGuards,Request,Param,Res,Logger,Post,Put } from 
   
   @Get('recently') @UseGuards(AuthGuard) async getRecently(@Request()request,@Res() response):Promise<void>{
     try{
-      var result = await this.message.getRecently<Criteria.Message_Last>(
+      var result = await this.message.getRecently<{sender:Types.ObjectId,accept:Types.ObjectId}>(
         {
           sender:new Types.ObjectId(
             request.user._id
@@ -92,7 +91,7 @@ import { Controller,Get,Body,UseGuards,Request,Param,Res,Logger,Post,Put } from 
       )
       
       this.gateway.newMessage<Message>(result)
-      this.gateway.message<Result.Populated_Message>(
+      this.gateway.message<Omit<Last_Message,"unreadCounter">>(
         populated
       )
 

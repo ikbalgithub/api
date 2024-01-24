@@ -1,6 +1,5 @@
 import { Model,Types } from 'mongoose';
-import { Criteria,Result } from '../../../index.d'
-import { Message } from '../../schemas/message.schema'
+import { Message,Last_Message } from '../../schemas/message.schema'
 import { Profile } from '../../schemas/profile.schema'
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
@@ -18,8 +17,10 @@ import { Aggregate,Document } from 'mongoose'
     ])
   }
 
-  getRecently<Filter>(filter:Filter):Aggregate<Result.Last_Message[]>{
-    var $or = Object.keys(filter).map(key => ({[key]:filter[key]}))
+  getRecently<Filter>(filter:Filter):Aggregate<Last_Message[]>{
+    var $or = Object.keys(filter).map(key => ({
+      [key]:filter[key]
+    }))
     
     return this.message.aggregate([
       {$match:{
@@ -96,7 +97,7 @@ import { Aggregate,Document } from 'mongoose'
     )
   }
 
-  recently(_ids:any[],user:Types.ObjectId):Promise<(Message & {unreadCounter:number})[]>{
+  recently(_ids:any[],user:Types.ObjectId):Promise<Last_Message[]>{
     return this.message.aggregate([
       {$match:{
         $or:[
@@ -124,7 +125,7 @@ import { Aggregate,Document } from 'mongoose'
       }},
       {$group:{
         _id:'$groupId',
-         sender:{$last:'$sender'}, 
+        sender:{$last:'$sender'}, 
         value:{$last:'$value'},
         groupId:{$last:'$groupId'}, 
         accept:{$last:'$accept'},
@@ -150,7 +151,7 @@ import { Aggregate,Document } from 'mongoose'
     ])
   }
 
-  populate(_id:Types.ObjectId):Aggregate<Result.Populated_Message[]>{
+  populate(_id:Types.ObjectId):Aggregate<Omit<Last_Message,"unreadCounter">[]>{
     return this.message.aggregate([
       {$match:{
         _id

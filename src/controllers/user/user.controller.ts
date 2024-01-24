@@ -1,7 +1,7 @@
 import { Response } from 'express'
-import { isEqual,includes } from 'lodash'
+import { isEqual } from 'lodash'
 import { Model,Types } from 'mongoose';
-import { Common,Result } from '../../../index.d'
+import { Common } from '../../../index.d'
 import { AuthGuard } from '../../guards/auth.guard'
 import { Controller } from '@nestjs/common';
 import { LoginDto } from '../../dtos/login.dto'
@@ -58,12 +58,12 @@ import { Post,Body,Res,Logger,Get,Param,UseGuards,Request } from '@nestjs/common
       var result = profiles.map((profile) => {
         var [filter] = messages.filter(m => {
           var isEqual1 = isEqual(
-            m.sender,
+            m.sender as Types.ObjectId,
             profile.usersRef
           )
 
           var isEqual2 = isEqual(
-            m.accept,
+            m.accept as Types.ObjectId,
             profile.usersRef
           )
 

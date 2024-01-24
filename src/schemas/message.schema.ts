@@ -1,4 +1,5 @@
 import { Prop, Schema,SchemaFactory } from '@nestjs/mongoose';
+import { Profile } from './profile.schema'
 import { Types } from 'mongoose' 
 
 @Schema() export class Message{
@@ -16,3 +17,9 @@ import { Types } from 'mongoose'
 export const messageSchema = SchemaFactory.createForClass(
   Message
 )
+
+export type Last_Message = Message & {
+  unreadCounter:number,
+  sender:Profile|Types.ObjectId,
+  accept:Profile|Types.ObjectId
+}

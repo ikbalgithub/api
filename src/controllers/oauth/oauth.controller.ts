@@ -2,7 +2,7 @@ import { Types } from 'mongoose'
 import { OAuth2Client } from 'google-auth-library'
 import { Controller,Get,Res,Query } from '@nestjs/common';
 import { UserService } from '../../services/user/user.service'
-import { Common,Result,Oauth } from '../../../index.d'
+import { Common } from '../../../index.d'
 import { CommonService } from '../../services/common/common.service'
 
 
@@ -41,11 +41,13 @@ import { CommonService } from '../../services/common/common.service'
     )
     
     try{
-      var {data}:Result.Oauth = await this.oAuth2Client.request({
+      var oauthInfo:any = await this.oAuth2Client.request({
         url:this.info
       })
 
-      var [user] = await this.userSvc.findByOauthReference(data.id)
+      var [user] = await this.userSvc.findByOauthReference(
+        oauthInfo.data.id
+      )
 
       let authorization = await this.commonSvc.getJwt<Common.Jwt>(
         {
@@ -64,7 +66,7 @@ import { CommonService } from '../../services/common/common.service'
       else{
         await this.userSvc.newAccountByGoogleInfo({
           _id:new Types.ObjectId(),
-          oauthReference:data.id
+          oauthReference:oauthInfo.data.id
         })
       }
     }

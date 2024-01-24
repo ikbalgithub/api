@@ -1,5 +1,4 @@
 import { Model,Types } from 'mongoose';
-import { Result,Oauth } from '../../../index.d'
 import { LoginDto } from '../../dtos/login.dto'
 import { User } from '../../schemas/user.schema'
 import { Profile } from '../../schemas/profile.schema'
@@ -65,7 +64,7 @@ import { Aggregate } from 'mongoose'
     ])
   }
 
-  newAccountByGoogleInfo(newOauthAccount:User):Promise<any>{
+  newAccountByGoogleInfo(newOauthAccount:User):Promise<User>{
     return new this.user(newOauthAccount).save()
   }
 
