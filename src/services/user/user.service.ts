@@ -64,8 +64,11 @@ import { Aggregate } from 'mongoose'
     ])
   }
 
-  newAccountByGoogleInfo(newOauthAccount:User):Promise<User>{
-    return new this.user(newOauthAccount).save()
+  new(newOauthAccount:User):Promise<User>{
+    return new this.user(
+      newOauthAccount
+    )
+    .save()
   }
 
 }

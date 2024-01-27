@@ -24,4 +24,8 @@ import { Profile } from '../../schemas/profile.schema'
       }}
     ])
   }
+
+  async new(newProfile:Profile):Promise<Profile>{
+    return new this.profile(newProfile).save()
+  }
 }

@@ -33,7 +33,7 @@ import { Controller,Get,Body,UseGuards,Request,Param,Res,Logger,Post,Put } from 
     }
     catch(error:any){
       new Logger('ERROR').error(error.message)
-      response.status(500).send("internal server error")
+      response.status(500).send(error.message)
     }
 
 
