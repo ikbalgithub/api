@@ -16,6 +16,7 @@ import { MessageController } from './controllers/message/message.controller';
 import { EventsGateway } from './gateways/events/events.gateway';
 import { ProfileService } from './services/profile/profile.service';
 import { OauthController } from './controllers/oauth/oauth.controller';
+import { ProfileController } from './controllers/profile/profile.controller';
 
 
 @Module({
@@ -51,7 +52,8 @@ import { OauthController } from './controllers/oauth/oauth.controller';
     AppController,
     UserController,
     MessageController,
-    OauthController
+    OauthController,
+    ProfileController
   ],
   providers: [
     AppService,
