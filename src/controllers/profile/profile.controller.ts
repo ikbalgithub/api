@@ -8,11 +8,13 @@ import { ProfileService } from '../../services/profile/profile.service'
 @Controller('profile') export class ProfileController {
   @Put('') @UseGuards(AuthGuard) async update(@Body() dto:ProfileUpdate,@Request() request, @Res() response):Promise<void>{
     var usersRef = new Types.ObjectId(request.user._id)
+    var _id = new Types.ObjectId(dto._id)
 
     try{
       var result = await this.profileService.update({
         ...dto,
-        usersRef
+        usersRef,
+        _id
       })
 
       response.send(

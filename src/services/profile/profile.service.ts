@@ -29,10 +29,10 @@ import { Profile } from '../../schemas/profile.schema'
     return new this.profile(newProfile).save()
   }
 
-  async update(update:Omit<Profile,"_id">):Promise<Profile>{
-    var {usersRef,...updatedFields} = update
+  async update(newProfile:Profile):Promise<Profile>{
+    var {_id,...updatedFields} = newProfile
     return this.profile.findOneAndUpdate(
-      {usersRef},
+      _id,
       updatedFields,
       {
         new:true

@@ -57,7 +57,6 @@ import { Aggregate } from 'mongoose'
         password:0,
         oauthReference:0,
         profile:{
-          _id:0,
           usersRef:0
         }
       }}
