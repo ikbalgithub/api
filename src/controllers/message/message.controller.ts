@@ -90,9 +90,9 @@ import { Controller,Get,Body,UseGuards,Request,Param,Res,Logger,Post,Put } from 
         result._id
       )
       
-      this.gateway.newMessage<Message>(result)
+      this.gateway.newMessage<Message>(result,dto.accept)
       this.gateway.message<Omit<Last_Message,"unreadCounter">>(
-        populated
+        populated,dto.accept
       )
 
       response.send(

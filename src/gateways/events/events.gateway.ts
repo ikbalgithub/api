@@ -1,6 +1,6 @@
 import { Types } from 'mongoose'
 import { Server, Socket } from 'socket.io'
-import { WebSocketServer,WebSocketGateway,OnGatewayConnection } from '@nestjs/websockets';
+import { WebSocketServer,WebSocketGateway,OnGatewayConnection,SubscribeMessage } from '@nestjs/websockets';
 
 @WebSocketGateway({ 
   cors:{
@@ -8,19 +8,23 @@ import { WebSocketServer,WebSocketGateway,OnGatewayConnection } from '@nestjs/we
   }
 })
 
-export class EventsGateway implements OnGatewayConnection{
+export class EventsGateway{
   @WebSocketServer() server:Server
 
-  newMessage<Type>(message:Type){
-    this.server.emit(
+  @SubscribeMessage('join') join(socket:Socket,id:string){
+    socket.join(id)
+  }
+
+  newMessage<Type>(message:Type,dst:string){
+    this.server.to(dst).emit(
       'newMessage',
       message
     )
   }
 
-  message<Type>(newMessage:Type){
+  message<Type>(newMessage:Type,to:string){
     setTimeout(() => {
-      this.server.emit(
+      this.server.to(to).emit(
         'message',
         newMessage
       )
@@ -32,10 +36,6 @@ export class EventsGateway implements OnGatewayConnection{
       'updated',
       _id
     )
-  }
-  
-  handleConnection(){
-    
   }
 }
 
