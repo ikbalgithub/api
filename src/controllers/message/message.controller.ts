@@ -75,14 +75,13 @@ import { Controller,Get,Body,UseGuards,Request,Param,Res,Logger,Post,Put } from 
     })
 
     try{
+      console.log(dto)
       var result = await this.message.new({
         ...dto,
         _id,
         sender,
         accept,
         groupId,
-        contentType:'',
-        description:'',
         read:false,
       })
       
