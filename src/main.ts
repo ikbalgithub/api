@@ -21,7 +21,7 @@ import { ValidationPipe } from '@nestjs/common'
   )
 
   await app.listen(
-    '0.0.0.0:8080'
+    process.env.PORT
   );
 
 })()
