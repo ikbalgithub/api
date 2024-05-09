@@ -14,25 +14,26 @@ import { CommonService } from '../../services/common/common.service'
   @Post('') async findOrCreate(@Body() dto:OauthDto,@Res() response):Promise<void>{
     try{
       var [user] = await this.user.findByOauthReference(dto.uid)
-
+      
       var authorization = await this.common.getJwt<Common.Jwt>(
         {
           _id:user?._id.toString() ?? ''
         }
       )
-
       if(user) response.send(
         {
           authorization,
-          ...user
+          ...user,
+          username:user.username
         }
       )
 
       if(!user){
-       
+        var username = `user${Date.now()}`
         var newUser = await this.user.new({
           _id:new Types.ObjectId(),
-          oauthReference:dto.uid
+          oauthReference:dto.uid,
+          username
         }) 
 
         authorization = await this.common.getJwt<Common.Jwt>(
@@ -52,7 +53,8 @@ import { CommonService } from '../../services/common/common.service'
         response.send({
           _id:newUser._id,
           profile:newProfile,
-          authorization
+          authorization,
+          username
         })
       }
     }

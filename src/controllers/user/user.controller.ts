@@ -48,12 +48,14 @@ import { Post,Body,Res,Logger,Get,Param,UseGuards,Request } from '@nestjs/common
     var _id = new Types.ObjectId(request.user._id)
 
     try{
-     
-      var profiles = await this.profileSvc.find(q,_id)
+      var searchResult = await this.userSvc.findByUsername(q,_id)
+      var profiles = searchResult.map(({profile}) => profile[0])
       var _ids = profiles.map(({usersRef}) => usersRef)
+      
       var messages = await this.messageSvc.recently(
         _ids,_id
       )
+
 
       var result = profiles.map((profile) => {
         var [filter] = messages.filter(m => {

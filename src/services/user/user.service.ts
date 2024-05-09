@@ -38,7 +38,7 @@ import { Aggregate } from 'mongoose'
     ])
   }
 
-  findByOauthReference(id:string):Aggregate<({_id:Types.ObjectId} & Omit<Profile,'_id|usersRef'>)[]>{
+  findByOauthReference(id:string):Aggregate<({_id:Types.ObjectId,username:string} & Omit<Profile,'_id|usersRef'>)[]>{
     return this.user.aggregate([
       {$match:{
         oauthReference:id
@@ -53,12 +53,37 @@ import { Aggregate } from 'mongoose'
         path:"$profile",
       }},
       {$project:{
-        username:0,
         password:0,
         oauthReference:0,
         profile:{
           usersRef:0
         }
+      }}
+    ])
+  }
+
+  findByUsername(username:string,user:Types.ObjectId):Aggregate<{profile:Profile}[]>{
+    return this.user.aggregate([
+      {$match:{
+        username:{
+          $regex: new RegExp(
+            `^${username}`, "i"
+          )
+        },
+        _id:{
+          $ne:user
+        }
+      }},
+      {$lookup:{
+        from:'profiles',
+        localField:'_id',
+        foreignField:'usersRef',
+        as:'profile'
+      }},
+      {$project:{
+        username:0,
+        password:0,
+        oauthReferences:0
       }}
     ])
   }
