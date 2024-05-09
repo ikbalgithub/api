@@ -105,6 +105,7 @@ import { Controller,Get,Body,UseGuards,Request,Param,Res,Logger,Post,Put } from 
     }
   }
 
+
   @Put('') async updateOnRead(@Body() dto:MessageUpdateRead, @Res() response):Promise<void>{
     if(!Types.ObjectId.isValid(dto._id)) response.status(500).send(
       "internal server error"
@@ -114,9 +115,9 @@ import { Controller,Get,Body,UseGuards,Request,Param,Res,Logger,Post,Put } from 
       var result = await this.message.updateOnRead(
         new Types.ObjectId(dto._id)
       )
-      this.gateway.updated(
-        result._id
-      )
+      
+      this.gateway.updated()
+      
       response.send(
         result
       )

@@ -3,7 +3,7 @@ import { Message,Last_Message } from '../../schemas/message.schema'
 import { Profile } from '../../schemas/profile.schema'
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Aggregate,Document } from 'mongoose'
+import { Aggregate,UpdateWriteOpResult } from 'mongoose'
 
 @Injectable() export class MessageService {
    
@@ -85,16 +85,25 @@ import { Aggregate,Document } from 'mongoose'
     return new this.message(newMessage).save()
   }
 
-  async updateOnRead(_id:Types.ObjectId):Promise<Message>{
-    return this.message.findByIdAndUpdate(
-      _id,
+  async updateOnRead(_id:Types.ObjectId):Promise<UpdateWriteOpResult>{
+    return this.message.updateMany(
       {
-        read:true
+        sender:_id,
+        read:false
       },
       {
-        new:true,
+        read:true
       }
     )
+    // return this.message.findByIdAndUpdate(
+    //   _id,
+    //   {
+    //     read:true
+    //   },
+    //   {
+    //     new:true,
+    //   }
+    // )
   }
 
   recently(_ids:any[],user:Types.ObjectId):Promise<Last_Message[]>{

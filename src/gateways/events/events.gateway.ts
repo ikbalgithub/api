@@ -31,11 +31,8 @@ export class EventsGateway{
     },3000)
   }
 
-  updated(_id:Types.ObjectId){
-    this.server.emit(
-      'updated',
-      _id
-    )
+  updated(){
+    this.server.emit('updated')
   }
 }
 
