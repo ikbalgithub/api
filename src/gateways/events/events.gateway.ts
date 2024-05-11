@@ -31,8 +31,8 @@ export class EventsGateway{
     },3000)
   }
 
-  updated(){
-    this.server.emit('updated')
+  updated(to:string){
+    this.server.to(to).emit('updated')
   }
 }
 

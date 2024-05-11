@@ -75,7 +75,6 @@ import { Controller,Get,Body,UseGuards,Request,Param,Res,Logger,Post,Put } from 
     })
 
     try{
-      console.log(dto)
       var result = await this.message.new({
         ...dto,
         _id,
@@ -116,7 +115,7 @@ import { Controller,Get,Body,UseGuards,Request,Param,Res,Logger,Post,Put } from 
         new Types.ObjectId(dto._id)
       )
       
-      this.gateway.updated()
+      this.gateway.updated(`${dto.groupId}/${dto._id}`)
       
       response.send(
         result
