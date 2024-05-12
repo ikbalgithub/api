@@ -9,7 +9,6 @@ RUN curl -sL https://deb.nodesource.com/setup_12.x | bash && \
 
 WORKDIR /app
 
-COPY . /app
+COPY ./package.json
 
-RUN npm install
 
