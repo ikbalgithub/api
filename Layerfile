@@ -1,4 +1,4 @@
-#This is an example webapp.io configuration for NodeJS
+#This is an example webapp.io configuration for NodeJS...
 FROM vm/ubuntu:18.04
 # To note: Layerfiles create VMs, *not* containers!
 
