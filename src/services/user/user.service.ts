@@ -1,11 +1,11 @@
 import { Model,Types } from 'mongoose';
 import { LoginDto } from '../../dtos/login.dto'
+import { AccountUpdate } from '../../dtos/account-update.dto'
 import { User } from '../../schemas/user.schema'
 import { Profile } from '../../schemas/profile.schema'
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Aggregate } from 'mongoose'
-
+import { Aggregate,UpdateWriteOpResult } from 'mongoose'
 
 @Injectable() export class UserService {
   
@@ -86,6 +86,13 @@ import { Aggregate } from 'mongoose'
         oauthReferences:0
       }}
     ])
+  }
+
+  update(_id:Types.ObjectId,update:AccountUpdate){
+    return this.user.updateOne(
+      {_id},
+      update
+    )
   }
 
   new(newOauthAccount:User):Promise<User>{

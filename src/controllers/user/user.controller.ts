@@ -5,13 +5,32 @@ import { Common } from '../../../index.d'
 import { AuthGuard } from '../../guards/auth.guard'
 import { Controller } from '@nestjs/common';
 import { LoginDto } from '../../dtos/login.dto'
+import { AccountUpdate } from '../../dtos/account-update.dto'
 import { UserService } from '../../services/user/user.service'
 import { ProfileService } from '../../services/profile/profile.service'
 import { MessageService } from '../../services/message/message.service'
 import { CommonService } from '../../services/common/common.service'
-import { Post,Body,Res,Logger,Get,Param,UseGuards,Request } from '@nestjs/common';
+import { Post,Put,Body,Res,Logger,Get,Param,UseGuards,Request } from '@nestjs/common';
 
 @Controller('user') export class UserController {
+
+  @Put('update') @UseGuards(AuthGuard) async updateUsername(@Body() dto:AccountUpdate,@Request() request,@Res() response):Promise<void>{
+    var _id = new Types.ObjectId(request.user._id)
+
+    try{
+      let result = await this.userSvc.update(
+        _id,dto
+      )
+
+      response.send(
+        dto
+      )
+    }
+    catch(err:any){
+      new Logger('Error').error(err.message)
+      response.status(500).send(err.message)
+    }
+  }
 
   @Post('login') async login(@Body() dto:LoginDto,@Res() response:Response):Promise<void>{
     try{
