@@ -17,12 +17,24 @@ export class EventsGateway{
 
   newMessage<Type>(message:Type,dst:string){
     this.server.to(dst).emit(
+      'history/newMessage',
+      message
+    )
+
+    this.server.to(dst).emit(
       'newMessage',
       message
     )
   }
 
   message<Type>(newMessage:Type,to:string){
+    setTimeout(() => {
+      this.server.to(to).emit(
+        'history/message',
+        newMessage
+      )
+    },3000)
+
     setTimeout(() => {
       this.server.to(to).emit(
         'message',
