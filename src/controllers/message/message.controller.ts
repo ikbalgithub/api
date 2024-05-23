@@ -88,14 +88,17 @@ import { Controller,Get,Body,UseGuards,Request,Param,Res,Logger,Post,Put } from 
         result._id
       )
       
-      this.gateway.newMessage<Message>(result,dto.accept)
-      this.gateway.newMessage<Message>(result,`${dto.groupId}/${dto.accept}`)
-      this.gateway.message<Omit<Last_Message,"unreadCounter">>(
-        populated,`${dto.groupId}/${dto.accept}`
-      )
-      this.gateway.message<Omit<Last_Message,"unreadCounter">>(
-        populated,dto.accept
-      )
+
+      this.gateway.newMessage<Message>(result,dto.accept) // home/history (only message)
+      this.gateway.message<Omit<Last_Message,"unreadCounter">>(populated,dto.accept) // home / history (populated message)
+      
+
+      
+      // this.gateway.newMessage<Message>(result,`${dto.groupId}/${dto.accept}`) // history/message (only message)
+      // this.gateway.message<Omit<Last_Message,"unreadCounter">>( // history/message (populated message)
+      //   populated,`${dto.groupId}/${dto.accept}`
+      // )
+    
 
       response.send(
         result
