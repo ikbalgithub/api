@@ -91,7 +91,8 @@ import { Controller,Get,Body,UseGuards,Request,Param,Res,Logger,Post,Put } from 
 
       this.gateway.newMessage<Message>(result,dto.accept) // home/history (only message)
       this.gateway.message<Omit<Last_Message,"unreadCounter">>(populated,dto.accept) // home / history (populated message)
-      
+      this.gateway.newMessage<Message>(result,`${dto.groupId}/${dto.accept}`) // detail (only message)
+
 
       
       // this.gateway.newMessage<Message>(result,`${dto.groupId}/${dto.accept}`) // history/message (only message)
