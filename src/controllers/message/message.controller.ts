@@ -91,6 +91,9 @@ import { Controller,Get,Body,UseGuards,Request,Param,Res,Logger,Post,Put } from 
       this.gateway.newMessage<Message>(result,dto.accept)
       this.gateway.newMessage<Message>(result,`${dto.groupId}/${dto.accept}`)
       this.gateway.message<Omit<Last_Message,"unreadCounter">>(
+        populated,`${dto.groupId}/${dto.accept}`
+      )
+      this.gateway.message<Omit<Last_Message,"unreadCounter">>(
         populated,dto.accept
       )
 
