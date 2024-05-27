@@ -15,33 +15,30 @@ export class EventsGateway{
     socket.join(id)
   }
 
-  newMessage<Type>(message:Type,dst:string){
-    this.server.to(dst).emit(
+  newMessage<Type>(message:Type,dst:string[]){
+    // for home/messages/detail page (works)
+    this.server.to(dst[0]).emit(
       'history/newMessage',
       message
     )
 
 
-    this.server.to(dst).emit(
-      'newMessage',
+    // for detail page (works)
+    this.server.to(dst[1]).emit(
+      'incomingMessage',
       message
     )
   }
 
-  message<Type>(newMessage:Type,to:string){
+  message<Type>(newMessage:Type,dst:string[]){
     setTimeout(() => {
-      this.server.to(to).emit(
+      this.server.to(dst[0]).emit(
         'history/message',
         newMessage
       )
     },3000)
 
-    setTimeout(() => {
-      this.server.to(to).emit(
-        'message',
-        newMessage
-      )
-    },3000)
+    // for home/messages/detail page (works)
   }
 
   updated(to:string){
