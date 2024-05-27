@@ -39,4 +39,10 @@ import { Profile } from '../../schemas/profile.schema'
       }
     )
   }
+
+  findByRef(params:{usersRef:Types.ObjectId}):Promise<Profile>{
+    return this.profile.findOne(
+      params
+    )
+  }
 }
