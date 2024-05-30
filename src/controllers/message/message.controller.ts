@@ -113,7 +113,10 @@ import { Controller,Get,Body,UseGuards,Request,Param,Res,Logger,Post,Put } from 
         new Types.ObjectId(dto._id)
       )
       
-      this.gateway.updated(`${dto.groupId}/${dto._id}`)
+      this.gateway.updated(
+        [`${dto.groupId}/${dto._id}`,`history/${dto._id}`],
+        dto.groupId
+      )
       
       response.send(
         result

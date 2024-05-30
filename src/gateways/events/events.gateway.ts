@@ -41,8 +41,14 @@ export class EventsGateway{
     // for home/messages/detail page (works)
   }
 
-  updated(to:string){
-    this.server.to(to).emit('updated')
+  updated(dst:string[],groupId:string){
+    this.server.to(dst[0]).emit(
+      'updated',groupId
+    )
+
+    this.server.to(dst[1]).emit(
+      'history/updated',groupId
+    )
   }
 }
 
