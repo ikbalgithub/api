@@ -103,7 +103,7 @@ import { Controller,Get,Body,UseGuards,Request,Param,Res,Logger,Post,Put } from 
   }
 
 
-  @Put('') async updateOnRead(@Body() dto:MessageUpdateRead, @Res() response):Promise<void>{
+  @Put('') @UseGuards(AuthGuard) async updateOnRead(@Request() request,@Body() dto:MessageUpdateRead, @Res() response):Promise<void>{
     if(!Types.ObjectId.isValid(dto._id)) response.status(500).send(
       "internal server error"
     )
@@ -115,9 +115,9 @@ import { Controller,Get,Body,UseGuards,Request,Param,Res,Logger,Post,Put } from 
       
       this.gateway.updated(
         [`${dto.groupId}/${dto._id}`,`history/${dto._id}`],
-        dto.groupId
+        request.user._id
       )
-      
+       
       response.send(
         result
       )

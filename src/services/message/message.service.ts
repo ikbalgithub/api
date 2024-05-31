@@ -13,7 +13,25 @@ import { Aggregate,UpdateWriteOpResult } from 'mongoose'
     return this.message.aggregate([
       {$match:{
         $or
-      }} 
+      }},
+      {$lookup:{
+        from:"profiles",
+        localField:"accept",
+        foreignField:"usersRef",
+        as:"accept"
+      }},
+      {$lookup:{
+        from:"profiles",
+        localField:"sender",
+        foreignField:"usersRef",
+        as:"sender"
+      }},
+      {$unwind:{
+        path:"$sender"
+      }},
+      {$unwind:{
+        path:"$accept"
+      }}
     ])
   }
 

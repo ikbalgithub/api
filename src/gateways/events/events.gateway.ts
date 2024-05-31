@@ -1,6 +1,7 @@
 import { Types } from 'mongoose'
 import { Server, Socket } from 'socket.io'
 import { WebSocketServer,WebSocketGateway,OnGatewayConnection,SubscribeMessage } from '@nestjs/websockets';
+import { Injectable,NestMiddleware,Logger } from '@nestjs/common';
 
 @WebSocketGateway({ 
   cors:{
@@ -13,6 +14,7 @@ export class EventsGateway{
 
   @SubscribeMessage('join') join(socket:Socket,id:string){
     socket.join(id)
+    new Logger('Socket').log(`A client has been joined with id: ${id}`)
   }
 
   newMessage<Type>(message:Type,dst:string[]){
