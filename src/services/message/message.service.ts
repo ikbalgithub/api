@@ -1,6 +1,5 @@
 import { Model,Types } from 'mongoose';
 import { Message,Last_Message } from '../../schemas/message.schema'
-import { Profile } from '../../schemas/profile.schema'
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Aggregate,UpdateWriteOpResult } from 'mongoose'
