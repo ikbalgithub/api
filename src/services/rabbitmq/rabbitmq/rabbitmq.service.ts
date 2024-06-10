@@ -38,6 +38,9 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
         `queue_${_id}`,'socket',_id
       )
     }
+    catch(e:any){
+      console.log(e.message)
+    }
   }
 
   send(routingKey:string,message:string){
