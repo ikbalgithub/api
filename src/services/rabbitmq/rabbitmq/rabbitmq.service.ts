@@ -17,7 +17,9 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 
   async consume(queue:string,onMessage:(message:{content:Buffer}) => void){
     try{
-      await this.channel.consume(queue,onMessage,{noAck:true})
+      await (this.channel as Channel).consume(
+        queue,onMessage,{noAck:true}
+      )
     }
     catch(e:any){
       console.log(e.message)
