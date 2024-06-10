@@ -35,7 +35,7 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
       )
 
       await (this.channel as Channel).bindQueue(
-        `queue_${_id}`,'socket',_id
+        `queue_${_id}`,'socket',`queue_${_id}`
       )
     }
     catch(e:any){

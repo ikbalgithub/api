@@ -18,7 +18,13 @@ import { RabbitmqService } from 'src/services/rabbitmq/rabbitmq/rabbitmq.service
     this.rabbitMq.consume(`queue_${_id}`,message => {
       var content = message.content
       var buffer = Buffer.from(content)
-      console.log(buffer.toString())
+      var toString = buffer.toString()
+      var [event,dst,data] = toString.split('-')
+      
+      this.server.to(dst).emit(
+        event,
+        JSON.parse(data)
+      )
     })
   }
 
@@ -27,12 +33,11 @@ import { RabbitmqService } from 'src/services/rabbitmq/rabbitmq/rabbitmq.service
   }
 
   newMessage<Type>(message:Type,dst:string[]){
-    // for home/messages/detail page (works)
+    // for messages/detail page (works)
     this.server.to(dst[0]).emit(
       'history/newMessage',
       message
     )
-
 
     // for detail page (works)
     this.server.to(dst[1]).emit(
@@ -49,7 +54,7 @@ import { RabbitmqService } from 'src/services/rabbitmq/rabbitmq/rabbitmq.service
       )
     },3000)
 
-    // for home/messages/detail page (works)
+    // for messages/detail page (works)
   }
 
   updated(dst:string[],groupId:string){

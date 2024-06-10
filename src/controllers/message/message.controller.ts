@@ -89,13 +89,17 @@ import { RabbitmqService } from 'src/services/rabbitmq/rabbitmq/rabbitmq.service
         result._id
       )
       
+      // what to send to messages page
+      this.rabbitMq.send(`messages/${dto.accept}`,`history/newMessage-history/${dto.accept}-${JSON.stringify(result)}`)
+      this.rabbitMq.send(`messages/${dto.accept}`,`history/message-history/${dto.accept}`)
+      // what to send to detail page (chat page)
+      this.rabbitMq.send(`detail/${dto.accept}`,`history/newMessage-history/${dto.accept}-${JSON.stringify(result)}`)
+      this.rabbitMq.send(`detail/${dto.accept}`,`history/message-history/${dto.accept}-${JSON.stringify(populated)}`)
+      this.rabbitMq.send(`detail/${dto.accept}`,`chat/${dto.accept}/${sender}-incomingMessage-${JSON.stringify(result)}`)
 
       //this.gateway.newMessage<Message>(result,[`history/${dto.accept}`,`chat/${dto.accept}/${sender}`]) // only message
       //this.gateway.message<Omit<Last_Message,"unreadCounter">>(populated,[`history/${dto.accept}`]) // populated message
-      this.rabbitMq.send(dto.accept,`history/${dto.accept}-${JSON.stringify(result)}`)
-      this.rabbitMq.send(dto.accept,`chat/${dto.accept}/${sender}-${JSON.stringify(result)}`)
-      this.rabbitMq.send(dto.accept,`history/${dto.accept}-${JSON.stringify(populated)}`)
-
+      
       response.send(
         result
       )
