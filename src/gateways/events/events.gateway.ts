@@ -1,7 +1,9 @@
 import { Types } from 'mongoose'
+import { connect } from 'amqplib'
 import { Server, Socket } from 'socket.io'
 import { WebSocketServer,WebSocketGateway,OnGatewayConnection,SubscribeMessage } from '@nestjs/websockets';
 import { Injectable,NestMiddleware,Logger } from '@nestjs/common';
+import { RabbitmqService } from 'src/services/rabbitmq/rabbitmq/rabbitmq.service';
 
 @WebSocketGateway({ 
   cors:{
@@ -9,12 +11,15 @@ import { Injectable,NestMiddleware,Logger } from '@nestjs/common';
   }
 })
 
-export class EventsGateway{
+export class EventsGateway implements OnGatewayConnection{
+  constructor(private rabbitMq:RabbitmqService){
+    // adding rabbitmq service
+  }
+
   @WebSocketServer() server:Server
 
-  @SubscribeMessage('join') join(socket:Socket,id:string){
-    socket.join(id)
-    new Logger('Socket').log(`A client has been joined with id: ${id}`)
+  @SubscribeMessage('join') join(socket:Socket,roomId:string){
+    socket.join(roomId)
   }
 
   newMessage<Type>(message:Type,dst:string[]){
@@ -52,5 +57,18 @@ export class EventsGateway{
       'history/updated',groupId
     )
   }
+
+  handleConnection(client:Socket){
+    this.rabbitMq.consume('test',message => {
+      var content = message.content
+      var buffer = Buffer.from(content)
+      console.log(buffer.toString())
+    })
+  }
 }
 
+interface Room{
+  socketId:string,
+  userId:string,
+  roomId:string,
+}

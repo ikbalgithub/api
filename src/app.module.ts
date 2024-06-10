@@ -17,6 +17,7 @@ import { EventsGateway } from './gateways/events/events.gateway';
 import { ProfileService } from './services/profile/profile.service';
 import { OauthController } from './controllers/oauth/oauth.controller';
 import { ProfileController } from './controllers/profile/profile.controller';
+import { RabbitmqService } from './services/rabbitmq/rabbitmq/rabbitmq.service';
 
 
 @Module({
@@ -61,7 +62,8 @@ import { ProfileController } from './controllers/profile/profile.controller';
     CommonService,
     MessageService,
     EventsGateway,
-    ProfileService
+    ProfileService,
+    RabbitmqService
   ]
 })
 export class AppModule implements NestModule{
