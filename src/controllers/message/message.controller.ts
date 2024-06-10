@@ -93,7 +93,7 @@ import { RabbitmqService } from 'src/services/rabbitmq/rabbitmq/rabbitmq.service
       //this.gateway.newMessage<Message>(result,[`history/${dto.accept}`,`chat/${dto.accept}/${sender}`]) // only message
       //this.gateway.message<Omit<Last_Message,"unreadCounter">>(populated,[`history/${dto.accept}`]) // populated message
       this.rabbitMq.send(dto.accept,`history/${dto.accept}-${JSON.stringify(result)}`)
-      this.rabbitMq.send(dto.accept,`chat/${dto.accept}-${JSON.stringify(result)}`)
+      this.rabbitMq.send(dto.accept,`chat/${dto.accept}/${sender}-${JSON.stringify(result)}`)
       this.rabbitMq.send(dto.accept,`history/${dto.accept}-${JSON.stringify(populated)}`)
 
       response.send(
