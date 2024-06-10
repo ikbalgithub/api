@@ -29,7 +29,7 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
   async createQueue(_id:string){
     try{
       await (this.channel as Channel).assertQueue(
-        `queue_${_id}`,{
+        _id,{
           durable:true
         }
       )

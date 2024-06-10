@@ -15,7 +15,7 @@ import { RabbitmqService } from 'src/services/rabbitmq/rabbitmq/rabbitmq.service
   @SubscribeMessage('consume') consume(_socket,_id:string){
     this.rabbitMq.createQueue(_id)
 
-    this.rabbitMq.consume(`queue_${_id}`,message => {
+    this.rabbitMq.consume(_id,message => {
       var content = message.content
       var buffer = Buffer.from(content)
       var toString = buffer.toString()
