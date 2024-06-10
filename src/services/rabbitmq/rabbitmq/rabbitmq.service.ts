@@ -1,4 +1,4 @@
-import { Connection,Channel,connect,ConsumeMessage } from 'amqplib'
+import { Connection,Channel,connect } from 'amqplib'
 import { Injectable, OnModuleInit } from '@nestjs/common';
 
 @Injectable() export class RabbitmqService implements OnModuleInit {
