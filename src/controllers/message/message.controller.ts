@@ -6,6 +6,7 @@ import { MessageDto } from '../../dtos/message.dto'
 import { MessageUpdateRead } from '../../dtos/message-update-read.dto'
 import { EventsGateway } from '../../gateways/events/events.gateway'
 import { Controller,Get,Body,UseGuards,Request,Param,Res,Logger,Post,Put } from '@nestjs/common';
+import { RabbitmqService } from 'src/services/rabbitmq/rabbitmq/rabbitmq.service'
 
 @Controller('message') export class MessageController {
 
@@ -89,8 +90,11 @@ import { Controller,Get,Body,UseGuards,Request,Param,Res,Logger,Post,Put } from 
       )
       
 
-      this.gateway.newMessage<Message>(result,[`history/${dto.accept}`,`chat/${dto.accept}/${sender}`]) // only message
-      this.gateway.message<Omit<Last_Message,"unreadCounter">>(populated,[`history/${dto.accept}`]) // populated message
+      //this.gateway.newMessage<Message>(result,[`history/${dto.accept}`,`chat/${dto.accept}/${sender}`]) // only message
+      //this.gateway.message<Omit<Last_Message,"unreadCounter">>(populated,[`history/${dto.accept}`]) // populated message
+      this.rabbitMq.send(dto.accept,`history/${dto.accept}-${JSON.stringify(result)}`)
+      this.rabbitMq.send(dto.accept,`chat/${dto.accept}-${JSON.stringify(result)}`)
+      this.rabbitMq.send(dto.accept,`history/${dto.accept}-${JSON.stringify(populated)}`)
 
       response.send(
         result
@@ -130,8 +134,9 @@ import { Controller,Get,Body,UseGuards,Request,Param,Res,Logger,Post,Put } from 
 
 
 
-  constructor(private message:MessageService,private gateway:EventsGateway){
+  constructor(private message:MessageService,private gateway:EventsGateway,private rabbitMq:RabbitmqService){
     // inject message service
     // inject events gateway
+    // inject rabbitmq service
   }
 }

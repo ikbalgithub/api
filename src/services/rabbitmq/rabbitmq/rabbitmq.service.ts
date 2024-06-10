@@ -25,4 +25,26 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
       console.log(e.message)
     }
   }
+
+  async createQueue(_id:string){
+    try{
+      await (this.channel as Channel).assertQueue(
+        `queue_${_id}`,{
+          durable:true
+        }
+      )
+
+      await (this.channel as Channel).bindQueue(
+        `queue_${_id}`,'socket',_id
+      )
+    }
+  }
+
+  send(routingKey:string,message:string){
+    (this.channel as Channel).publish(routingKey,message)
+  }
+
+  catch(e:any){
+    console.log(e.message)
+  }
 }

@@ -1,22 +1,26 @@
 import { Types } from 'mongoose'
-import { connect } from 'amqplib'
+import { Channel } from 'amqplib'
 import { Server, Socket } from 'socket.io'
 import { WebSocketServer,WebSocketGateway,OnGatewayConnection,SubscribeMessage } from '@nestjs/websockets';
 import { Injectable,NestMiddleware,Logger } from '@nestjs/common';
 import { RabbitmqService } from 'src/services/rabbitmq/rabbitmq/rabbitmq.service';
 
-@WebSocketGateway({ 
-  cors:{
-    origin:'*'
-  }
-})
-
-export class EventsGateway implements OnGatewayConnection{
+@WebSocketGateway({cors:{origin:'*'}}) export class EventsGateway{
   constructor(private rabbitMq:RabbitmqService){
     // adding rabbitmq service
   }
 
   @WebSocketServer() server:Server
+
+  @SubscribeMessage('consume') consume(_socket,_id:string){
+    this.rabbitMq.createQueue(_id)
+
+    this.rabbitMq.consume(`queue_${_id}`,message => {
+      var content = message.content
+      var buffer = Buffer.from(content)
+      console.log(buffer.toString())
+    })
+  }
 
   @SubscribeMessage('join') join(socket:Socket,roomId:string){
     socket.join(roomId)
@@ -58,13 +62,7 @@ export class EventsGateway implements OnGatewayConnection{
     )
   }
 
-  handleConnection(client:Socket){
-    this.rabbitMq.consume('test',message => {
-      var content = message.content
-      var buffer = Buffer.from(content)
-      console.log(buffer.toString())
-    })
-  }
+ 
 }
 
 interface Room{
