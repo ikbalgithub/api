@@ -35,7 +35,9 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
       )
 
       await (this.channel as Channel).bindQueue(
-        `queue_${_id}`,'socket',`queue_${_id}`
+        _id,'socket',_id
+        // onConnected with consume id messages/12345
+        // socket -> messages/12345 -> messages/12345
       )
     }
     catch(e:any){
@@ -44,7 +46,7 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
   }
 
   send(routingKey:string,message:string){
-    (this.channel as Channel).publish(routingKey,message)
+    (this.channel as Channel).publish('socket',routingKey,message)
   }
 
   catch(e:any){
