@@ -96,11 +96,9 @@ import { RabbitmqService } from 'src/services/rabbitmq/rabbitmq/rabbitmq.service
       populatedObj.accept._id = populatedObj.accept._id.toString()
       populatedObj.accept.usersRef = populatedObj.accept.usersRef.toString()
       populatedObj.groupId = populatedObj.groupId.toString()
-
-      var objStr = JSON.stringify(populatedObj)
-
-      console.log(objStr)
-      console.log(JSON.parse(objStr))
+      
+      console.log(populatedObj)
+      
 
       // what to send to messages page
       //this.rabbitMq.send(`messages/${dto.accept}`,`history/newMessage-history/${dto.accept}-${JSON.stringify(result)}`) // works
