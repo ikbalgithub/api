@@ -21,7 +21,7 @@ import { RabbitmqService } from 'src/services/rabbitmq/rabbitmq/rabbitmq.service
       var toString = buffer.toString()
       var [event,dst,data] = toString.split('-')
 
-      console.log({event,dst,data})
+      this.server.to(dst).emit(event,JSON.parse(data))
     })
   }
 
