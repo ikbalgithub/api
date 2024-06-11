@@ -100,8 +100,8 @@ import { RabbitmqService } from 'src/services/rabbitmq/rabbitmq/rabbitmq.service
       var test1 = `${populatedObj.sender._id}-${populatedObj.sender.profileImage}`
       var test2 = `${populatedObj.accept._id}-${populatedObj.accept.profileImage}`
 
-      populatedObj.sender = {...populatedObj.sender,profileImage:test1.split("-")[1]}
-      populatedObj.accept = {...populatedObj.accept,profileImage:test2.split("-")[1]}
+      populatedObj.sender.profileImage = test1.split("-")[1]
+      populatedObj.accept.profileImage = test2.split("-")[1]
 
       console.log(populatedObj)
 
