@@ -93,10 +93,10 @@ import { RabbitmqService } from 'src/services/rabbitmq/rabbitmq/rabbitmq.service
       populatedObj._id = populatedObj._id.toString()
       populatedObj.sender._id = populatedObj.sender._id.toString()
       populatedObj.sender.usersRef = populatedObj.sender.usersRef.toString()
-      populatedObj.sender.profileImage = populatedObj.sender.profileImage
+      populatedObj.sender.profileImage = populatedObj.sender.profileImage.replace(/;(?=\s*")/g, '');
       populatedObj.accept._id = populatedObj.accept._id.toString()
       populatedObj.accept.usersRef = populatedObj.accept.usersRef.toString()
-      populatedObj.accept.profileImage = populatedObj.accept.profileImage
+      populatedObj.accept.profileImage = populatedObj.accept.profileImage.replace(/;(?=\s*")/g, '');
       populatedObj.groupId = populatedObj.groupId.toString()
       
       console.log(populatedObj)
