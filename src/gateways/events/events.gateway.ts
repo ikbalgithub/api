@@ -66,12 +66,5 @@ import { RabbitmqService } from 'src/services/rabbitmq/rabbitmq/rabbitmq.service
       'history/updated',groupId
     )
   }
-
  
-}
-
-interface Room{
-  socketId:string,
-  userId:string,
-  roomId:string,
 }

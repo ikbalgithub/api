@@ -46,7 +46,11 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
   }
 
   send(routingKey:string,message:string){
-    (this.channel as Channel).publish('socket',routingKey,message)
+    (this.channel as Channel).publish(
+      'socket',
+      routingKey,
+      Buffer.from(message)
+    )
   }
 
   catch(e:any){
