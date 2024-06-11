@@ -5,7 +5,7 @@ import { AuthGuard } from '../../guards/auth.guard'
 import { MessageDto } from '../../dtos/message.dto'
 import { MessageUpdateRead } from '../../dtos/message-update-read.dto'
 import { EventsGateway } from '../../gateways/events/events.gateway'
-import { Controller,Get,Body,UseGuards,Request,Param,Res,Logger,Post,Put } from '@nestjs/common';
+import { Controller,Get,Body,UseGuards,Request,Param,Res,Logger,Post,Put } from '@nestjs/common'
 import { RabbitmqService } from 'src/services/rabbitmq/rabbitmq/rabbitmq.service'
 
 @Controller('message') export class MessageController {
@@ -93,13 +93,13 @@ import { RabbitmqService } from 'src/services/rabbitmq/rabbitmq/rabbitmq.service
       populatedObj._id = populatedObj._id.toString()
       populatedObj.sender._id = populatedObj.sender._id.toString()
       populatedObj.sender.usersRef = populatedObj.sender.usersRef.toString()
-      populatedObj.sender.profileImage = populatedObj.sender.profileImage.replace(/;(?=\s*")/g, '');
       populatedObj.accept._id = populatedObj.accept._id.toString()
       populatedObj.accept.usersRef = populatedObj.accept.usersRef.toString()
-      populatedObj.accept.profileImage = populatedObj.accept.profileImage.replace(/;(?=\s*")/g, '');
       populatedObj.groupId = populatedObj.groupId.toString()
       
-      console.log(populatedObj)
+      var test = `${populatedObj.sender._id}/${populatedObj.sender.profileImage}`
+
+      console.log(test)
       
 
       // what to send to messages page
