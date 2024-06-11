@@ -97,14 +97,18 @@ import { RabbitmqService } from 'src/services/rabbitmq/rabbitmq/rabbitmq.service
       populatedObj.accept.usersRef = populatedObj.accept.usersRef.toString()
       populatedObj.groupId = populatedObj.groupId.toString()
 
+      var objStr = JSON.stringify(populatedObj)
+
+      console.log(objStr)
+      console.log(JSON.parse(objStr))
+
       // what to send to messages page
-      this.rabbitMq.send(`messages/${dto.accept}`,`history/newMessage-history/${dto.accept}-${JSON.stringify(result)}`) // works
-      this.rabbitMq.send(`messages/${dto.accept}`,`history/message-history/${dto.accept}-${JSON.stringify(populatedObj)}`)
-      console.log({...populated})
+      //this.rabbitMq.send(`messages/${dto.accept}`,`history/newMessage-history/${dto.accept}-${JSON.stringify(result)}`) // works
+      //this.rabbitMq.send(`messages/${dto.accept}`,`history/message-history/${dto.accept}-${JSON.stringify(populatedObj)}`)
       // what to send to detail page (chat page)
-      this.rabbitMq.send(`detail/${dto.accept}`,`history/newMessage-history/${dto.accept}-${JSON.stringify(result)}`)
-      this.rabbitMq.send(`detail/${dto.accept}`,`history/message-history/${dto.accept}-${JSON.stringify(populatedObj)}`)
-      this.rabbitMq.send(`detail/${dto.accept}`,`chat/${dto.accept}/${sender}-incomingMessage-${JSON.stringify(result)}`)
+      //.rabbitMq.send(`detail/${dto.accept}`,`history/newMessage-history/${dto.accept}-${JSON.stringify(result)}`)
+      //this.rabbitMq.send(`detail/${dto.accept}`,`history/message-history/${dto.accept}-${JSON.stringify(populatedObj)}`)
+      //this.rabbitMq.send(`detail/${dto.accept}`,`chat/${dto.accept}/${sender}-incomingMessage-${JSON.stringify(result)}`)
 
       //this.gateway.newMessage<Message>(result,[`history/${dto.accept}`,`chat/${dto.accept}/${sender}`]) // only message
       //this.gateway.message<Omit<Last_Message,"unreadCounter">>(populated,[`history/${dto.accept}`]) // populated message
