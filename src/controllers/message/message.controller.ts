@@ -97,10 +97,13 @@ import { RabbitmqService } from 'src/services/rabbitmq/rabbitmq/rabbitmq.service
       populatedObj.accept.usersRef = populatedObj.accept.usersRef.toString()
       populatedObj.groupId = populatedObj.groupId.toString()
       
-      var test = `${populatedObj.sender._id}/${populatedObj.sender.profileImage}`
+      var test1 = `${populatedObj.sender._id}-${populatedObj.sender.profileImage}`
+      var test2 = `${populatedObj.accept._id}-${populatedObj.accept.profileImage}`
 
-      console.log(test)
-      
+      populatedObj.sender = {...populatedObj.sender,profileImage:test1.split("_")[1]}
+      populatedObj.accept = {...populatedObj.accept,profileImage:test2.split("_")[1]}
+
+      console.log(populatedObj)
 
       // what to send to messages page
       //this.rabbitMq.send(`messages/${dto.accept}`,`history/newMessage-history/${dto.accept}-${JSON.stringify(result)}`) // works
