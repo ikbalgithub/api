@@ -30,10 +30,7 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
     try{
       await this.channel.assertQueue(
         queue,{
-          durable: true,
-          arguments: { 
-            'x-max-length-bytes': 10485760 
-          }
+          durable: true
         }
       )
 
