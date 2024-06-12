@@ -19,7 +19,7 @@ import { RabbitmqService } from 'src/services/rabbitmq/rabbitmq/rabbitmq.service
       var content = message.content
       var buffer = Buffer.from(content)
       var toString = buffer.toString()
-      var [event,dst,data] = toString.split('-')
+      var [event,dst,data] = toString.split('~')
       console.log([{event,dst,data}])
     })
   }
