@@ -103,7 +103,7 @@ import { Profile } from 'src/schemas/profile.schema'
 
       _sender = {
         _id:_sender._id,
-        profileImage:_sender.profileImage.replace(/[,;]$/,''),
+        profileImage:`${sender._id}-${_sender.profileImage}`.split("-")[1],
         surname:_sender.surname,
         firstName:_sender.firstName,
         usersRef:_sender.usersRef,
