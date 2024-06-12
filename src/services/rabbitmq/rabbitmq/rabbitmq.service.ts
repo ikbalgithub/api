@@ -29,8 +29,6 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
           consumerTag:result.consumerTag
         }
       )
-
-      console.log(this.queues)
     }
     catch(e:any){
       console.log(e.message)
