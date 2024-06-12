@@ -80,7 +80,8 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
     (this.channel as Channel).publish(
       'socket',
       routingKey,
-      Buffer.from(message)
+      Buffer.from(message),
+      {persistent:true}
     )
   }
 
