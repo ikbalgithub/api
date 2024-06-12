@@ -86,11 +86,11 @@ import { Profile } from 'src/schemas/profile.schema'
         read:false,
       })
       
-      var [populated] = await this.message.populate(
+      var populateds = await this.message.populate(
         result._id
       )
 
-      console.log(JSON.stringify(populated))
+      console.log(JSON.stringify(populateds))
 
      
 
