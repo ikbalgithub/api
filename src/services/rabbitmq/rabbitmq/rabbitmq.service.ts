@@ -2,7 +2,7 @@ import { Connection,Channel,connect } from 'amqplib'
 import { Injectable, OnModuleInit } from '@nestjs/common';
 
 @Injectable() export class RabbitmqService implements OnModuleInit {
-  queues:{socketId:string,consumerTag:string}[] = []
+  queues:{socketId:string,consumerTag:{consumerTag:string}}[] = []
   
   connection:Connection
   channel:Channel
@@ -26,7 +26,7 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
       this.queues.push(
         {
           socketId,
-          consumerTag:result.consumerTag
+          consumerTag:result
         }
       )
     }
@@ -63,7 +63,7 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 			)
 	
 			await (this.channel as Channel).cancel(
-				consumerTag
+				consumerTag.consumerTag
 			)
 
 			this.queues.splice(index,1)
