@@ -20,7 +20,7 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
   async consume(queue:string,socketId:string,onMessage:(message:{content:Buffer}) => void){
     try{
       var result = await (this.channel as Channel).consume(
-        queue,onMessage,{noAck:true}
+        queue,onMessage,{noAck:false}
       )
 
       this.queues.push(
