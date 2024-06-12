@@ -110,7 +110,6 @@ import { Profile } from 'src/schemas/profile.schema'
       }
       
       var populatedMessage:any = {
-        ...populated,
         sender:{
           ..._sender,
           _id:_sender._id.toString()
