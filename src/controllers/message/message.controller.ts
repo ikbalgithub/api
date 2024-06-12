@@ -86,13 +86,13 @@ import { Profile } from 'src/schemas/profile.schema'
         read:false,
       })
       
-      var populateds = await this.message.populate(
+      var [populated] = await this.message.populate(
         result._id
       )
 
   
       this.rabbitMq.send(`messages/${dto.accept}`,`history/newMessage-history/${dto.accept}-${JSON.stringify(result)}`) // works
-      this.rabbitMq.send(`messages/${dto.accept}`,`history/message-history/${dto.accept}-${JSON.stringify(populateds[0])}`)
+      this.rabbitMq.send(`messages/${dto.accept}`,`history/message-history/${dto.accept}-${JSON.stringify(populated)}`)
      
       //this.rabbitMq.send(`detail/${dto.accept}`,`history/newMessage-history/${dto.accept}-${JSON.stringify(result)}`)
       //this.rabbitMq.send(`detail/${dto.accept}`,`history/message-history/${dto.accept}-${JSON.stringify(populateds)}`)
