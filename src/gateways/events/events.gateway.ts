@@ -22,9 +22,7 @@ import { RabbitmqService } from 'src/services/rabbitmq/rabbitmq/rabbitmq.service
       var [event,dst,data] = toString.split('-')
 
       if(event === 'history/message'){
-        this.server.to(dst).emit(
-          event,data
-        )
+        console.log(data)
       }
       else{
         this.server.to(dst).emit(
