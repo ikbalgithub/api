@@ -2,6 +2,8 @@ import { Connection,Channel,connect } from 'amqplib'
 import { Injectable, OnModuleInit } from '@nestjs/common';
 
 @Injectable() export class RabbitmqService implements OnModuleInit {
+  queues:{socketId:string,consumerTag:string}[] = []
+  
   connection:Connection
   channel:Channel
   
@@ -15,11 +17,20 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
     }
   }
 
-  async consume(queue:string,onMessage:(message:{content:Buffer}) => void){
+  async consume(queue:string,socketId:string,onMessage:(message:{content:Buffer}) => void){
     try{
-      await (this.channel as Channel).consume(
+      var result = await (this.channel as Channel).consume(
         queue,onMessage,{noAck:true}
       )
+
+      this.queues.push(
+        {
+          socketId,
+          consumerTag:result.consumerTag
+        }
+      )
+
+      console.log(this.queues)
     }
     catch(e:any){
       console.log(e.message)
@@ -41,6 +52,28 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
     catch(e:any){
       console.log(e.message)
     }
+  }
+
+  async stopConsume(socketId:string){
+    try{
+			var [{consumerTag}] = this.queues.filter(
+				q => q.socketId === socketId
+			)
+	
+			var index = this.queues.findIndex(
+				q => q.socketId === socketId
+			)
+	
+			await (this.channel as Channel).cancel(
+				consumerTag
+			)
+
+			this.queues.splice(index,1)
+    }
+    catch(e:any){
+      console.log(e.message)
+    }
+    
   }
 
   send(routingKey:string,message:string){
