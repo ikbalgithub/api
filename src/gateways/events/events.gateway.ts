@@ -16,6 +16,7 @@ import { RabbitmqService } from 'src/services/rabbitmq/rabbitmq/rabbitmq.service
     this.rabbitMq.createQueue(_id)
 
     this.rabbitMq.consume(_id,socket.id,message => {
+      this.rabbitMq.channel.ack(message)
       var content = message.content
       var buffer = Buffer.from(content)
       var toString = buffer.toString()
