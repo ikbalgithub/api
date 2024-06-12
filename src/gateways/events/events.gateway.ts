@@ -23,7 +23,7 @@ import { RabbitmqService } from 'src/services/rabbitmq/rabbitmq/rabbitmq.service
 
       if(event === 'history/message'){
         this.server.to(dst).emit(
-          event,data[0]
+          event,data
         )
       }
       else{
