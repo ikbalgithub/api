@@ -90,39 +90,14 @@ import { Profile } from 'src/schemas/profile.schema'
         result._id
       )
 
-      var populatedObj:any = {...populated}
-      populatedObj._id = populatedObj._id.toString()
-      populatedObj.sender._id = populatedObj.sender._id.toString()
-      populatedObj.sender.usersRef = populatedObj.sender.usersRef.toString()
-      populatedObj.accept._id = populatedObj.accept._id.toString()
-      populatedObj.accept.usersRef = populatedObj.accept.usersRef.toString()
-      populatedObj.groupId = populatedObj.groupId.toString()
+      console.log(JSON.stringify(populated))
 
-      var _sender = populated.sender as Profile
-      var _accept = populated.accept as Profile
+     
 
-      _sender = {
-        _id:_sender._id,
-        profileImage:`${sender._id}-${_sender.profileImage}`.split("-")[1],
-        surname:_sender.surname,
-        firstName:_sender.firstName,
-        usersRef:_sender.usersRef,
-      }
-      
-      var populatedMessage:any = {
-        sender:{
-          ..._sender,
-          _id:_sender._id.toString()
-        }
-      }
-
-      console.log(populatedMessage)
-
-      // what to send to messages page
       //this.rabbitMq.send(`messages/${dto.accept}`,`history/newMessage-history/${dto.accept}-${JSON.stringify(result)}`) // works
-      //this.rabbitMq.send(`messages/${dto.accept}`,`history/message-history/${dto.accept}-${JSON.stringify(populatedObj)}`)
-      // what to send to detail page (chat page)
-      //.rabbitMq.send(`detail/${dto.accept}`,`history/newMessage-history/${dto.accept}-${JSON.stringify(result)}`)
+      //this.rabbitMq.send(`messages/${dto.accept}`,`history/message-history/${dto.accept}-${JSON.stringify(populated)}`)
+     
+      //rabbitMq.send(`detail/${dto.accept}`,`history/newMessage-history/${dto.accept}-${JSON.stringify(result)}`)
       //this.rabbitMq.send(`detail/${dto.accept}`,`history/message-history/${dto.accept}-${JSON.stringify(populatedObj)}`)
       //this.rabbitMq.send(`detail/${dto.accept}`,`chat/${dto.accept}/${sender}-incomingMessage-${JSON.stringify(result)}`)
 

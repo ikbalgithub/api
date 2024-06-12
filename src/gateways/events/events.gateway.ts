@@ -21,7 +21,18 @@ import { RabbitmqService } from 'src/services/rabbitmq/rabbitmq/rabbitmq.service
       var toString = buffer.toString()
       var [event,dst,data] = toString.split('-')
 
-      this.server.to(dst).emit(event,JSON.parse(data))
+      // if(!['message'].includes(event)){
+      //   this.server.to(dst).emit(
+      //     event,JSON.parse(
+      //       data
+      //     )
+      //   )
+      // }
+      // else{
+      //   this.server.to(dst).emit(
+      //     event,data
+      //   )
+      // }
     })
   }
 
