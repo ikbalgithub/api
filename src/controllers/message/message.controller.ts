@@ -7,6 +7,7 @@ import { MessageUpdateRead } from '../../dtos/message-update-read.dto'
 import { EventsGateway } from '../../gateways/events/events.gateway'
 import { Controller,Get,Body,UseGuards,Request,Param,Res,Logger,Post,Put } from '@nestjs/common'
 import { RabbitmqService } from 'src/services/rabbitmq/rabbitmq/rabbitmq.service'
+import { Profile } from 'src/schemas/profile.schema'
 
 @Controller('message') export class MessageController {
 
@@ -96,11 +97,27 @@ import { RabbitmqService } from 'src/services/rabbitmq/rabbitmq/rabbitmq.service
       populatedObj.accept._id = populatedObj.accept._id.toString()
       populatedObj.accept.usersRef = populatedObj.accept.usersRef.toString()
       populatedObj.groupId = populatedObj.groupId.toString()
+
+      var _sender = populated.sender as Profile
+      var _accept = populated.accept as Profile
+
+      _sender = {
+        _id:_sender._id,
+        profileImage:_sender.profileImage,
+        surname:_sender.surname,
+        firstName:_sender.firstName,
+        usersRef:_sender.usersRef,
+      }
       
-      var test1 = `${populatedObj.sender.profileImage}~${populatedObj.sender.surname}`
-      populatedObj.sender.profileImage = test1.split("~")[0]
-      
-      console.log(populatedObj)
+      var populatedMessage:any = {
+        ...populated,
+        sender:{
+          ..._sender,
+          _id:_sender._id.toString()
+        }
+      }
+
+      console.log(populatedMessage)
 
       // what to send to messages page
       //this.rabbitMq.send(`messages/${dto.accept}`,`history/newMessage-history/${dto.accept}-${JSON.stringify(result)}`) // works
