@@ -90,16 +90,13 @@ import { Profile } from 'src/schemas/profile.schema'
         result._id
       )
 
-      console.log(JSON.stringify(populateds))
-
+  
+      this.rabbitMq.send(`messages/${dto.accept}`,`history/newMessage-history/${dto.accept}-${JSON.stringify(result)}`) // works
+      this.rabbitMq.send(`messages/${dto.accept}`,`history/message-history/${dto.accept}-${JSON.stringify(populateds)}`)
      
-
-      //this.rabbitMq.send(`messages/${dto.accept}`,`history/newMessage-history/${dto.accept}-${JSON.stringify(result)}`) // works
-      //this.rabbitMq.send(`messages/${dto.accept}`,`history/message-history/${dto.accept}-${JSON.stringify(populated)}`)
-     
-      //rabbitMq.send(`detail/${dto.accept}`,`history/newMessage-history/${dto.accept}-${JSON.stringify(result)}`)
-      //this.rabbitMq.send(`detail/${dto.accept}`,`history/message-history/${dto.accept}-${JSON.stringify(populatedObj)}`)
-      //this.rabbitMq.send(`detail/${dto.accept}`,`chat/${dto.accept}/${sender}-incomingMessage-${JSON.stringify(result)}`)
+      this.rabbitMq.send(`detail/${dto.accept}`,`history/newMessage-history/${dto.accept}-${JSON.stringify(result)}`)
+      this.rabbitMq.send(`detail/${dto.accept}`,`history/message-history/${dto.accept}-${JSON.stringify(populateds)}`)
+      this.rabbitMq.send(`detail/${dto.accept}`,`chat/${dto.accept}/${sender}-incomingMessage-${JSON.stringify(result)}`)
 
       //this.gateway.newMessage<Message>(result,[`history/${dto.accept}`,`chat/${dto.accept}/${sender}`]) // only message
       //this.gateway.message<Omit<Last_Message,"unreadCounter">>(populated,[`history/${dto.accept}`]) // populated message
