@@ -26,18 +26,19 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
     }
   }
 
-  async createQueue(_id:string){
+  async createQueue(queue:string){
     try{
-      await (this.channel as Channel).assertQueue(
-        _id,{
-          durable:true
+      await this.channel.assertQueue(
+        queue,{
+          durable: true,
+          arguments: { 
+            'x-max-length-bytes': 10485760 
+          }
         }
       )
 
       await (this.channel as Channel).bindQueue(
-        _id,'socket',_id
-        // onConnected with consume id messages/12345
-        // socket -> messages/12345 -> messages/12345
+        queue,'socket',queue
       )
     }
     catch(e:any){
