@@ -22,7 +22,7 @@ import { RabbitmqService } from 'src/services/rabbitmq/rabbitmq/rabbitmq.service
       var toString = buffer.toString()
       var [event,dst,data] = toString.split('~')
       
-      console.log(`sending event ${event} info to ${dst}`)
+      console.log(`sending event ${event} info from ${_id} queue to ${dst}`)
       
       this.server.to(dst).emit(event,JSON.parse(data))
     })
