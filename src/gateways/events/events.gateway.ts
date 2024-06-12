@@ -20,16 +20,7 @@ import { RabbitmqService } from 'src/services/rabbitmq/rabbitmq/rabbitmq.service
       var buffer = Buffer.from(content)
       var toString = buffer.toString()
       var [event,dst,data] = toString.split('-')
-
-      if(event === 'history/message'){
-        console.log(data)
-      }
-      else{
-        this.server.to(dst).emit(
-          event,
-          JSON.parse(data)
-        )
-      }
+      console.log([{event,dst,data}])
     })
   }
 
