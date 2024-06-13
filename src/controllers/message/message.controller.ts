@@ -91,12 +91,12 @@ import { Profile } from 'src/schemas/profile.schema'
       )
 
   
-      this.rabbitMq.send(`messages/${dto.accept}`,`history/newMessage~history/${dto.accept}~${JSON.stringify(result)}`) // works
-      this.rabbitMq.send(`messages/${dto.accept}`,`history/message~history/${dto.accept}~${JSON.stringify(populated)}`)
+      this.rabbitMq.send(`history/${dto.accept}`,`history/newMessage~history/${dto.accept}~${JSON.stringify(result)}`) // works
+      this.rabbitMq.send(`history/${dto.accept}`,`history/message~history/${dto.accept}~${JSON.stringify(populated)}`)
      
-      this.rabbitMq.send(`detail/${dto.accept}`,`history/newMessage~history/${dto.accept}~${JSON.stringify(result)}`)
-      this.rabbitMq.send(`detail/${dto.accept}`,`history/message~history/${dto.accept}~${JSON.stringify(populated)}`)
-      this.rabbitMq.send(`detail/${dto.accept}`,`incomingMessage~chat/${dto.accept}/${sender.toString()}~${JSON.stringify(result)}`)
+      this.rabbitMq.send(`history/${dto.accept}`,`history/newMessage~history/${dto.accept}~${JSON.stringify(result)}`)
+      this.rabbitMq.send(`history/${dto.accept}`,`history/message~history/${dto.accept}~${JSON.stringify(populated)}`)
+      this.rabbitMq.send(`chat/${dto.accept}/${sender.toString()}`,`incomingMessage~chat/${dto.accept}/${sender.toString()}~${JSON.stringify(result)}`)
 
       //this.gateway.newMessage<Message>(result,[`history/${dto.accept}`,`chat/${dto.accept}/${sender}`]) // only message
       //this.gateway.message<Omit<Last_Message,"unreadCounter">>(populated,[`history/${dto.accept}`]) // populated message

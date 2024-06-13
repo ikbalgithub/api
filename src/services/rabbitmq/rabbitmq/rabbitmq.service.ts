@@ -6,7 +6,7 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
   connection:Connection
   channel:Channel
 
-  consumers:{socketId:string,tag:string}[] = []
+  consumers: {socketId:string,consumerTag:string}[] = []
 
   async onModuleInit(){
     try{
@@ -27,7 +27,7 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 
         this.consumers.push({
           socketId,
-          tag:result.consumerTag
+          consumerTag:result.consumerTag
         })
 
         resolve(
@@ -59,20 +59,19 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
     })
   }
 
-  stopConsume(socketId:string):Promise<void>{
-    return new Promise(async (resolve,reject) => {
-      var [consumer] = this.consumers.filter(
-        c => c.socketId === socketId
-      )
+  stopConsume(socketId:string){
+    var queues = this.consumers.filter(
+      q => q.socketId === socketId
+    )
 
+    queues.forEach(async ({consumerTag}) => {
       try{
         await this.channel?.cancel(
-          consumer.tag
+          consumerTag
         )
-        resolve(null)
       }
       catch(e:any){
-        reject(e)
+        console.log
       }
     })
   }
