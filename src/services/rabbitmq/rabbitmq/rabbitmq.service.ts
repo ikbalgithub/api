@@ -2,11 +2,12 @@ import { Connection,Channel,connect } from 'amqplib'
 import { Injectable, OnModuleInit } from '@nestjs/common';
 
 @Injectable() export class RabbitmqService implements OnModuleInit {
-  queues:{socketId:string,consumerTag:{consumerTag:string}}[] = []
   
   connection:Connection
   channel:Channel
-  
+
+  consumers:{socketId:string,tag:string}[] = []
+
   async onModuleInit(){
     try{
       this.connection = await connect(process.env.RABBITMQ_URL)
@@ -17,61 +18,63 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
     }
   }
 
-  async consume(queue:string,socketId:string,onMessage:(message:{content:Buffer}) => void){
-    try{
-      var result = await (this.channel as Channel).consume(
-        queue,onMessage,{noAck:false}
-      )
+  consume(queue:string,socketId,onMessage:(message:{content:Buffer}) => void):Promise<string>{
+    return new Promise(async (resolve,reject) => {
+      try{
+        var result = await (this.channel as Channel).consume(
+          queue,onMessage,{noAck:false}
+        )
 
-      this.queues.push(
-        {
+        this.consumers.push({
           socketId,
-          consumerTag:result
-        }
-      )
-    }
-    catch(e:any){
-      console.log(e.message)
-    }
+          tag:result.consumerTag
+        })
+
+        resolve(
+          result.consumerTag
+        )
+      }
+      catch(e:any){
+        reject(e)
+      }
+    })
   }
 
-  async createQueue(queue:string){
-    try{
-      await this.channel.assertQueue(
-        queue,{
-          durable: true
-        }
-      )
-
-      await (this.channel as Channel).bindQueue(
-        queue,'socket',queue
-      )
-    }
-    catch(e:any){
-      console.log(e.message)
-    }
+  async createQueue(queue:string):Promise<void>{
+    return new Promise(async (resolve,reject) => {
+      try{
+        await (this.channel as Channel).assertQueue(
+          queue,{durable:true}
+        )
+        await (this.channel as Channel).bindQueue(
+          queue,'socket',queue
+        )
+        resolve(
+          null
+        )
+      }
+      catch(e:any){
+        reject(e)
+      }
+    })
   }
 
-  async stopConsume(socketId:string){
-    try{
-			var [{consumerTag}] = this.queues.filter(
-				q => q.socketId === socketId
-			)
-	
-			var index = this.queues.findIndex(
-				q => q.socketId === socketId
-			)
-	
-			await (this.channel as Channel).cancel(
-				consumerTag.consumerTag
-			)
+  stopConsume(socketId:string):Promise<void>{
+    return new Promise(async (resolve,reject) => {
+      var [consumer] = this.consumers.filter(
+        c => c.socketId === socketId
+      )
 
-			this.queues.splice(index,1)
-    }
-    catch(e:any){
-      console.log(e.message)
-    }
-    
+      try{
+        await this.channel?.cancel(
+          consumer.tag
+        )
+        resolve(null)
+      }
+      catch(e:any){
+        reject(e)
+      }
+    })
   }
 
   send(routingKey:string,message:string){

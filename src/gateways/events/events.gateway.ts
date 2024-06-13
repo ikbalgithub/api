@@ -6,26 +6,27 @@ import { Injectable,NestMiddleware,Logger } from '@nestjs/common';
 import { RabbitmqService } from 'src/services/rabbitmq/rabbitmq/rabbitmq.service';
 
 @WebSocketGateway({cors:{origin:'*'}}) export class EventsGateway implements OnGatewayDisconnect{
-  constructor(private rabbitMq:RabbitmqService){
-    // adding rabbitmq service
-  }
-
   @WebSocketServer() server:Server
 
-  @SubscribeMessage('consume') consume(socket:Socket,_id:string){
-    this.rabbitMq.createQueue(_id)
+  @SubscribeMessage('consume') async consume(socket:Socket,queue:string){
+    try{
+      var createdQueue = await this.rabbitMq.createQueue(queue)
+      var cT = await this.rabbitMq.consume(queue,socket.id,m => {
+        this.rabbitMq.channel.ack(m)
+        var content = m.content
+        var eventInfo = content.toString()
+        var [event,dst,data] = eventInfo.split('~')        
+        this.server.to(dst).emit(event,JSON.parse(data))
+      })
 
-    this.rabbitMq.consume(_id,socket.id,message => {
-      this.rabbitMq.channel.ack(message)
-      var content = message.content
-      var buffer = Buffer.from(content)
-      var toString = buffer.toString()
-      var [event,dst,data] = toString.split('~')
-      
-      console.log(`sending event ${event} info from ${_id} queue to ${dst}`)
-      
-      this.server.to(dst).emit(event,JSON.parse(data))
-    })
+      this.server.to(socket.id).emit(
+        'startedConsume',
+        cT
+      )
+    }
+    catch(e:any){
+      console.log(e.message)
+    }
   }
 
   @SubscribeMessage('join') join(socket:Socket,roomId:string){
@@ -63,14 +64,23 @@ import { RabbitmqService } from 'src/services/rabbitmq/rabbitmq/rabbitmq.service
     )
 
     this.server.to(dst[1]).emit(
-      'history/updated',groupId
+      'history/updated',
+      groupId
     )
   }
 
-  handleDisconnect(socket: Socket) {
-    this.rabbitMq.stopConsume(
-      socket.id
-    )
+  async handleDisconnect(socket: Socket) {
+    try{
+      await this.rabbitMq.stopConsume(
+        socket.id
+      )
+    }
+    catch(e:any){
+      console.log(e.message)
+    }
   }
  
+  constructor(private rabbitMq:RabbitmqService){
+    // adding rabbitmq service
+  }
 }
