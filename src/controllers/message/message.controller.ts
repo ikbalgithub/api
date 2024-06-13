@@ -123,7 +123,7 @@ import { Profile } from 'src/schemas/profile.schema'
         result
       )
     }
-    catch(err){
+    catch(err:any){
       new Logger('Error').error(err.message)
       response.status(500).send(err.message)
     }
