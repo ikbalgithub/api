@@ -91,13 +91,10 @@ import { Profile } from 'src/schemas/profile.schema'
       )
 
   
-      this.rabbitMq.send(`history/${dto.accept}`,`history/newMessage~history/${dto.accept}~${JSON.stringify(result)}`) // works
+      this.rabbitMq.send(`history/${dto.accept}`,`history/newMessage~history/${dto.accept}~${JSON.stringify(result)}`)
       this.rabbitMq.send(`history/${dto.accept}`,`history/message~history/${dto.accept}~${JSON.stringify(populated)}`)
       this.rabbitMq.send(`chat/${dto.accept}/${sender.toString()}`,`incomingMessage~chat/${dto.accept}/${sender.toString()}~${JSON.stringify(result)}`)
-
-      //this.gateway.newMessage<Message>(result,[`history/${dto.accept}`,`chat/${dto.accept}/${sender}`]) // only message
-      //this.gateway.message<Omit<Last_Message,"unreadCounter">>(populated,[`history/${dto.accept}`]) // populated message
-      
+ 
       response.send(
         result
       )
@@ -118,12 +115,10 @@ import { Profile } from 'src/schemas/profile.schema'
       var result = await this.message.updateOnRead(
         new Types.ObjectId(dto._id)
       )
-      
-      this.gateway.updated(
-        [`${dto.groupId}/${dto._id}`,`history/${dto._id}`],
-        request.user._id
-      )
-       
+
+      this.rabbitMq.send(`${dto.groupId}/${dto._id}`,`updated~${dto.groupId}/${dto._id}~${JSON.stringify(request.user._id)}`)
+      this.rabbitMq.send(`history/${dto._id}`,`history/updated~history/${dto._id}~${JSON.stringify(request.user._id)}`)
+
       response.send(
         result
       )

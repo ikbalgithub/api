@@ -27,42 +27,6 @@ import { RabbitmqService } from 'src/services/rabbitmq/rabbitmq/rabbitmq.service
     }
   }
 
-  newMessage<Type>(message:Type,dst:string[]){
-    // for messages/detail page (works)
-    this.server.to(dst[0]).emit(
-      'history/newMessage',
-      message
-    )
-
-    // for detail page (works)
-    this.server.to(dst[1]).emit(
-      'incomingMessage',
-      message
-    )
-  }
-
-  message<Type>(newMessage:Type,dst:string[]){
-    setTimeout(() => {
-      this.server.to(dst[0]).emit(
-        'history/message',
-        newMessage
-      )
-    },3000)
-
-    // for messages/detail page (works)
-  }
-
-  updated(dst:string[],groupId:string){
-    this.server.to(dst[0]).emit(
-      'updated',groupId
-    )
-
-    this.server.to(dst[1]).emit(
-      'history/updated',
-      groupId
-    )
-  }
-
   async handleDisconnect(socket: Socket) {
     this.rabbitMq.stopConsume(socket.id)
   }
