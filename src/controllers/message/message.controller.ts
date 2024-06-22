@@ -107,9 +107,7 @@ import { Profile } from 'src/schemas/profile.schema'
 
 
   @Put('') @UseGuards(AuthGuard) async updateOnRead(@Request() request,@Body() dto:MessageUpdateRead, @Res() response):Promise<void>{
-    if(!Types.ObjectId.isValid(dto._id)) response.status(500).send(
-      "internal server error"
-    )
+    if(!Types.ObjectId.isValid(dto._id)) response.status(500).send("internal server error")
 
     try{
       var result = await this.message.updateOnRead(

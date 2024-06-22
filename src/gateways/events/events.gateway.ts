@@ -1,8 +1,5 @@
-import { Types } from 'mongoose'
-import { Channel } from 'amqplib'
 import { Server, Socket } from 'socket.io'
 import { WebSocketServer,WebSocketGateway,SubscribeMessage,OnGatewayDisconnect } from '@nestjs/websockets';
-import { Injectable,NestMiddleware,Logger } from '@nestjs/common';
 import { RabbitmqService } from 'src/services/rabbitmq/rabbitmq/rabbitmq.service';
 
 @WebSocketGateway({cors:{origin:'*'}}) export class EventsGateway implements OnGatewayDisconnect{
@@ -13,13 +10,14 @@ import { RabbitmqService } from 'src/services/rabbitmq/rabbitmq/rabbitmq.service
     socket.join(roomId)
 
     try{
-      var queue = await this.rabbitMq.createQueue(roomId)
-      var cT = await this.rabbitMq.consume(roomId,socket.id,m => {
+      await this.rabbitMq.createQueue(roomId)
+      await this.rabbitMq.consume(roomId,socket.id,m => {
         this.rabbitMq.channel.ack(m)
         var content = m.content
         var eventInfo = content.toString()
-        var [event,dst,data] = eventInfo.split('~')        
-        this.server.to(dst).emit(event,JSON.parse(data))
+        var [event,dst,data] = eventInfo.split('~')
+        var objectData = JSON.parse(data)
+        this.server.to(dst).emit(event,objectData)
       })
     }
     catch(e:any){
@@ -27,7 +25,11 @@ import { RabbitmqService } from 'src/services/rabbitmq/rabbitmq/rabbitmq.service
     }
   }
 
-  async handleDisconnect(socket: Socket) {
+  @SubscribeMessage('leave') leave(socket:Socket,prevId:string){
+    this.rabbitMq.stopConsume(prevId)
+  }
+
+  handleDisconnect(socket:Socket) {
     this.rabbitMq.stopConsume(socket.id)
   }
  

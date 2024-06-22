@@ -64,16 +64,20 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
       q => q.socketId === socketId
     )
 
-    queues.forEach(async ({consumerTag}) => {
+    queues.forEach(async ({consumerTag},index) => {
       try{
         await this.channel?.cancel(
           consumerTag
         )
+
+        this.consumers.splice(index,1)
       }
       catch(e:any){
         console.log
       }
     })
+
+    
   }
 
   send(routingKey:string,message:string){
