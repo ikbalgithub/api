@@ -19,7 +19,7 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
   }
 
 
-  consume(id:string,queue:string,onMessage:(message:{content:Buffer}) => void):Promise<void>{
+  consume(id:string,queue:string,onMessage:(message:{content:Buffer}) => void):Promise<string>{
     return new Promise(async (resolve,reject) => {
       try{
         var r = await this.channel?.consume(
@@ -32,7 +32,7 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
         ]
 
         resolve(
-          null
+          r.consumerTag
         )
       }
       catch(e:any){
@@ -70,7 +70,7 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
   async stopConsume(id:string,index){    
     try{
       await this.channel.cancel(
-        this.consumers[id][index]
+        this.consumers[id][0]
       )
 
       this.consumers[id].splice(
@@ -78,7 +78,7 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
       )
 
       if(this.consumers[id].length > 0){
-        this.stopConsume(id,index)
+        this.stopConsume(id,0)
       }
       else{
         delete this.consumers[id]

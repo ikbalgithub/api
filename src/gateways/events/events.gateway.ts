@@ -5,13 +5,19 @@ import { Inject } from '@nestjs/common';
 
 @WebSocketGateway({cors:{origin:'*'}}) export class EventsGateway implements OnGatewayDisconnect{
   @WebSocketServer() server:Server
+  
+  @SubscribeMessage('leave') leaveQueue(socket:Socket,consumerTag:string){
+    this.rabbitMq.channel.cancel(
+      consumerTag
+    )
+  }
    
-  @SubscribeMessage('join') async join(socket:Socket,roomId:string){
+  @SubscribeMessage('join') async join(socket:Socket,roomId:string,cb:Function){
     socket.join(roomId)
 
     try{
       await this.rabbitMq.createQueue(roomId)
-      await this.rabbitMq.consume(socket.id,roomId,m => {
+      var tag = await this.rabbitMq.consume(socket.id,roomId,m => {
         var content = m.content
         var eventInfo = content.toString()
         var [event,dst,data] = eventInfo.split('~')
@@ -25,6 +31,8 @@ import { Inject } from '@nestjs/common';
           }
         )
       })
+
+      cb(tag)
     }
     catch(e:any){
       console.log(e.message)
