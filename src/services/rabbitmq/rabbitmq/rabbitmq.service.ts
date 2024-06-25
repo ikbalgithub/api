@@ -26,7 +26,7 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
           queue,onMessage,{noAck:false}
         )
 
-        this.consumers[id] = ct
+        this.consumers[id] = ct.consumerTag
 
         resolve(
           null
