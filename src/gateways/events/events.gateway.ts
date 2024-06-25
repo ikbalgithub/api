@@ -17,6 +17,7 @@ import { Inject } from '@nestjs/common';
         var [event,dst,data] = eventInfo.split('~')
         var objectData = JSON.parse(data)
         this.server.to(dst).emit(event,objectData,m => {
+          console.log('acknowledging message')
           this.rabbitMq.channel.ack(m)
         })
       })
