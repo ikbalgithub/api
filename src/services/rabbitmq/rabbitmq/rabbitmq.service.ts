@@ -2,7 +2,7 @@ import { Connection,Channel,connect } from 'amqplib'
 import { Injectable, OnModuleInit } from '@nestjs/common';
 
 @Injectable() export class RabbitmqService implements OnModuleInit {
-  consumers:{[id:string]:string[]} = {}
+  consumers:{id:string,consumerTag:string}[] = []
   connection:Connection
   channel:Channel
 
@@ -26,9 +26,9 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
           queue,onMessage,{noAck:false}
         )
 
-        this.consumers[id] = [
-          ...this.consumers[id],
-          r.consumerTag
+        this.consumers = [
+          ...this.consumers,
+          {id,consumerTag:r.consumerTag}
         ]
 
         resolve(
@@ -67,25 +67,28 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
     })
   }
 
-  async stopConsume(id:string,index){    
-    try{
-      await this.channel.cancel(
-        this.consumers[id][0]
-      )
-
-      this.consumers[id].splice(
-        index,1
-      )
-
-      if(this.consumers[id].length > 0){
-        this.stopConsume(id,0)
-      }
-      else{
-        delete this.consumers[id]
-      }
-    }
-    catch(err:any){
-      console.log(err.message)
+  stopConsume(id:string){    
+    var target = this.consumers.filter(
+      c => c.id === id
+    )
+    
+    if(target.length > 0){
+      target.forEach(async c => {
+        try{
+          await this.channel?.cancel(
+            c.consumerTag
+          )
+          var index = this.consumers.findIndex(
+            _c => _c.consumerTag === c.consumerTag
+          )
+  
+          this.consumers.splice(index,1)
+        
+        }
+        catch(err:any){
+          console.log(err.message)
+        }
+      })
     }
   }
 
