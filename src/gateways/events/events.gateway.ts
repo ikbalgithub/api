@@ -22,7 +22,7 @@ import { Inject } from '@nestjs/common';
     }
   }
    
-  @SubscribeMessage('join') async join(socket:Socket,roomId:string,cb:any){
+  @SubscribeMessage('join') async join(socket:Socket,roomId:string){
     socket.join(roomId)
 
     try{
@@ -42,7 +42,10 @@ import { Inject } from '@nestjs/common';
         )
       });
 
-      (cb as Function)(tag)
+      this.server.to(socket.id).emit(
+        `joined/${roomId}`,
+        tag
+      )
     }
     catch(e:any){
       console.log(e.message)
