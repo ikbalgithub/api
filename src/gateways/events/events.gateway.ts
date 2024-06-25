@@ -22,7 +22,7 @@ import { Inject } from '@nestjs/common';
     }
   }
    
-  @SubscribeMessage('join') async join(socket:Socket,roomId:string,cb:Function){
+  @SubscribeMessage('join') async join(socket:Socket,roomId:string,cb:any){
     socket.join(roomId)
 
     try{
@@ -40,9 +40,9 @@ import { Inject } from '@nestjs/common';
             this.rabbitMq.channel.ack(m)
           }
         )
-      })
+      });
 
-      cb(tag)
+      (cb as Function)(tag)
     }
     catch(e:any){
       console.log(e.message)
