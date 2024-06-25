@@ -6,10 +6,15 @@ import { Inject } from '@nestjs/common';
 @WebSocketGateway({cors:{origin:'*'}}) export class EventsGateway implements OnGatewayDisconnect{
   @WebSocketServer() server:Server
   
-  @SubscribeMessage('leave') leaveQueue(socket:Socket,consumerTag:string){
-    this.rabbitMq.channel.cancel(
-      consumerTag
-    )
+  @SubscribeMessage('leave') async leaveQueue(socket:Socket,consumerTag:string){
+    try{
+      await this.rabbitMq.channel.cancel(
+        consumerTag
+      )
+    }
+    catch(err:any){
+      console.log(err.message)
+    }
   }
    
   @SubscribeMessage('join') async join(socket:Socket,roomId:string,cb:Function){
