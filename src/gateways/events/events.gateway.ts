@@ -33,7 +33,7 @@ import { Inject } from '@nestjs/common';
 
   handleDisconnect(socket:Socket){
     this.rabbitMq.stopConsume(
-      socket.id
+      socket.id,0
     )
   }
  

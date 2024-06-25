@@ -2,7 +2,7 @@ import { Connection,Channel,connect } from 'amqplib'
 import { Injectable, OnModuleInit } from '@nestjs/common';
 
 @Injectable() export class RabbitmqService implements OnModuleInit {
-  consumers:{[id:string]:string} = {}
+  consumers:{[id:string]:string[]} = {}
   connection:Connection
   channel:Channel
 
@@ -26,7 +26,10 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
           queue,onMessage,{noAck:false}
         )
 
-        this.consumers[id] = r.consumerTag
+        this.consumers[id] = [
+          ...this.consumers[id],
+          r.consumerTag
+        ]
 
         resolve(
           null
@@ -42,7 +45,7 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
     return new Promise(async (resolve,reject) => {
       try{
         await this.channel?.assertQueue(
-          queue,
+          queue, 
           {
             durable:true,
             arguments: {
@@ -64,14 +67,21 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
     })
   }
 
-  async stopConsume(id:string){
+  async stopConsume(id:string,index){    
     try{
       await this.channel.cancel(
-        this.consumers[id]
+        this.consumers[index]
       )
+
+      if(index<2){
+        this.stopConsume(
+          id,index++
+        )
+      }
     }
     catch(err:any){
-      console.log(err)
+      console.log(err.message)
+      this.stopConsume(id,index)
     }
   }
 
