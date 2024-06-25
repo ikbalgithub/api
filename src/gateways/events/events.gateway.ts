@@ -19,7 +19,7 @@ import { Inject } from '@nestjs/common';
         this.server.to(dst).emit(
           event,
           objectData,
-          m => {
+          () => {
             console.log('acknowledge message')
             this.rabbitMq.channel.ack(m)
           }
