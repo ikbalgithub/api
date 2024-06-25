@@ -66,7 +66,7 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 
   async closeAChannel(id:string){
     try{
-      this.channels[id].close()
+      await this.channels[id].close()
     }
     catch(err:any){
       console.log(err)
