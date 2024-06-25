@@ -18,15 +18,6 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
     }
   }
 
-  async createChannel(id:string){
-    try{
-      var channel = await this.connection.createChannel()
-      this.channels[id] = channel
-    }
-    catch(err:any){
-      console.log(err.message)
-    }
-  }
 
   consume(id:string,queue:string,onMessage:(message:{content:Buffer}) => void):Promise<void>{
     return new Promise(async (resolve,reject) => {
