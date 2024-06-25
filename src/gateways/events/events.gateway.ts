@@ -1,17 +1,17 @@
 import { Server, Socket } from 'socket.io'
-import { WebSocketServer,WebSocketGateway,SubscribeMessage,OnGatewayDisconnect } from '@nestjs/websockets';
+import { WebSocketServer,WebSocketGateway,SubscribeMessage,OnGatewayDisconnect,OnGatewayConnection } from '@nestjs/websockets';
 import { RabbitmqService } from 'src/services/rabbitmq/rabbitmq/rabbitmq.service';
+import { Inject } from '@nestjs/common';
 
-@WebSocketGateway({cors:{origin:'*'}}) export class EventsGateway implements OnGatewayDisconnect{
+@WebSocketGateway({cors:{origin:'*'}}) export class EventsGateway implements OnGatewayConnection,OnGatewayDisconnect{
   @WebSocketServer() server:Server
-
- 
+   
   @SubscribeMessage('join') async join(socket:Socket,roomId:string){
     socket.join(roomId)
 
     try{
       await this.rabbitMq.createQueue(roomId)
-      await this.rabbitMq.consume(roomId,socket.id,m => {
+      await this.rabbitMq.consume(socket.id,roomId,m => {
         var content = m.content
         var eventInfo = content.toString()
         var [event,dst,data] = eventInfo.split('~')
@@ -26,12 +26,16 @@ import { RabbitmqService } from 'src/services/rabbitmq/rabbitmq/rabbitmq.service
     }
   }
 
-  @SubscribeMessage('leave') leave(socket:Socket,prevId:string){
-    this.rabbitMq.stopConsume(prevId)
+  handleConnection(socket:Socket){
+    this.rabbitMq.createChannel(
+      socket.id
+    )
   }
 
-  handleDisconnect(socket:Socket) {
-    this.rabbitMq.stopConsume(socket.id)
+  handleDisconnect(socket:Socket){
+    this.rabbitMq.stopConsume(
+      socket.id
+    )
   }
  
   constructor(private rabbitMq:RabbitmqService){

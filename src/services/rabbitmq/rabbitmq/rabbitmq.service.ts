@@ -5,8 +5,8 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
   
   connection:Connection
   channel:Channel
+  channels:{[id:string]:Channel}
 
-  consumers: {socketId:string,consumerTag:string}[] = []
 
   async onModuleInit(){
     try{
@@ -18,20 +18,25 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
     }
   }
 
-  consume(queue:string,socketId,onMessage:(message:{content:Buffer}) => void):Promise<string>{
+  async createChannel(id:string){
+    try{
+      var channel = await this.connection.createChannel()
+      this.channels[id] = channel
+    }
+    catch(err:any){
+      console.log(err.message)
+    }
+  }
+
+  consume(id:string,queue:string,onMessage:(message:{content:Buffer}) => void):Promise<void>{
     return new Promise(async (resolve,reject) => {
       try{
-        var result = await (this.channel as Channel).consume(
+        await this.channels[id].consume(
           queue,onMessage,{noAck:false}
         )
 
-        this.consumers.push({
-          socketId,
-          consumerTag:result.consumerTag
-        })
-
         resolve(
-          result.consumerTag
+          null
         )
       }
       catch(e:any){
@@ -40,13 +45,13 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
     })
   }
 
-  async createQueue(queue:string):Promise<void>{
+  async createQueue(id:string,queue:string):Promise<void>{
     return new Promise(async (resolve,reject) => {
       try{
-        await (this.channel as Channel).assertQueue(
+        await this.channels[id].assertQueue(
           queue,{durable:true}
         )
-        await (this.channel as Channel).bindQueue(
+        await this.channels[id].bindQueue(
           queue,'socket',queue
         )
         resolve(
@@ -59,29 +64,17 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
     })
   }
 
-  stopConsume(socketId:string){
-    var queues = this.consumers.filter(
-      q => q.socketId === socketId
-    )
-
-    queues.forEach(async ({consumerTag},index) => {
-      try{
-        await this.channel?.cancel(
-          consumerTag
-        )
-
-        this.consumers.splice(index,1)
-      }
-      catch(e:any){
-        console.log
-      }
-    })
-
-    
+  async closeAChannel(id:string){
+    try{
+      await this.channels[id].close()
+    }
+    catch(err:any){
+      console.log(err)
+    }
   }
 
   send(routingKey:string,message:string){
-    (this.channel as Channel).publish(
+    this.channels?.publish(
       'socket',
       routingKey,
       Buffer.from(message),
