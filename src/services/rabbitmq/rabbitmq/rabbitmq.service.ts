@@ -70,18 +70,22 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
   async stopConsume(id:string,index){    
     try{
       await this.channel.cancel(
-        this.consumers[index]
+        this.consumers[id][index]
       )
 
-      if(index<2){
-        this.stopConsume(
-          id,index++
-        )
+      this.consumers[id].splice(
+        index,1
+      )
+
+      if(this.consumers[id].length > 0){
+        this.stopConsume(id,index)
+      }
+      else{
+        delete this.consumers[id]
       }
     }
     catch(err:any){
       console.log(err.message)
-      this.stopConsume(id,index)
     }
   }
 
