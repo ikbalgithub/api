@@ -2,11 +2,11 @@ import { Connection,Channel,connect } from 'amqplib'
 import { Injectable, OnModuleInit } from '@nestjs/common';
 
 @Injectable() export class RabbitmqService implements OnModuleInit {
-  
+  consumers:{[id:string]:string} = {}
   connection:Connection
   channel:Channel
-  channels:{[id:string]:Channel}
 
+  
 
   async onModuleInit(){
     try{
@@ -31,7 +31,7 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
   consume(id:string,queue:string,onMessage:(message:{content:Buffer}) => void):Promise<void>{
     return new Promise(async (resolve,reject) => {
       try{
-        await this.channels[id].consume(
+        await this.channel?.consume(
           queue,onMessage,{noAck:false}
         )
 
@@ -45,13 +45,13 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
     })
   }
 
-  async createQueue(id:string,queue:string):Promise<void>{
+  async createQueue(queue:string):Promise<void>{
     return new Promise(async (resolve,reject) => {
       try{
-        await this.channels[id].assertQueue(
+        await this.channel?.assertQueue(
           queue,{durable:true}
         )
-        await this.channels[id].bindQueue(
+        await this.channel?.bindQueue(
           queue,'socket',queue
         )
         resolve(
@@ -64,9 +64,11 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
     })
   }
 
-  async closeAChannel(id:string){
+  async stopConsume(id:string){
     try{
-      await this.channels[id].close()
+      await this.channel.cancel(
+        this.consumers[id]
+      )
     }
     catch(err:any){
       console.log(err)
@@ -74,7 +76,7 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
   }
 
   send(routingKey:string,message:string){
-    this.channels?.publish(
+    this.channel?.publish(
       'socket',
       routingKey,
       Buffer.from(message),
