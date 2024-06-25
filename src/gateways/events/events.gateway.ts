@@ -12,12 +12,13 @@ import { RabbitmqService } from 'src/services/rabbitmq/rabbitmq/rabbitmq.service
     try{
       await this.rabbitMq.createQueue(roomId)
       await this.rabbitMq.consume(roomId,socket.id,m => {
-        this.rabbitMq.channel.ack(m)
         var content = m.content
         var eventInfo = content.toString()
         var [event,dst,data] = eventInfo.split('~')
         var objectData = JSON.parse(data)
-        this.server.to(dst).emit(event,objectData)
+        this.server.to(dst).emit(event,objectData,m => {
+          this.rabbitMq.channel.ack(m)
+        })
       })
     }
     catch(e:any){
