@@ -22,11 +22,11 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
   consume(id:string,queue:string,onMessage:(message:{content:Buffer}) => void):Promise<void>{
     return new Promise(async (resolve,reject) => {
       try{
-        var ct = await this.channel?.consume(
+        var r = await this.channel?.consume(
           queue,onMessage,{noAck:false}
         )
 
-        this.consumers[id] = ct.consumerTag
+        this.consumers[id] = r.consumerTag
 
         resolve(
           null
@@ -42,7 +42,14 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
     return new Promise(async (resolve,reject) => {
       try{
         await this.channel?.assertQueue(
-          queue,{durable:true}
+          queue,
+          {
+            durable:true,
+            arguments: {
+              'x-queue-type': 'quorum'
+            }
+          },
+          
         )
         await this.channel?.bindQueue(
           queue,'socket',queue
