@@ -4,12 +4,14 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 @Injectable() export class RabbitmqService implements OnModuleInit {
   
   connection:Connection
+  channel:Channel
   channels:{[id:string]:Channel}
 
 
   async onModuleInit(){
     try{
       this.connection = await connect(process.env.RABBITMQ_URL)
+      this.channel = await this.connection.createChannel()
     }
     catch(e:any){
       console.log(e.message)
@@ -62,7 +64,7 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
     })
   }
 
-  async stopConsume(id:string){
+  async closeAChannel(id:string){
     try{
       this.channels[id].close()
     }
@@ -71,8 +73,8 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
     }
   }
 
-  send(id:string,routingKey:string,message:string){
-    this.channels[id].publish(
+  send(routingKey:string,message:string){
+    this.channels?.publish(
       'socket',
       routingKey,
       Buffer.from(message),
