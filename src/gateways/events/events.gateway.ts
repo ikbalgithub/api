@@ -3,7 +3,7 @@ import { WebSocketServer,WebSocketGateway,SubscribeMessage,OnGatewayDisconnect,O
 import { RabbitmqService } from 'src/services/rabbitmq/rabbitmq/rabbitmq.service';
 import { Inject } from '@nestjs/common';
 
-@WebSocketGateway({cors:{origin:'*'}}) export class EventsGateway implements OnGatewayConnection,OnGatewayDisconnect{
+@WebSocketGateway({cors:{origin:'*'}}) export class EventsGateway implements OnGatewayDisconnect{
   @WebSocketServer() server:Server
    
   @SubscribeMessage('join') async join(socket:Socket,roomId:string){
@@ -24,12 +24,6 @@ import { Inject } from '@nestjs/common';
     catch(e:any){
       console.log(e.message)
     }
-  }
-
-  handleConnection(socket:Socket){
-    this.rabbitMq.createChannel(
-      socket.id
-    )
   }
 
   handleDisconnect(socket:Socket){
