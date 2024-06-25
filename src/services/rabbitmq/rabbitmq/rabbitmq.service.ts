@@ -22,9 +22,11 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
   consume(id:string,queue:string,onMessage:(message:{content:Buffer}) => void):Promise<void>{
     return new Promise(async (resolve,reject) => {
       try{
-        await this.channel?.consume(
+        var ct = await this.channel?.consume(
           queue,onMessage,{noAck:false}
         )
+
+        this.channel[id] = ct
 
         resolve(
           null
@@ -73,9 +75,5 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
       Buffer.from(message),
       {persistent:true}
     )
-  }
-
-  catch(e:any){
-    console.log(e.message)
   }
 }
