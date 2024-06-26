@@ -102,6 +102,6 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
   }
 
   ack(message:{content:Buffer}){
-    this.channel?.ack(m)
+    this.channel?.ack(message)
   }
 }
