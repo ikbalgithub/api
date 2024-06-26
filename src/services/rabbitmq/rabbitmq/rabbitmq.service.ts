@@ -64,8 +64,13 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
   }
 
   async onDisconnect(){
-    this.acceptChannel?.close()
-    this.acceptChannel = await this.connection.createChannel()
+    try{
+      await this.acceptChannel?.close()
+      this.acceptChannel = await this.connection.createChannel()
+    }
+    catch(e:any){
+      console.log(e.message)
+    }
   }
 
   send(routingKey:string,message:string){
