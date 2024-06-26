@@ -65,7 +65,7 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 
   async onDisconnect(){
     this.acceptChannel?.close()
-    this.acceptChannel = this.connection.createChannel()
+    this.acceptChannel = await this.connection.createChannel()
   }
 
   send(routingKey:string,message:string){
@@ -82,3 +82,4 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
       message
     )
   }
+}
