@@ -100,4 +100,8 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
       {persistent:true}
     )
   }
+
+  ack(message:{content:Buffer}){
+    this.channel?.ack(m)
+  }
 }
