@@ -20,7 +20,7 @@ import { Inject } from '@nestjs/common';
     }
   }
    
-  @SubscribeMessage('join') async join(socket:Socket,queue:string,cb:(t:string) => void){
+  @SubscribeMessage('join') async joinAndConsume(socket:Socket,queue:string){
     try{
       await socket.join(queue)
       await this.rabbitMq.createQueue(queue)
@@ -38,8 +38,8 @@ import { Inject } from '@nestjs/common';
         )
       });
      
-      cb(
-        tag
+      this.server.to(socket.id).emit(
+        'joined',tag
       )
     }
     catch(e:any){
