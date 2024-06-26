@@ -70,7 +70,7 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 
   send(routingKey:string,message:string){
     this.sendChannel?.publish(
-      'sockett',
+      'socket',
       routingKey,
       Buffer.from(message),
       {persistent:true}
