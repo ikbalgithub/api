@@ -2,16 +2,17 @@ import { Connection,Channel,connect } from 'amqplib'
 import { Injectable, OnModuleInit } from '@nestjs/common';
 
 @Injectable() export class RabbitmqService implements OnModuleInit {
-  consumers:{id:string,consumerTag:string}[] = []
+  sendChannel:Channel
+  acceptChannel:Channel
   connection:Connection
-  channel:Channel
 
   
 
   async onModuleInit(){
     try{
       this.connection = await connect(process.env.RABBITMQ_URL)
-      this.channel = await this.connection.createChannel()
+      this.sendChannel = await this.connection.createChannel()
+      this.acceptChannel = await this.connection.createChannel()
     }
     catch(e:any){
       console.log(e.message)
@@ -19,20 +20,15 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
   }
 
 
-  consume(id:string,queue:string,onMessage:(message:{content:Buffer}) => void):Promise<string>{
+  consume(id:string,queue:string,onMessage:(message:{content:Buffer}) => void):Promise<void>{
     return new Promise(async (resolve,reject) => {
       try{
-        var r = await this.channel?.consume(
+        await this.acceptChannel?.consume(
           queue,onMessage,{noAck:false}
         )
 
-        this.consumers = [
-          ...this.consumers,
-          {id,consumerTag:r.consumerTag}
-        ]
-
         resolve(
-          r.consumerTag
+          null
         )
       }
       catch(e:any){
@@ -44,7 +40,7 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
   async createQueue(queue:string):Promise<void>{
     return new Promise(async (resolve,reject) => {
       try{
-        await this.channel?.assertQueue(
+        await this.acceptChannel?.assertQueue(
           queue, 
           {
             durable:true,
@@ -54,7 +50,7 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
           },
           
         )
-        await this.channel?.bindQueue(
+        await this.acceptChannel?.bindQueue(
           queue,'socket',queue
         )
         resolve(
@@ -67,33 +63,13 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
     })
   }
 
-  stopConsume(id:string){    
-    var target = this.consumers.filter(
-      c => c.id === id
-    )
-    
-    if(target.length > 0){
-      target.forEach(async c => {
-        try{
-          await this.channel?.cancel(
-            c.consumerTag
-          )
-          var index = this.consumers.findIndex(
-            _c => _c.consumerTag === c.consumerTag
-          )
-  
-          this.consumers.splice(index,1)
-        
-        }
-        catch(err:any){
-          console.log(err.message)
-        }
-      })
-    }
+  async onDisconnect(){
+    this.acceptChannel?.close()
+    this.acceptChannel = this.connection.createChannel()
   }
 
   send(routingKey:string,message:string){
-    this.channel?.publish(
+    this.sendChannel?.publish(
       'socket',
       routingKey,
       Buffer.from(message),
@@ -102,6 +78,7 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
   }
 
   ack(message:{content:Buffer}){
-    this.channel?.ack(message)
+    this.acceptChannel?.ack(
+      message
+    )
   }
-}
