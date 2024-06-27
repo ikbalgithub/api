@@ -42,7 +42,7 @@ import { Inject } from '@nestjs/common';
       c => c.id === socket.id
     )
 
-    this.rabbitMq.channel = this.rabbitMq.channels.filter(
+    this.rabbitMq.channels = this.rabbitMq.channels.filter(
       c => c.id !== socket.id
     )
 
