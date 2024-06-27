@@ -2,17 +2,15 @@ import { Connection,Channel,connect } from 'amqplib'
 import { Injectable, OnModuleInit } from '@nestjs/common';
 
 @Injectable() export class RabbitmqService implements OnModuleInit {
-  sendChannel:Channel
-  acceptChannel:Channel
+  channel:Channel
   connection:Connection
-
+  channels:{id:string,channel:Channel}[] = []
   
 
   async onModuleInit(){
     try{
       this.connection = await connect(process.env.RABBITMQ_URL)
-      this.sendChannel = await this.connection.createChannel()
-      this.acceptChannel = await this.connection.createChannel()
+      this.channel = await this.connection.createChannel()
     }
     catch(e:any){
       console.log(e.message)
@@ -20,27 +18,10 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
   }
 
 
-  consume(id:string,queue:string,onMessage:(message:{content:Buffer}) => void):Promise<void>{
-    return new Promise(async (resolve,reject) => {
-      try{
-        await this.acceptChannel?.consume(
-          queue,onMessage,{noAck:false}
-        )
-
-        resolve(
-          null
-        )
-      }
-      catch(e:any){
-        reject(e)
-      }
-    })
-  }
-
   async createQueue(queue:string):Promise<void>{
     return new Promise(async (resolve,reject) => {
       try{
-        await this.acceptChannel?.assertQueue(
+        await this.channel?.assertQueue(
           queue, 
           {
             durable:true,
@@ -50,7 +31,7 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
           },
           
         )
-        await this.acceptChannel?.bindQueue(
+        await this.channel?.bindQueue(
           queue,'socket',queue
         )
         resolve(
@@ -63,18 +44,9 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
     })
   }
 
-  async onDisconnect(){
-    try{
-      await this.acceptChannel?.close()
-      this.acceptChannel = await this.connection.createChannel()
-    }
-    catch(e:any){
-      console.log(e.message)
-    }
-  }
-
+ 
   send(routingKey:string,message:string){
-    this.sendChannel?.publish(
+    this.channel?.publish(
       'socket',
       routingKey,
       Buffer.from(message),
@@ -83,7 +55,7 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
   }
 
   ack(message:{content:Buffer}){
-    this.acceptChannel?.ack(
+    this.channel?.ack(
       message
     )
   }

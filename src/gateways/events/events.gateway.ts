@@ -11,19 +11,26 @@ import { Inject } from '@nestjs/common';
     try{
       await socket.join(queue)
       await this.rabbitMq.createQueue(queue)
-      var tag = await this.rabbitMq.consume(socket.id,queue,m => {
-        var content = m.content
+      
+      var channel = await this.rabbitMq.connection.createChannel()
+      var consumer = await channel?.consume(queue,message => {
+        var content = message.content
         var eventInfo = content.toString()
         var [event,dst,data] = eventInfo.split('~')
         var objectData = JSON.parse(data)
+
+        this.rabbitMq.ack(message)
         this.server.to(dst).emit(
           event,
           objectData,
-          r => this.rabbitMq.ack(
-            m
-          )
         )
-      });
+      },{noAck:false});
+
+      this.rabbitMq.channels = [
+        ...this.rabbitMq.channels,
+        {id:socket.id,channel}
+      ]
+
     }
     catch(e:any){
       console.log(e.message)
@@ -31,8 +38,13 @@ import { Inject } from '@nestjs/common';
   }
 
   handleDisconnect(socket:Socket){
-    this.rabbitMq.onDisconnect()
-    this.server.emit('forceClose')
+    var channels = this.rabbitMq.channels.filter(
+      c => c.id === socket.id
+    )
+
+    channels.forEach(c => {
+      c.channel?.close()
+    })
   }
  
   constructor(private rabbitMq:RabbitmqService){
