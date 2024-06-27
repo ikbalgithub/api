@@ -38,9 +38,7 @@ import { Inject } from '@nestjs/common';
   }
 
   handleDisconnect(socket:Socket){
-    var channels = [...this.rabbitMq.channels]
-    
-    channels.forEach((c,index) => {
+    [...this.rabbitMq.channels].forEach((c,index) => {
       if(c.id === socket.id){
         c.channel?.close()
         this.rabbitMq.channels = this.rabbitMq.channels.filter(
