@@ -26,10 +26,32 @@ import { Inject } from '@nestjs/common';
         )
       },{noAck:false});
 
-      this.rabbitMq.channels = [
-        ...this.rabbitMq.channels,
-        {id:socket.id,channel}
-      ]
+      var [filter] = this.rabbitMq.consumers.filter(
+        c => c.id === socket.id
+      )
+
+      if(filter){
+        var index = this.rabbitMq.consumers.findIndex(
+          c => c.id === socket.id
+        )
+
+        this.rabbitMq.consumers[index] = {
+          ...filter,
+          channels:[
+            ...filter.channels,
+            channel
+          ]
+        }
+      }
+      else{
+        this.rabbitMq.consumers = [
+          ...this.rabbitMq.consumers,
+          {
+            id:socket.id,
+            channels:[channel]
+          }
+        ]
+      }
 
     }
     catch(e:any){
@@ -38,14 +60,20 @@ import { Inject } from '@nestjs/common';
   }
 
   handleDisconnect(socket:Socket){
-    [...this.rabbitMq.channels].forEach((c,index) => {
-      if(c.id === socket.id){
-        c.channel?.close()
-        this.rabbitMq.channels = this.rabbitMq.channels.filter(
-          (ch,i) => i > index
-        )
-      }
-    })
+    var [f] = this.rabbitMq.consumers.filter(
+      c => c.id === socket.id
+    )
+
+    if(f){
+      f.channels.forEach(async c => {
+        try{
+          await c?.close()
+        }
+        catch(e:any){
+          console.log(e.message)
+        }
+      })
+    }
   }
  
   constructor(private rabbitMq:RabbitmqService){

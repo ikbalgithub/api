@@ -4,7 +4,7 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 @Injectable() export class RabbitmqService implements OnModuleInit {
   channel:Channel
   connection:Connection
-  channels:{id:string,channel:Channel}[] = []
+  consumers:{id:string,channels:Channel[]}[] = []
   
 
   async onModuleInit(){
