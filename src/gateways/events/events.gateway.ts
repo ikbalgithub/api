@@ -41,6 +41,12 @@ import { Inject } from '@nestjs/common';
     var channels = this.rabbitMq.channels.filter(
       c => c.id === socket.id
     )
+    
+    channels.forEach(channel => {
+      this.rabbitMq.channels = this.rabbitMq.channels.filter(
+        c => c.id !== socket.id
+      )
+    })
 
     channels.forEach(c => {
       c.channel?.close()
