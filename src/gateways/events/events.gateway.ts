@@ -42,13 +42,18 @@ import { Inject } from '@nestjs/common';
       c => c.id === socket.id
     )
 
+    channels.forEach(async c => {
+      try{
+        await c.channel?.close()
+      }
+      catch(e:any){
+        console.log(e.message)
+      }
+    })
+
     this.rabbitMq.channels = this.rabbitMq.channels.filter(
       c => c.id !== socket.id
     )
-
-    channels.forEach(c => {
-      c.channel?.close()
-    })
   }
  
   constructor(private rabbitMq:RabbitmqService){
