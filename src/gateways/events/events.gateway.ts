@@ -38,22 +38,16 @@ import { Inject } from '@nestjs/common';
   }
 
   handleDisconnect(socket:Socket){
-    var channels = this.rabbitMq.channels.filter(
-      c => c.id === socket.id
-    )
-
-    channels.forEach(async c => {
-      try{
-        await c.channel?.close()
-      }
-      catch(e:any){
-        console.log(e.message)
+    var channels = [...this.rabbitMq.channels]
+    
+    channels.forEach((c,index) => {
+      if(c.id === socket.id){
+        c.channel?.close()
+        this.rabbitMq.channels = this.rabbitMq.channels.filter(
+          (ch,i) => i > index
+        )
       }
     })
-
-    this.rabbitMq.channels = this.rabbitMq.channels.filter(
-      c => c.id !== socket.id
-    )
   }
  
   constructor(private rabbitMq:RabbitmqService){
