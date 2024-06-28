@@ -44,15 +44,9 @@ import { RabbitmqService } from 'src/services/rabbitmq/rabbitmq/rabbitmq.service
   }
 
   handleDisconnect(socket:Socket){
-    var channels = [...this.rabbitMq.channels[socket.id]]
-
-    delete this.rabbitMq.channels[socket.id]
-
-    if(channels){
-      channels.forEach(c => {
-        c?.close()
-      })
-    }
+    this.rabbitMq.channels[socket.id].forEach(
+      c => c?.close()
+    )
   }
  
   constructor(private rabbitMq:RabbitmqService){
