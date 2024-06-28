@@ -40,19 +40,9 @@ import { RabbitmqService } from 'src/services/rabbitmq/rabbitmq/rabbitmq.service
     }
   }
 
-  async handleDisconnect(socket:Socket){
-    var channels = [...this.rabbitMq.channels[socket.id]]
+  handleDisconnect(socket:Socket){
 
     delete this.rabbitMq.channels[socket.id]
-
-    channels.forEach(async channel => {
-      try{
-        await channel?.close()
-      }
-      catch(e:any){
-        console.log(e.message)
-      }
-    })
 
   }
  
