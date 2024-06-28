@@ -21,7 +21,7 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
   async assertQueue(queueName:string):Promise<void>{
     return new Promise(async (resolve,reject) => {
       try{
-        await this.channel?.assertQueue(
+        await this.channel.assertQueue(
           queueName, 
           {
             durable:true,
@@ -31,7 +31,7 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
           },
           
         )
-        await this.channel?.bindQueue(
+        await this.channel.bindQueue(
           queueName,
           'socket',
           queueName

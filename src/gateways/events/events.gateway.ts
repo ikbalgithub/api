@@ -11,29 +11,20 @@ import { RabbitmqService } from 'src/services/rabbitmq/rabbitmq/rabbitmq.service
       await socket.join(queue)
       await this.rabbitMq.assertQueue(queue)
       
+      
       var channel = await this.rabbitMq.connection.createChannel()
-      var consumer = await channel?.consume(queue,message => {
-        var content = message.content
-        var eventInfo = content.toString()
-        var [event,dst,data] = eventInfo.split('~')
-        var objectData = JSON.parse(data)
+      // var consumer = await channel?.consume(queue,message => {
+      //   var content = message.content
+      //   var eventInfo = content.toString()
+      //   var [event,dst,data] = eventInfo.split('~')
+      //   var objectData = JSON.parse(data)
 
-        this.rabbitMq.ack(message)
-        this.server.to(dst).emit(
-          event,
-          objectData,
-        )
-      },{noAck:false})
-
-      if(this.rabbitMq.channels[socket.id]){
-        this.rabbitMq.channels[socket.id] = [
-          ...this.rabbitMq.channels[socket.id],
-          channel
-        ]
-      }
-      else{
-        this.rabbitMq.channels[socket.id] = [channel]
-      }
+      //   this.rabbitMq.ack(message)
+      //   this.server.to(dst).emit(
+      //     event,
+      //     objectData,
+      //   )
+      // },{noAck:false})
     }
     catch(e:any){
       console.log(e.message)
@@ -41,8 +32,6 @@ import { RabbitmqService } from 'src/services/rabbitmq/rabbitmq/rabbitmq.service
   }
 
   handleDisconnect(socket:Socket){
-
-    delete this.rabbitMq.channels[socket.id]
 
   }
  
