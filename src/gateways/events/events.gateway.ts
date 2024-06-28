@@ -10,7 +10,11 @@ import { RabbitmqService } from 'src/services/rabbitmq/rabbitmq/rabbitmq.service
     try{
       await socket.join(queue)
       await this.rabbitMq.assertQueue(queue)
-      var consumerTag = await this.rabbitMq.consume(queue,message => {})
+      var consumerTag = await this.rabbitMq.consume(queue,message => {
+        var content = message.content.toString()
+        var [event,dst,msg] = content.split("~")
+        this.server.to(dst).emit(event,msg)
+      })
       
       if(this.rabbitMq.consumers.get(socket.id)){
         var prev = this.rabbitMq.consumers.get(
