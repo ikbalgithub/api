@@ -2,6 +2,7 @@ import { Server, Socket } from 'socket.io'
 import { WebSocketServer,WebSocketGateway,SubscribeMessage,OnGatewayDisconnect,OnGatewayConnection } from '@nestjs/websockets';
 import { RabbitmqService } from 'src/services/rabbitmq/rabbitmq/rabbitmq.service';
 import { Inject } from '@nestjs/common';
+import { managedidentities_v1 } from 'googleapis';
 
 @WebSocketGateway({cors:{origin:'*'}}) export class EventsGateway implements OnGatewayDisconnect{
   @WebSocketServer() server:Server
@@ -10,7 +11,7 @@ import { Inject } from '@nestjs/common';
   @SubscribeMessage('join') async joinAndConsume(socket:Socket,queue:string){
     try{
       await socket.join(queue)
-      await this.rabbitMq.createQueue(queue)
+      await this.rabbitMq.assertQueue(queue)
       
       var channel = await this.rabbitMq.connection.createChannel()
       var consumer = await channel?.consume(queue,message => {
@@ -24,56 +25,37 @@ import { Inject } from '@nestjs/common';
           event,
           objectData,
         )
-      },{noAck:false});
+      },{noAck:false})
 
-      var [filter] = this.rabbitMq.consumers.filter(
-        c => c.id === socket.id
-      )
-
-      if(filter){
-        var index = this.rabbitMq.consumers.findIndex(
-          c => c.id === socket.id
-        )
-
-        this.rabbitMq.consumers[index] = {
-          ...filter,
-          channels:[
-            ...filter.channels,
-            channel
-          ]
-        }
-      }
-      else{
-        this.rabbitMq.consumers = [
-          ...this.rabbitMq.consumers,
-          {
-            id:socket.id,
-            channels:[channel]
-          }
+      if(this.rabbitMq.channels[socket.id]){
+        this.rabbitMq.channels[socket.id] = [
+          ...this.rabbitMq.channels[socket.id],
+          channel
         ]
       }
-
+      else{
+        this.rabbitMq.channels[socket.id] = [channel]
+      }
     }
     catch(e:any){
       console.log(e.message)
     }
   }
 
-  handleDisconnect(socket:Socket){
-    var [f] = this.rabbitMq.consumers.filter(
-      c => c.id === socket.id
-    )
+  async handleDisconnect(socket:Socket){
+    var channels = [...this.rabbitMq.channels[socket.id]]
 
-    if(f){
-      f.channels.forEach(async c => {
-        try{
-          await c?.close()
-        }
-        catch(e:any){
-          console.log(e.message)
-        }
-      })
-    }
+    delete this.rabbitMq.channels[socket.id]
+
+    channels.forEach(async channel => {
+      try{
+        await channel?.close()
+      }
+      catch(e:any){
+        console.log(e.message)
+      }
+    })
+
   }
  
   constructor(private rabbitMq:RabbitmqService){

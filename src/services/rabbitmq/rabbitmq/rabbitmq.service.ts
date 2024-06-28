@@ -4,7 +4,7 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 @Injectable() export class RabbitmqService implements OnModuleInit {
   channel:Channel
   connection:Connection
-  consumers:{id:string,channels:Channel[]}[] = []
+  channels:{[id:string]:Channel[]}
   
 
   async onModuleInit(){
@@ -18,11 +18,11 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
   }
 
 
-  async createQueue(queue:string):Promise<void>{
+  async assertQueue(queueName:string):Promise<void>{
     return new Promise(async (resolve,reject) => {
       try{
         await this.channel?.assertQueue(
-          queue, 
+          queueName, 
           {
             durable:true,
             arguments: {
@@ -32,7 +32,9 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
           
         )
         await this.channel?.bindQueue(
-          queue,'socket',queue
+          queueName,
+          'socket',
+          queueName
         )
         resolve(
           null
