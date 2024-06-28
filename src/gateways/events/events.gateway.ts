@@ -12,9 +12,9 @@ import { RabbitmqService } from 'src/services/rabbitmq/rabbitmq/rabbitmq.service
       await this.rabbitMq.assertQueue(queue)
       var consumerTag = await this.rabbitMq.consume(queue,message => {
         var content = message.content.toString()
-        var [event,dst,msg] = content.split("~")
+        var [event,_dst,msg] = content.split("~")
         this.rabbitMq.ack(message)
-        this.server.to(dst).emit(
+        this.server.to(socket.id).emit(
           event,JSON.parse(msg)
         )
       })
