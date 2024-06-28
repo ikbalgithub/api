@@ -14,7 +14,9 @@ import { RabbitmqService } from 'src/services/rabbitmq/rabbitmq/rabbitmq.service
         var content = message.content.toString()
         var [event,dst,msg] = content.split("~")
         this.rabbitMq.ack(message)
-        this.server.to(dst).emit(event,msg)
+        this.server.to(dst).emit(
+          event,JSON.parse(msg)
+        )
       })
       
       if(this.rabbitMq.consumers.get(socket.id)){
