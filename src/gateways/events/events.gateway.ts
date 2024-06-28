@@ -15,11 +15,8 @@ import { RabbitmqService } from 'src/services/rabbitmq/rabbitmq/rabbitmq.service
         console.log(message)
       })
       
-      if(this.rabbitMq.channels[socket.id]){
-        this.rabbitMq.channels[socket.id] = [
-          ...this.rabbitMq.channels[socket.id],
-          channel
-        ]
+      if(this.rabbitMq.channels.hasOwnProperty(socket.id)){
+        this.rabbitMq.channels[socket.id].push(channel)
       }
       else{
         this.rabbitMq.channels[socket.id] = [channel]
