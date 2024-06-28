@@ -15,12 +15,9 @@ import { RabbitmqService } from 'src/services/rabbitmq/rabbitmq/rabbitmq.service
         console.log(message)
       })
       
-      if(this.rabbitMq.channels.hasOwnProperty(socket.id)){
-        this.rabbitMq.channels[socket.id].push(channel)
-      }
-      else{
-        this.rabbitMq.channels[socket.id] = [channel]
-      }
+      socket.on('disconnect',() => {
+        channel.close()
+      })
      
       // var consumer = await channel?.consume(queue,message => {
       //   var content = message.content
@@ -41,9 +38,7 @@ import { RabbitmqService } from 'src/services/rabbitmq/rabbitmq/rabbitmq.service
   }
 
   handleDisconnect(socket:Socket){
-    this.rabbitMq.channels[socket.id].forEach(
-      c => c?.close()
-    )
+    
   }
  
   constructor(private rabbitMq:RabbitmqService){
