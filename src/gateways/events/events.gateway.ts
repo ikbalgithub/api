@@ -10,41 +10,23 @@ import { RabbitmqService } from 'src/services/rabbitmq/rabbitmq/rabbitmq.service
     try{
       await socket.join(queue)
       await this.rabbitMq.assertQueue(queue)
-      var channel = await this.rabbitMq.connection.createChannel()
-      var consumer = await channel?.consume(queue,message => {
-        console.log(message)
-      })
+      var consumerTag = await this.rabbitMq.consume(queue,message => {})
       
-      if(this.rabbitMq.channels.has(socket.id)){
-        var prev = this.rabbitMq.channels.get(
+      if(this.rabbitMq.consumers.get(socket.id)){
+        var prev = this.rabbitMq.consumers.get(
           socket.id
         )
-        
-        this.rabbitMq.channels.set(
-          socket.id,[
-            ...prev,
-            channel
-          ]
+        this.rabbitMq.consumers.set(
+          socket.id,
+          [...prev,consumerTag]
         )
       }
       else{
-        this.rabbitMq.channels.set(
-          socket.id,[channel]
+        this.rabbitMq.consumers.set(
+          socket.id,
+          [consumerTag]
         )
       }
-     
-      // var consumer = await channel?.consume(queue,message => {
-      //   var content = message.content
-      //   var eventInfo = content.toString()
-      //   var [event,dst,data] = eventInfo.split('~')
-      //   var objectData = JSON.parse(data)
-
-      //   this.rabbitMq.ack(message)
-      //   this.server.to(dst).emit(
-      //     event,
-      //     objectData,
-      //   )
-      // },{noAck:false})
     }
     catch(e:any){
       console.log(e.message)
@@ -52,8 +34,8 @@ import { RabbitmqService } from 'src/services/rabbitmq/rabbitmq/rabbitmq.service
   }
 
   handleDisconnect(socket:Socket){
-    this.rabbitMq.channels.get(socket.id).forEach(
-      channel => channel.close()
+    this.rabbitMq.consumers.get(socket.id).forEach(
+      cT => this.rabbitMq.channel.cancel(cT)
     )
   }
  

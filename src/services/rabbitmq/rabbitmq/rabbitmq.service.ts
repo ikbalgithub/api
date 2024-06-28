@@ -4,7 +4,7 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 @Injectable() export class RabbitmqService implements OnModuleInit {
   channel:Channel
   connection:Connection
-  channels:Map<string,Channel[]> = new Map()
+  consumers:Map<string,string[]> = new Map()
 
   async onModuleInit(){
     try{
@@ -45,7 +45,23 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
     })
   }
 
- 
+  consume(queue:string,cb:(m:{content:Buffer}) => void):Promise<string>{
+    return new Promise(async (resolve,reject) => {
+      try{
+        var result = await this.channel.consume(
+          'queue',cb,{noAck:false}
+        )
+
+        resolve(
+          result.consumerTag
+        )
+      }
+      catch(e:any){
+        reject(e.message)
+      }
+    })
+  }
+
   send(routingKey:string,message:string){
     this.channel?.publish(
       'socket',
