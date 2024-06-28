@@ -1,8 +1,6 @@
 import { Server, Socket } from 'socket.io'
 import { WebSocketServer,WebSocketGateway,SubscribeMessage,OnGatewayDisconnect,OnGatewayConnection } from '@nestjs/websockets';
 import { RabbitmqService } from 'src/services/rabbitmq/rabbitmq/rabbitmq.service';
-import { Inject } from '@nestjs/common';
-import { managedidentities_v1 } from 'googleapis';
 
 @WebSocketGateway({cors:{origin:'*'}}) export class EventsGateway implements OnGatewayDisconnect{
   @WebSocketServer() server:Server
