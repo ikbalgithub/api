@@ -15,9 +15,9 @@ import { RabbitmqService } from 'src/services/rabbitmq/rabbitmq/rabbitmq.service
         console.log(message)
       })
       
-      socket.on('disconnect',() => {
-        channel.close()
-      })
+      setTimeout(() => {
+        channel?.close()
+      },30000)
      
       // var consumer = await channel?.consume(queue,message => {
       //   var content = message.content
