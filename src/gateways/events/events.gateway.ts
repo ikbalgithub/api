@@ -48,7 +48,11 @@ import { RabbitmqService } from 'src/services/rabbitmq/rabbitmq/rabbitmq.service
 
     delete this.rabbitMq.channels[socket.id]
 
-    channels.forEach(c => c?.close())
+    if(channels){
+      channels.forEach(c => {
+        c?.close()
+      })
+    }
   }
  
   constructor(private rabbitMq:RabbitmqService){
