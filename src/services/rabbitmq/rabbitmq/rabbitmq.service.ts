@@ -49,7 +49,7 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
     return new Promise(async (resolve,reject) => {
       try{
         var result = await this.channel.consume(
-          'queue',cb,{noAck:false}
+          queue,cb,{noAck:false}
         )
 
         resolve(
