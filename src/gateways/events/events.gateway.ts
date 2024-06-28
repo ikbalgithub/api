@@ -14,11 +14,17 @@ import { RabbitmqService } from 'src/services/rabbitmq/rabbitmq/rabbitmq.service
       var consumer = await channel?.consume(queue,message => {
         console.log(message)
       })
-
-      this.rabbitMq.channels[socket.id] = [
-        ...this.rabbitMq.channels[socket.id],
-        channel
-      ]
+      
+      if(this.rabbitMq.channels[socket.id]){
+        this.rabbitMq.channels[socket.id] = [
+          ...this.rabbitMq.channels[socket.id],
+          channel
+        ]
+      }
+      else{
+        this.rabbitMq.channels[socket.id] = [channel]
+      }
+     
       // var consumer = await channel?.consume(queue,message => {
       //   var content = message.content
       //   var eventInfo = content.toString()
