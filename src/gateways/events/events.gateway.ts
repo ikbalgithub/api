@@ -10,9 +10,10 @@ import { RabbitmqService } from 'src/services/rabbitmq/rabbitmq/rabbitmq.service
     try{
       await socket.join(queue)
       await this.rabbitMq.assertQueue(queue)
-      
-      
       var channel = await this.rabbitMq.connection.createChannel()
+      var consumer = await channel?.consume(queue,message => {
+        console.log(message)
+      })
       // var consumer = await channel?.consume(queue,message => {
       //   var content = message.content
       //   var eventInfo = content.toString()
