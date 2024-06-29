@@ -40,9 +40,13 @@ import { RabbitmqService } from 'src/services/rabbitmq/rabbitmq/rabbitmq.service
     }
   }
 
-  handleDisconnect(socket:Socket){
-    this.rabbitMq.consumers.get(socket.id).forEach(
+  async handleDisconnect(socket:Socket){
+    await this.rabbitMq.consumers.get(socket.id).forEach(
       cT => this.rabbitMq.channel.cancel(cT)
+    )
+
+    this.rabbitMq.consumers.delete(
+      socket.id
     )
   }
  
