@@ -5,6 +5,15 @@ import { RabbitmqService } from 'src/services/rabbitmq/rabbitmq/rabbitmq.service
 @WebSocketGateway({cors:{origin:'*'}}) export class EventsGateway implements OnGatewayDisconnect{
   @WebSocketServer() server:Server
   
+  @SubscribeMessage('leave') async leave(socket:Socket){
+    await this.rabbitMq.consumers.get(socket.id).forEach(
+      cT => this.rabbitMq.channel.cancel(cT)
+    )
+
+    this.rabbitMq.consumers.delete(
+      socket.id
+    )
+  }
    
   @SubscribeMessage('join') async joinAndConsume(socket:Socket,queue:string){
     try{
