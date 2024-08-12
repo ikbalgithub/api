@@ -1,6 +1,5 @@
 import { JwtModule } from '@nestjs/jwt'
 import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { User,userSchema } from './schemas/user.schema'
@@ -18,7 +17,6 @@ import { ProfileService } from './services/profile/profile.service';
 import { OauthController } from './controllers/oauth/oauth.controller';
 import { ProfileController } from './controllers/profile/profile.controller';
 import { RabbitmqService } from './services/rabbitmq/rabbitmq/rabbitmq.service';
-import { ClientsModule, Transport } from '@nestjs/microservices';
 
 @Module({
   imports: [
@@ -46,21 +44,6 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
       secret:process.env.JWT_SECRET_KEY,
       global:true,
     }),
-    ClientsModule.register(
-      [
-        {
-          name:'APP_SERVICE',
-          transport:Transport.RMQ,
-          options:{
-            urls:[process.env.RABBITMQ_URL],
-            queue:'message',
-            queueOptions:{
-              durable:false
-            }
-          }
-        }
-      ]
-    )
   ],
   controllers: [
     AppController,
@@ -70,7 +53,6 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
     ProfileController
   ],
   providers: [
-    AppService,
     UserService,
     CommonService,
     MessageService,

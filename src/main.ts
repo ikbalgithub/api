@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common'
+import { RmqOptions,Transport } from '@nestjs/microservices';
 
 (async function(){
 
@@ -12,6 +13,17 @@ import { ValidationPipe } from '@nestjs/common'
       methods: 'GET,PUT,POST',
     }
   )
+
+  app.connectMicroservice<RmqOptions>({
+    transport: Transport.RMQ,
+    options: {
+      urls: [process.env.RABBITMQ_URL],
+      queue: 'message',
+      queueOptions: {
+        durable: true,
+      },
+    },
+  });
 
   app.useGlobalPipes(
     new ValidationPipe({
