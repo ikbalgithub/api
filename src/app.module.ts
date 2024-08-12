@@ -49,7 +49,7 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
     ClientsModule.register(
       [
         {
-          name:'MESSAGE_SERVICE',
+          name:'APP_SERVICE',
           transport:Transport.RMQ,
           options:{
             urls:[process.env.RABBITMQ_URL],
