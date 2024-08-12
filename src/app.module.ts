@@ -17,6 +17,7 @@ import { ProfileService } from './services/profile/profile.service';
 import { OauthController } from './controllers/oauth/oauth.controller';
 import { ProfileController } from './controllers/profile/profile.controller';
 import { RabbitmqService } from './services/rabbitmq/rabbitmq/rabbitmq.service';
+import { RabbitmqController } from './controllers/rabbitmq/rabbitmq.controller';
 
 @Module({
   imports: [
@@ -50,7 +51,8 @@ import { RabbitmqService } from './services/rabbitmq/rabbitmq/rabbitmq.service';
     UserController,
     MessageController,
     OauthController,
-    ProfileController
+    ProfileController,
+    RabbitmqController
   ],
   providers: [
     UserService,
