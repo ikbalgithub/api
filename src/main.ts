@@ -14,16 +14,16 @@ import { Transport,MicroserviceOptions } from '@nestjs/microservices';
     }
   )
 
-  app.connectMicroservice<MicroserviceOptions>({
-    transport: Transport.RMQ,
-    options: {
-      urls: [process.env.RABBITMQ_URL],
-      queue: 'microservice',
-      queueOptions: {
-        durable: true,
-      },
-    },
-  });
+  // app.connectMicroservice<MicroserviceOptions>({
+  //   transport: Transport.RMQ,
+  //   options: {
+  //     urls: [process.env.RABBITMQ_URL],
+  //     queue: 'microservice',
+  //     queueOptions: {
+  //       durable: true,
+  //     },
+  //   },
+  // });
 
   app.useGlobalPipes(
     new ValidationPipe({
@@ -32,7 +32,7 @@ import { Transport,MicroserviceOptions } from '@nestjs/microservices';
     })
   )
 
-  await app.startAllMicroservices()
+  //await app.startAllMicroservices()
 
   await app.listen(
     process.env.PORT || '3000'
