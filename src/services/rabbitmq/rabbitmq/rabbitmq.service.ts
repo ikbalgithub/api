@@ -7,13 +7,7 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
   consumers:Map<string,string[]> = new Map()
 
   async onModuleInit(){
-    try{
-      this.connection = await connect(process.env.RABBITMQ_URL)
-      this.channel = await this.connection.createChannel()
-    }
-    catch(e:any){
-      console.log(e.message)
-    }
+    
   }
 
 
