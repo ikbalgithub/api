@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common'
-import { RmqOptions,Transport } from '@nestjs/microservices';
+import { Transport,MicroserviceOptions } from '@nestjs/microservices';
 
 (async function(){
 
@@ -14,11 +14,11 @@ import { RmqOptions,Transport } from '@nestjs/microservices';
     }
   )
 
-  app.connectMicroservice<RmqOptions>({
+  app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.RMQ,
     options: {
       urls: [process.env.RABBITMQ_URL],
-      queue: 'message',
+      queue: 'microservice',
       queueOptions: {
         durable: true,
       },
@@ -31,6 +31,8 @@ import { RmqOptions,Transport } from '@nestjs/microservices';
       forbidNonWhitelisted:true,
     })
   )
+
+  await app.startAllMicroservices()
 
   await app.listen(
     process.env.PORT || '3000'
