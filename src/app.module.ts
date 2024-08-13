@@ -5,6 +5,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { User,userSchema } from './schemas/user.schema'
 import { Message,messageSchema } from './schemas/message.schema'
 import { Profile,profileSchema } from './schemas/profile.schema'
+import { AppService } from './app.service';
 import { UserService } from './services/user/user.service';
 import { UserController } from './controllers/user/user.controller';
 import { LoggerMiddleware } from './middlewares/logger/logger.middleware'
@@ -16,7 +17,6 @@ import { EventsGateway } from './gateways/events/events.gateway';
 import { ProfileService } from './services/profile/profile.service';
 import { OauthController } from './controllers/oauth/oauth.controller';
 import { ProfileController } from './controllers/profile/profile.controller';
-import { RabbitmqService } from './services/rabbitmq/rabbitmq/rabbitmq.service';
 import { RabbitmqController } from './controllers/rabbitmq/rabbitmq.controller';
 
 @Module({
@@ -55,12 +55,12 @@ import { RabbitmqController } from './controllers/rabbitmq/rabbitmq.controller';
     RabbitmqController
   ],
   providers: [
+    AppService,
     UserService,
     CommonService,
     MessageService,
     EventsGateway,
     ProfileService,
-    RabbitmqService
   ]
 })
 export class AppModule implements NestModule{
