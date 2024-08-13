@@ -1,5 +1,4 @@
 import { Types } from 'mongoose'
-import { Message,Last_Message } from '../../schemas/message.schema'
 import { MessageService } from '../../services/message/message.service'
 import { AuthGuard } from '../../guards/auth.guard'
 import { MessageDto } from '../../dtos/message.dto'
@@ -127,9 +126,8 @@ import { Controller,Get,Body,UseGuards,Request,Param,Res,Logger,Post,Put } from 
 
 
 
-  constructor(private message:MessageService,private gateway:EventsGateway,private rabbitMq:RabbitmqService){
+  constructor(private message:MessageService,private gateway:EventsGateway){
     // inject message service
     // inject events gateway
-    // inject rabbitmq service
   }
 }
