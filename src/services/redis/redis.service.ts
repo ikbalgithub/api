@@ -13,7 +13,7 @@ import { ClientProxy } from '@nestjs/microservices';
   }
 
   fetchList(key:string):Promise<string[]>{
-    return this.redis.lRange(
+    return (this.redis as any).lRange(
       key,
       0,
       -1
@@ -21,13 +21,13 @@ import { ClientProxy } from '@nestjs/microservices';
   }
 
   push(key:string,value:string):Promise<number>{
-    return this.redis.lPush(
+    return (this.redis as any).lPush(
       key,
       value
     )
   }
 
   makeEmpty(key):Promise<"OK">{
-    return this.redis.ltrim(key,1,0)
+    return (this.redis as any).lTtrim(key,1,0)
   }
 }
