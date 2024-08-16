@@ -15,7 +15,10 @@ import { RedisService } from 'src/services/redis/redis.service';
       
       data.forEach(x => {
         var [e,dst,v] = x.split('~')
-        this.server.to(dst).emit(e,v)
+        var objValue = JSON.parse(v)
+        this.server.to(dst).emit(
+          e,objValue
+        )
       })
     }
     catch(e:any){
