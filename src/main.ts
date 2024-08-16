@@ -15,13 +15,12 @@ import { Transport,MicroserviceOptions } from '@nestjs/microservices';
   )
 
   app.connectMicroservice<MicroserviceOptions>({
-    transport: Transport.RMQ,
+    transport: Transport.REDIS,
     options: {
-      urls: [process.env.RABBITMQ_URL],
-      queue: 'microservice',
-      queueOptions: {
-        durable: true,
-      },
+      host:process.env.REDIS_HOST,
+      port:19926,
+      password:process.env.REDIS_PASSWORD,
+      username:'default'
     },
   });
 

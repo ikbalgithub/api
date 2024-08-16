@@ -1,9 +1,20 @@
-import { Controller,Get,UseGuards } from '@nestjs/common';
-import { AppService } from './app.service';
-import { AuthGuard } from './guards/auth.guard'
+import { Controller } from '@nestjs/common';
+import { EventPattern,Payload } from '@nestjs/microservices';
+import { EventsGateway } from './gateways/events/events.gateway';
 
-@Controller('app') export class AppController {
-  @Get('') getMotherFucker():string{
-    return 'hello motherfucker'
+@Controller() export class AppController {
+  @EventPattern('message') onTest(@Payload() message:string){
+    var [eventName,destination,value] = message.split('~')   
+    
+    this.gateway.emit(
+      eventName,
+      destination,
+      value
+    )
+  }
+
+  constructor(private gateway:EventsGateway){
+    //importing events gateway
   }
 }
+

@@ -5,6 +5,7 @@ import { MessageDto } from '../../dtos/message.dto'
 import { MessageUpdateRead } from '../../dtos/message-update-read.dto'
 import { EventsGateway } from '../../gateways/events/events.gateway'
 import { Controller,Get,Body,UseGuards,Request,Param,Res,Logger,Post,Put } from '@nestjs/common'
+import { RedisService } from 'src/services/redis/redis.service'
 
 @Controller('message') export class MessageController {
 
@@ -88,9 +89,9 @@ import { Controller,Get,Body,UseGuards,Request,Param,Res,Logger,Post,Put } from 
       )
 
   
-      //this.rabbitMq.send(`history/${dto.accept}`,`history/newMessage~history/${dto.accept}~${JSON.stringify(result)}`)
-      //this.rabbitMq.send(`history/${dto.accept}`,`history/message~history/${dto.accept}~${JSON.stringify(populated)}`)
-      //this.rabbitMq.send(`chat/${dto.accept}/${sender.toString()}`,`incomingMessage~chat/${dto.accept}/${sender.toString()}~${JSON.stringify(result)}`)
+      this.redis.publish(`history/newMessage~history/${dto.accept}~${JSON.stringify(result)}`)
+      this.redis.publish(`history/message~history/${dto.accept}~${JSON.stringify(populated)}`)
+      this.redis.publish(`incomingMessage~chat/${dto.accept}/${sender.toString()}~${JSON.stringify(result)}`)
  
       response.send(
         result
@@ -111,8 +112,8 @@ import { Controller,Get,Body,UseGuards,Request,Param,Res,Logger,Post,Put } from 
         new Types.ObjectId(dto._id)
       )
 
-      //this.rabbitMq.send(`${dto.groupId}/${dto._id}`,`updated~${dto.groupId}/${dto._id}~${JSON.stringify(request.user._id)}`)
-      //this.rabbitMq.send(`history/${dto._id}`,`history/updated~history/${dto._id}~${JSON.stringify(request.user._id)}`)
+      this.redis.publish(`updated~${dto.groupId}/${dto._id}~${JSON.stringify(request.user._id)}`)
+      this.redis.publish(`${Date.now()}~history/updated~history/${dto._id}~${JSON.stringify(request.user._id)}`)
 
       response.send(
         result
@@ -126,8 +127,8 @@ import { Controller,Get,Body,UseGuards,Request,Param,Res,Logger,Post,Put } from 
 
 
 
-  constructor(private message:MessageService,private gateway:EventsGateway){
+  constructor(private message:MessageService,private redis:RedisService){
     // inject message service
-    // inject events gateway
+    // inject redis service
   }
 }

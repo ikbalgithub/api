@@ -7,6 +7,7 @@ import { Message,messageSchema } from './schemas/message.schema'
 import { Profile,profileSchema } from './schemas/profile.schema'
 import { AppService } from './app.service';
 import { UserService } from './services/user/user.service';
+import { RabbitmqController } from './controllers/rabbitmq/rabbitmq.controller';
 import { UserController } from './controllers/user/user.controller';
 import { LoggerMiddleware } from './middlewares/logger/logger.middleware'
 import { Module,NestModule,MiddlewareConsumer } from '@nestjs/common';
@@ -17,8 +18,8 @@ import { EventsGateway } from './gateways/events/events.gateway';
 import { ProfileService } from './services/profile/profile.service';
 import { OauthController } from './controllers/oauth/oauth.controller';
 import { ProfileController } from './controllers/profile/profile.controller';
-import { RabbitmqController } from './controllers/rabbitmq/rabbitmq.controller';
-
+import { ClientsModule, Transport } from '@nestjs/microservices';
+import { RedisService } from './services/redis/redis.service';
 @Module({
   imports: [
     ConfigModule.forRoot(),
@@ -45,6 +46,20 @@ import { RabbitmqController } from './controllers/rabbitmq/rabbitmq.controller';
       secret:process.env.JWT_SECRET_KEY,
       global:true,
     }),
+    ClientsModule.register(
+      [
+        {
+          name:'REDIS_SERVICE',
+          transport:Transport.REDIS,
+          options:{
+            host:process.env.REDIS_HOST,
+            port:19926,
+            password:process.env.REDIS_PASSWORD,
+            username:'default'
+          }
+        }
+      ]
+    )
   ],
   controllers: [
     AppController,
@@ -61,6 +76,7 @@ import { RabbitmqController } from './controllers/rabbitmq/rabbitmq.controller';
     MessageService,
     EventsGateway,
     ProfileService,
+    RedisService,
   ]
 })
 export class AppModule implements NestModule{
