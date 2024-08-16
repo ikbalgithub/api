@@ -13,7 +13,7 @@ import { ClientProxy } from '@nestjs/microservices';
   }
 
   fetchList(key:string):Promise<string[]>{
-    return this.redis.lrange(
+    return this.redis.lRange(
       key,
       0,
       -1
@@ -21,7 +21,7 @@ import { ClientProxy } from '@nestjs/microservices';
   }
 
   push(key:string,value:string):Promise<number>{
-    return this.redis.lpush(
+    return this.redis.lPush(
       key,
       value
     )
