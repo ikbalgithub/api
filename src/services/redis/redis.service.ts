@@ -28,6 +28,6 @@ import { ClientProxy } from '@nestjs/microservices';
   }
 
   makeEmpty(key):Promise<"OK">{
-    return (this.redis as any).lTtrim(key,1,0)
+    return (this.redis as any).lTrim(key,1,0)
   }
 }
