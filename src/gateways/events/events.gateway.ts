@@ -23,13 +23,14 @@ import { RedisService } from 'src/services/redis/redis.service';
     }
   }
   
-  emit(eventName:string,dst:string,value:any){
+  emit(eventName:string,dst:string,value:string){
     var e = `${eventName}~${dst}~${value}`
+    var objValue = JSON.parse(value)
 
     var acknowledge = false
     
     this.server.to(dst).emit(
-      eventName,value,next => {
+      eventName,objValue,next => {
         acknowledge = true
       }
     )
