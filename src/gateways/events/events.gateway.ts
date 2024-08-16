@@ -10,6 +10,7 @@ import { RedisService } from 'src/services/redis/redis.service';
     
     try{
       var data = await this.redis.fetchList(room)
+      console.log({data})
       
       await this.redis.makeEmpty(room)
       
