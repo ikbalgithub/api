@@ -5,17 +5,25 @@ import { RedisService } from 'src/services/redis/redis.service';
 @WebSocketGateway({cors:{origin:'*'}}) export class EventsGateway implements OnGatewayDisconnect{
   @WebSocketServer() server:Server
 
-  @SubscribeMessage('join') async join(client:Socket,room:string){
-    
-    try{
+  @SubscribeMessage('join') join(client:Socket,rooms:string[]){
+    rooms.forEach(async room => {
       var id = client.id
-      await client.join(room)
-      await this.redis.push('rooms',{id,room})
-    }
-    catch(e:any){
-      console.log(e.message)
-    }
+
+      try{
+        await client.join(
+          room
+        )
+
+        await this.redis.push(
+          'rooms',{id,room}
+        )
+      }
+      catch(e:any){
+        console.log(e.message)
+      }
+    })
     
+
     // try{
     //   var data = await this.redis.fetchList(room)
     //   console.log({data})
