@@ -2,7 +2,7 @@ import { Server,Socket } from 'socket.io'
 import { WebSocketServer,WebSocketGateway, SubscribeMessage, OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets';
 import { RedisService } from 'src/services/redis/redis.service';
 
-@WebSocketGateway({cors:{origin:'*'}}) export class EventsGateway implements OnGatewayConnection,OnGatewayDisconnect{
+@WebSocketGateway({cors:{origin:'*'}}) export class EventsGateway implements OnGatewayDisconnect{
   @WebSocketServer() server:Server
 
   @SubscribeMessage('join') async join(client:Socket,room:string){
@@ -41,9 +41,9 @@ import { RedisService } from 'src/services/redis/redis.service';
     
     try{
       var rooms = await this.redis.fetch<Room>('rooms',false)
-      var [check] = rooms.filter(({room}) => room === dst)
+      var [online] = rooms.filter(({room}) => room === dst)
 
-      if(check){
+      if(online){
         this.server.to(dst).emit(
           eventName,objValue
         )
