@@ -35,36 +35,52 @@ import { RedisService } from 'src/services/redis/redis.service';
     // }
   }
   
-  emit(eventName:string,dst:string,value:string){
+  async emit(eventName:string,dst:string,value:string){
     var e = `${eventName}~${dst}~${value}`
     var objValue = JSON.parse(value)
+    
+    try{
+      var rooms = await this.redis.fetch<Room>('rooms',false)
+      var [check] = rooms.filter(({room}) => room === dst)
 
+      if(check){
+        this.server.to(dst).emit(
+          eventName,objValue
+        )
+      }
+      else{
+        await this.redis.push(
+          dst,e
+        )
+      }
+    }
+    catch(e:any){
+      console.log(e.message)
+    }
   }
 
-  constructor(private redis:RedisService){
-    // using redis ervice
-  }
+
   async handleDisconnect(client:Socket){
     try{
-      var data = await this.redis.fetch<Room>(
+      var rooms = await this.redis.fetch<Room>(
         'rooms',false
       )
 
-      var data = data.filter(x => {
+      var rooms = rooms.filter(x => {
         return x.id !== client.id
       })
 
       await this.redis.set(
         'rooms',
-        data
+        rooms
       )
     }
     catch(e:any){
       console.log(e.message)
     }
   }
-  async handleConnection(client:Socket){
-    
+  constructor(private redis:RedisService){
+    // using redis ervice
   }
 }
 
