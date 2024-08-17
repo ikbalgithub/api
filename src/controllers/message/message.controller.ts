@@ -113,7 +113,7 @@ import { RedisService } from 'src/services/redis/redis.service'
       )
 
       this.redis.publish(`updated~${dto.groupId}/${dto._id}~${JSON.stringify(request.user._id)}`)
-      this.redis.publish(`${Date.now()}~history/updated~history/${dto._id}~${JSON.stringify(request.user._id)}`)
+      this.redis.publish(`history/updated~history/${dto._id}~${JSON.stringify(request.user._id)}`)
 
       response.send(
         result
