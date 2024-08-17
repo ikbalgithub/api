@@ -1,8 +1,8 @@
 import { Server,Socket } from 'socket.io'
-import { WebSocketServer,WebSocketGateway, SubscribeMessage } from '@nestjs/websockets';
+import { WebSocketServer,WebSocketGateway, SubscribeMessage, OnGatewayConnection } from '@nestjs/websockets';
 import { RedisService } from 'src/services/redis/redis.service';
 
-@WebSocketGateway({cors:{origin:'*'}}) export class EventsGateway{
+@WebSocketGateway({cors:{origin:'*'}}) export class EventsGateway implements OnGatewayConnection{
   @WebSocketServer() server:Server
 
   @SubscribeMessage('join') async join(client:Socket,room:string){
@@ -44,22 +44,12 @@ import { RedisService } from 'src/services/redis/redis.service';
     var e = `${eventName}~${dst}~${value}`
     var objValue = JSON.parse(value)
 
-    var acknowledge = false
-    
-    this.server.to(dst).emit(
-      eventName,objValue,next => {
-        acknowledge = true
-      }
-    )
-    
-    setTimeout(async () => {
-      if(!acknowledge){
-        await this.redis.push(dst,e)
-      }
-    },3000)
   }
 
   constructor(private redis:RedisService){
     // using redis ervice
+  }
+  handleConnection(client:Socket) {
+    this.redis.push('socket',client.id)
   }
 }
