@@ -4,9 +4,12 @@ import { EventsGateway } from './gateways/events/events.gateway';
 
 @Controller() export class AppController {
   @EventPattern('message') onTest(@Payload() message:string){
-    var [eventName,destination,value] = message.split('~')   
-    console.log(value)
-    console.log("=======================================")
+    var [event,dst,value] = message.split('~')   
+    console.log({
+      event,
+      dst,
+      value
+    })
   }
 
   constructor(private gateway:EventsGateway){
