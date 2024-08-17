@@ -43,9 +43,8 @@ import { Observable } from 'rxjs';
   }
 
   publish(message:string){
-    console.log(
-      {message}
-    )
+    var [event,dst,value] = message.split('~')
+    console.log({event,dst,value})
   }
 
   async onModuleInit() {
