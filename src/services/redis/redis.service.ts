@@ -29,11 +29,20 @@ import { Observable } from 'rxjs';
     }
   }
 
-  async fetch(key){
-    try{
-      var data = await this.redisCache.get<string[]>(key)
+  /**
+   * fetch a list in redis
+   * @param {string} key - list key.
+   * @param {boolean} remove - if you want to clear the list.
+   * @returns {Array<any>} - returm list or an empty array
+   */
 
-      if(data) await this.redisCache.set(key,[])
+  async fetch<T>(key:string,remove:boolean):Promise<T[]>{
+    try{
+      var data = await this.redisCache.get<T[]>(key)
+
+      if(data && remove) await this.redisCache.set(
+        key,[]
+      )
 
       return data ? data : []
     }

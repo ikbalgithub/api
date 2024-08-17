@@ -1,8 +1,8 @@
 import { Server,Socket } from 'socket.io'
-import { WebSocketServer,WebSocketGateway, SubscribeMessage, OnGatewayConnection } from '@nestjs/websockets';
+import { WebSocketServer,WebSocketGateway, SubscribeMessage, OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets';
 import { RedisService } from 'src/services/redis/redis.service';
 
-@WebSocketGateway({cors:{origin:'*'}}) export class EventsGateway implements OnGatewayConnection{
+@WebSocketGateway({cors:{origin:'*'}}) export class EventsGateway implements OnGatewayConnection,OnGatewayDisconnect{
   @WebSocketServer() server:Server
 
   @SubscribeMessage('join') async join(client:Socket,room:string){
@@ -44,7 +44,31 @@ import { RedisService } from 'src/services/redis/redis.service';
   constructor(private redis:RedisService){
     // using redis ervice
   }
-  handleConnection(client:Socket) {
-    this.redis.push('socket',client.id)
+  async handleDisconnect(client:Socket){
+    try{
+      var data = await this.redis.fetch<Room>(
+        'rooms',false
+      )
+
+      var data = data.filter(x => {
+        return x.id !== client.id
+      })
+
+      await this.redis.set(
+        'rooms',
+        data
+      )
+    }
+    catch(e:any){
+      console.log(e.message)
+    }
   }
+  async handleConnection(client:Socket){
+    
+  }
+}
+
+interface Room{
+  id:string,
+  room:string
 }
