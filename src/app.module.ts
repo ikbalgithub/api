@@ -66,7 +66,7 @@ import { CacheModule } from '@nestjs/cache-manager';
     CacheModule.register<RedisClientOptions>({
       isGlobal:true,
       store:redisStore,
-      url:process.env.REDIS_URL,
+      url:'redis://default:idrQa2casLBSTccK475rLtHtifZlS4me@redis-19926.c8.us-east-1-3.ec2.redns.redis-cloud.com:19926/0',
     })
   ],
   controllers: [
