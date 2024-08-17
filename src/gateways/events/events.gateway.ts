@@ -41,23 +41,22 @@ import { RedisService } from 'src/services/redis/redis.service';
   }
   
   emit(eventName:string,dst:string,value:string){
-    console.log(JSON.parse(value))
-    // var e = `${eventName}~${dst}~${value}`
-    // var objValue = JSON.parse(value)
+    var e = `${eventName}~${dst}~${value}`
+    var objValue = JSON.parse(value)
 
-    // var acknowledge = false
+    var acknowledge = false
     
-    // this.server.to(dst).emit(
-    //   eventName,objValue,next => {
-    //     acknowledge = true
-    //   }
-    // )
+    this.server.to(dst).emit(
+      eventName,objValue,next => {
+        acknowledge = true
+      }
+    )
     
-    // setTimeout(() => {
-    //   if(!acknowledge){
-    //     this.redis.push(dst,e)
-    //   }
-    // },3000)
+    setTimeout(() => {
+      if(!acknowledge){
+        this.redis.push(dst,e)
+      }
+    },3000)
   }
 
   constructor(private redis:RedisService){
