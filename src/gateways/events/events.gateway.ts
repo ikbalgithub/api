@@ -50,7 +50,8 @@ import { RedisService } from 'src/services/redis/redis.service';
       }
       else{
         await this.redis.push(
-          dst,e
+          dst,
+          JSON.stringify(e)
         )
       }
     }
