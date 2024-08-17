@@ -6,16 +6,11 @@ import { RedisService } from 'src/services/redis/redis.service';
   @WebSocketServer() server:Server
 
   @SubscribeMessage('join') async join(client:Socket,room:string){
+    
     try{
+      var id = client.id
       await client.join(room)
-      var data = await this.redis.fetch(room)
-      data.forEach(x => {
-        var [e,dst,v] = x.split('~')
-        var objValue = JSON.parse(v)
-        this.server.to(dst).emit(
-          e,objValue
-        )
-      })
+      await this.redis.push('rooms',{id,room})
     }
     catch(e:any){
       console.log(e.message)

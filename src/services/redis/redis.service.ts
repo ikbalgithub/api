@@ -10,10 +10,9 @@ import { Observable } from 'rxjs';
     @Inject(CACHE_MANAGER) private redisCache:Cache
   ){}
 
-  async push(key:string,value:string):Promise<void>{
-    console.log({key,value})
+  async push(key:string,value:any):Promise<void>{
     try{
-      var list = await this.redisCache.get<string[]>(key)
+      var list = await this.redisCache.get<any[]>(key)
 
       if(list){
         var newList = [...list,value]
@@ -48,6 +47,31 @@ import { Observable } from 'rxjs';
       'message',message
     )
   }
+
+  async set(key:string,value:any){
+    try{
+      await this.redisCache.set(
+        key,value
+      )
+    }
+    catch(e:any){
+      console.log(e.message)
+    }
+  }
+
+  async inspect(key:string):Promise<boolean>{
+    try{
+      var data =await this.redisCache.get(
+        key
+      )
+      return data ? true : false
+    }
+    catch(e:any){
+      console.log(e.message)
+    }
+  }
+
+
 
   async onModuleInit() {
     
