@@ -6,14 +6,9 @@ import { RedisService } from 'src/services/redis/redis.service';
   @WebSocketServer() server:Server
 
   @SubscribeMessage('join') async join(client:Socket,room:string){
-    client.join(room)
-    
     try{
-      var data = await this.redis.fetchList(room)
-      console.log({data})
-      
-      await this.redis.makeEmpty(room)
-      
+      await client.join(room)
+      var data = await this.redis.fetch(room)
       data.forEach(x => {
         var [e,dst,v] = x.split('~')
         var objValue = JSON.parse(v)
@@ -25,6 +20,24 @@ import { RedisService } from 'src/services/redis/redis.service';
     catch(e:any){
       console.log(e.message)
     }
+    
+    // try{
+    //   var data = await this.redis.fetchList(room)
+    //   console.log({data})
+      
+    //   await this.redis.makeEmpty(room)
+      
+    //   data.forEach(x => {
+    //     var [e,dst,v] = x.split('~')
+    //     var objValue = JSON.parse(v)
+    //     this.server.to(dst).emit(
+    //       e,objValue
+    //     )
+    //   })
+    // }
+    // catch(e:any){
+    //   console.log(e.message)
+    // }
   }
   
   emit(eventName:string,dst:string,value:string){
@@ -39,17 +52,9 @@ import { RedisService } from 'src/services/redis/redis.service';
       }
     )
     
-    setTimeout(async() => {
+    setTimeout(() => {
       if(!acknowledge){
-        try{
-          await this.redis.push(
-            dst,
-            e
-          )
-        }
-        catch(e:any){
-          console.log(e.message)
-        }
+        this.redis.push(dst,e)
       }
     },3000)
   }

@@ -1,33 +1,54 @@
-import { Redis } from 'ioredis';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Injectable,Inject, OnModuleInit } from '@nestjs/common';
+import { Cache } from 'cache-manager';
 import { ClientProxy } from '@nestjs/microservices';
+import { Observable } from 'rxjs';
 
-@Injectable() export class RedisService {
-  constructor(@Inject('REDIS_SERVICE') private readonly redis:Redis) {}
+@Injectable() export class RedisService implements OnModuleInit{
+  constructor(
+    @Inject('REDIS_SERVICE') private redisPubsub:ClientProxy,
+    @Inject(CACHE_MANAGER) private redisCache:Cache
+  ){}
 
-  publish(message:string):boolean{
-    return this.redis.emit(
-      'message',
-      message
+  async push(key:string,value:string):Promise<void>{
+    try{
+      var list = await this.redisCache.get<string[]>(key)
+
+      if(list){
+        var newList = [...list,value]
+        await this.redisCache.set(key,newList)
+      }
+      else{
+        await this.redisCache.set(
+          key,[value]
+        )
+      }
+    }
+    catch(e:any){
+      console.log(e.message)
+    }
+  }
+
+  async fetch(key){
+    try{
+      var data = await this.redisCache.get<string[]>(key)
+
+      if(data) await this.redisCache.set(key,[])
+
+      return data ? data : []
+    }
+    catch(e:any){
+      console.log(e.message)
+    }
+  }
+
+  publish(message:string):Observable<any>{
+    return this.redisPubsub.emit(
+      'message',message
     )
   }
 
-  fetchList(key:string):Promise<string[]>{
-    return (this.redis as any).lRange(
-      key,
-      0,
-      -1
-    )
-  }
-
-  push(key:string,value:string):Promise<number>{
-    return (this.redis as any).lPush(
-      key,
-      value
-    )
-  }
-
-  makeEmpty(key):Promise<"OK">{
-    return (this.redis as any).lTrim(key,1,0)
+  async onModuleInit() {
+    
   }
 }

@@ -20,6 +20,9 @@ import { OauthController } from './controllers/oauth/oauth.controller';
 import { ProfileController } from './controllers/profile/profile.controller';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { RedisService } from './services/redis/redis.service';
+import { RedisClientOptions } from 'redis';
+import * as redisStore from 'cache-manager-redis-store'
+import { CacheModule } from '@nestjs/cache-manager';
 @Module({
   imports: [
     ConfigModule.forRoot(),
@@ -59,7 +62,12 @@ import { RedisService } from './services/redis/redis.service';
           }
         }
       ]
-    )
+    ),
+    CacheModule.register<RedisClientOptions>({
+      isGlobal:true,
+      store:redisStore,
+      url:process.env.REDIS_URL,
+    })
   ],
   controllers: [
     AppController,
