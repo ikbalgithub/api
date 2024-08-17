@@ -52,9 +52,9 @@ import { RedisService } from 'src/services/redis/redis.service';
       }
     )
     
-    setTimeout(() => {
+    setTimeout(async () => {
       if(!acknowledge){
-        this.redis.push(dst,e)
+        await this.redis.push(dst,e)
       }
     },3000)
   }

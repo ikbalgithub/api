@@ -11,6 +11,7 @@ import { Observable } from 'rxjs';
   ){}
 
   async push(key:string,value:string):Promise<void>{
+    console.log({key,value})
     try{
       var list = await this.redisCache.get<string[]>(key)
 
