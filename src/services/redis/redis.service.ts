@@ -42,9 +42,9 @@ import { Observable } from 'rxjs';
     }
   }
 
-  publish(message:string):Observable<any>{
-    return this.redisPubsub.emit(
-      'message',message
+  publish(message:string){
+    console.log(
+      {message}
     )
   }
 
