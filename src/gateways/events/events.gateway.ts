@@ -20,6 +20,7 @@ import { RedisService } from 'src/services/redis/redis.service';
       }
       catch(e:any){
         console.log(e.message)
+        console.log(e.message)
       }
     })
     
