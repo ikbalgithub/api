@@ -39,7 +39,8 @@ import { RedisService } from 'src/services/redis/redis.service';
       else{
         var cache = {event,value}
         await this.redis.push(
-          destination,cache
+          destination,
+          [cache]
         )
       }
     }
