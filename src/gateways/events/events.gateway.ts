@@ -6,9 +6,10 @@ import { RedisService } from 'src/services/redis/redis.service';
   @WebSocketServer() server:Server
 
   @SubscribeMessage('join') async join(client:Socket,room:string){
+    client.join(room)
+    
     try{
       var id = client.id
-      await client.join(room)
       await this.redis.push('rooms',{id,room})
     }
     catch(e:any){
