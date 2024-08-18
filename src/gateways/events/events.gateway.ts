@@ -14,17 +14,30 @@ import { RedisService } from 'src/services/redis/redis.service';
     })
 
     try{
-      var id = client.id
       await client.join([...rooms])
       await this.redis.push('rooms',cache)
+      rooms.forEach(async room => {
+        try{
+          var events = await this.redis.fetch<Event>(room,true)
+          events.forEach(e => {
+            this.server.to(room).emit(
+              e.event,e.value
+            )
+          })
+        }
+        catch(e:any){
+          console.log(e.message)
+        }
+      })
     }
     catch(e:any){
       console.log(e.message)
     }
+
+    
   }
   
   async emit(event:string,destination:string,value:any):Promise<void>{
-    
     try{
       var rooms = await this.redis.fetch<Room>('rooms',false)
       var [online] = rooms.filter(({room}) => {
@@ -72,6 +85,11 @@ import { RedisService } from 'src/services/redis/redis.service';
   constructor(private redis:RedisService){
     // using redis ervice
   }
+}
+
+interface Event{
+  event:string,
+  value:any
 }
 
 interface Room{
