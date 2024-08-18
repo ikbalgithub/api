@@ -14,7 +14,7 @@ import { RedisService } from 'src/services/redis/redis.service';
     })
 
     try{
-      var id = client.
+      var id = client.id
       await client.join([...rooms])
       await this.redis.push('rooms',cache)
     }
