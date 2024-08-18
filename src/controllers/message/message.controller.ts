@@ -75,23 +75,13 @@ import { RedisService } from 'src/services/redis/redis.service'
     })
 
     try{
-      var result = await this.message.new({
-        ...dto,
-        _id,
-        sender,
-        accept,
-        groupId,
-        read:false,
-      })
-      
-      var [populated] = await this.message.populate(
-        result._id
-      )
+      var params = {_id,sender,accept,groupId,read:false}
+      var result = await this.message.new({...dto,...params})
+      var [populated] = await this.message.populate(result._id)
 
-  
-      this.redis.publish(`history/newMessage~history/${dto.accept}~${JSON.stringify(result)}`)
-      this.redis.publish(`history/message~history/${dto.accept}~${JSON.stringify(populated)}`)
-      this.redis.publish(`incomingMessage~chat/${dto.accept}/${sender.toString()}~${JSON.stringify(result)}`)
+      this.gateway.emit('history/newMessage',`history/${dto.accept}`,result)
+      this.gateway.emit('history/message',`history/${dto.accept}`,populated)
+      this.gateway.emit('incomingMessage',`chat/${dto.accept}/${sender.toString()}`,result)
  
       response.send(
         result
@@ -108,12 +98,10 @@ import { RedisService } from 'src/services/redis/redis.service'
     if(!Types.ObjectId.isValid(dto._id)) response.status(500).send("internal server error")
 
     try{
-      var result = await this.message.updateOnRead(
-        new Types.ObjectId(dto._id)
-      )
+      var result = await this.message.updateOnRead(new Types.ObjectId(dto._id))
 
-      this.redis.publish(`updated~${dto.groupId}/${dto._id}~${JSON.stringify(request.user._id)}`)
-      this.redis.publish(`history/updated~history/${dto._id}~${JSON.stringify(request.user._id)}`)
+      this.gateway.emit('updated',`${dto.groupId}/${dto._id}`,request.user._id)
+      this.gateway.emit('history/updated',`history/${dto._id}`,request.user._id)
 
       response.send(
         result
@@ -124,11 +112,9 @@ import { RedisService } from 'src/services/redis/redis.service'
       response.status(500).send(err.message)
     }
   }
-
-
-
-  constructor(private message:MessageService,private redis:RedisService){
+  
+  constructor(private message:MessageService,private gateway:EventsGateway){
     // inject message service
-    // inject redis service
+    // inject gateway service
   }
 }

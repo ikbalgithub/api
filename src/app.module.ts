@@ -49,20 +49,6 @@ import { CacheModule } from '@nestjs/cache-manager';
       secret:process.env.JWT_SECRET_KEY,
       global:true,
     }),
-    ClientsModule.register(
-      [
-        {
-          name:'REDIS_SERVICE',
-          transport:Transport.REDIS,
-          options:{
-            host:process.env.REDIS_HOST,
-            port:19926,
-            password:process.env.REDIS_PASSWORD,
-            username:'default'
-          }
-        }
-      ]
-    ),
     CacheModule.register<RedisClientOptions>({
       isGlobal:true,
       store:redisStore,

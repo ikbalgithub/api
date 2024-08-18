@@ -5,21 +5,20 @@ import { ClientProxy } from '@nestjs/microservices';
 import { Observable } from 'rxjs';
 
 @Injectable() export class RedisService implements OnModuleInit{
-  constructor(
-    @Inject('REDIS_SERVICE') private redisPubsub:ClientProxy,
-    @Inject(CACHE_MANAGER) private redisCache:Cache
-  ){}
+  constructor(@Inject(CACHE_MANAGER) private redis:Cache){}
 
   async push(key:string,value:any):Promise<void>{
     try{
-      var list = await this.redisCache.get<any[]>(key)
+      var target = await this.redis.get<any[]>(
+        key
+      )
 
-      if(list){
-        var newList = [...list,value]
-        await this.redisCache.set(key,newList)
+      if(target){
+        var updated = [...target,value]
+        await this.redis.set(key,updated)
       }
       else{
-        await this.redisCache.set(
+        await this.redis.set(
           key,[value]
         )
       }
@@ -29,37 +28,22 @@ import { Observable } from 'rxjs';
     }
   }
 
-  /**
-   * fetch a list in redis
-   * @param {string} key - list key.
-   * @param {boolean} remove - if you want to clear the list.
-   * @returns {Array<any>} - returm list or an empty array
-   */
-
   async fetch<T>(key:string,remove:boolean):Promise<T[]>{
     try{
-      var data = await this.redisCache.get<T[]>(key)
+      var target = await this.redis.get<T[]>(key)
 
-      if(data && remove) await this.redisCache.set(
-        key,[]
-      )
+      if(target && remove) await this.redis.set(key,[])
 
-      return data ? data : []
+      return target ? target : []
     }
     catch(e:any){
       console.log(e.message)
     }
   }
 
-  publish(message:string){
-    this.redisPubsub.emit(
-      'message',message
-    )
-  }
-
-  async set(key:string,value:any){
+  async set(key:string,value:any):Promise<void>{
     try{
-      await this.redisCache.set(
+      await this.redis.set(
         key,value
       )
     }
@@ -67,20 +51,6 @@ import { Observable } from 'rxjs';
       console.log(e.message)
     }
   }
-
-  async inspect(key:string):Promise<boolean>{
-    try{
-      var data =await this.redisCache.get(
-        key
-      )
-      return data ? true : false
-    }
-    catch(e:any){
-      console.log(e.message)
-    }
-  }
-
-
 
   async onModuleInit() {
     

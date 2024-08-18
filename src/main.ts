@@ -14,24 +14,12 @@ import { Transport,MicroserviceOptions } from '@nestjs/microservices';
     }
   )
 
-  app.connectMicroservice<MicroserviceOptions>({
-    transport: Transport.REDIS,
-    options: {
-      host:process.env.REDIS_HOST,
-      port:19926,
-      password:process.env.REDIS_PASSWORD,
-      username:'default'
-    },
-  });
-
   app.useGlobalPipes(
     new ValidationPipe({
       skipMissingProperties:false,
       forbidNonWhitelisted:true,
     })
   )
-
-  await app.startAllMicroservices()
 
   await app.listen(
     process.env.PORT || '3000'
