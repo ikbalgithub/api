@@ -7,14 +7,14 @@ import { Observable } from 'rxjs';
 @Injectable() export class RedisService implements OnModuleInit{
   constructor(@Inject(CACHE_MANAGER) private redis:Cache){}
 
-  async push(key:string,value:any):Promise<void>{
+  async push(key:string,value:any[]):Promise<void>{
     try{
       var target = await this.redis.get<any[]>(
         key
       )
 
       if(target){
-        var updated = [...target,value]
+        var updated = [...target,...value]
         await this.redis.set(key,updated)
       }
       else{
