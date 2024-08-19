@@ -19,7 +19,7 @@ import { Observable } from 'rxjs';
       }
       else{
         await this.redis.set(
-          key,[value]
+          key,[...value]
         )
       }
     }
