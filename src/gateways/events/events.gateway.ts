@@ -20,11 +20,11 @@ import { userSchema } from 'src/schemas/user.schema';
 
       params.paths.forEach(async path => {
         try{
-          var events = await this.redis.fetch<Event>(path,true)
+          var events = await this.redis.fetch<any>(path,true)
           events.forEach(event => {
             this.server.to(path).emit(
-              event.room,
-              event.events
+              event.event,
+              event.value
             )
           })
         }
