@@ -1,98 +1,126 @@
 import { Server,Socket } from 'socket.io'
-import { WebSocketServer,WebSocketGateway, SubscribeMessage, OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets';
+import { WebSocketServer,WebSocketGateway, SubscribeMessage, OnGatewayDisconnect } from '@nestjs/websockets';
 import { RedisService } from 'src/services/redis/redis.service';
+import { userSchema } from 'src/schemas/user.schema';
 
 @WebSocketGateway({cors:{origin:'*'}}) export class EventsGateway implements OnGatewayDisconnect{
   @WebSocketServer() server:Server
 
-  @SubscribeMessage('join') async join(client:Socket,rooms:string[]){
-    var cache = rooms.map(room => {
-      return {
-        id:client.id,
-        room
-      }
-    })
-
+  @SubscribeMessage('join') async join(client:Socket,_id:string,rooms:string[]){
     try{
       await client.join([...rooms])
-      await this.redis.push('rooms',cache)
-      rooms.forEach(async room => {
-        try{
-          var events = await this.redis.fetch<Event>(room,true)
-          events.forEach(e => {
-            this.server.to(room).emit(
-              e.event,e.value
-            )
-          })
-        }
-        catch(e:any){
-          console.log(e.message)
-        }
-      })
-    }
-    catch(e:any){
-      console.log(e.message)
-    }
-
-    
-  }
-  
-  async emit(event:string,destination:string,value:any):Promise<void>{
-    try{
-      var rooms = await this.redis.fetch<Room>('rooms',false)
-      var [online] = rooms.filter(({room}) => {
-        return room === destination
-      })
-
-      if(online){
-        this.server.to(destination).emit(
-          event,value
-        )
+      var users = await this.redis.fetch<User>('users',false)
+      if(users.filter(user => user._id === _id).length > 0){
+        users = users.filter(user => user._id !== _id)
+        users = [...users,{_id,id:client.id,active:true}]
       }
       else{
-        var cache = {event,value}
-        await this.redis.push(
-          destination,
-          [cache]
-        )
+        users = [...users,{_id,id:client.id,active:true}]
       }
-    }
-    catch(e:any){
-      console.log(e.message)
-    }
-  }
 
+      var events = await this.redis.fetch<Event>('events')
 
-  async handleDisconnect(client:Socket){
-    try{
-      var rooms = await this.redis.fetch<Room>(
-        'rooms',false
-      )
-
-      var rooms = rooms.filter(x => {
-        return x.id !== client.id
+      events.forEach(async e => {
+        if(rooms.includes(e.room)){
+          var newEvents = events.filter(
+            ev => ev.room !== e.room
+          )
+          
+          e.events.forEach(({event,value}) => {
+            this.server.to(e.room).emit(
+              event,value
+            )
+          })
+         
+          try{
+            await this.redis.set(
+              'events',
+              newEvents
+            )
+          }
+          catch(e:any){
+            console.log(e.message)
+          }
+        }
       })
 
       await this.redis.set(
-        'rooms',
-        rooms
+        'users',users
       )
     }
     catch(e:any){
       console.log(e.message)
     }
   }
+  
+  async emit(event:string,dst:string,value:any,_id:string):Promise<void>{
+    try{
+      var users = await this.redis.fetch<User>('users',false)
+      var [user] = users.filter(u => u._id === _id)
+
+      if(user && user.active) this.server.to(dst).emit(
+        event,value
+      )
+      else{
+        var events = await this.redis.fetch<Event>('events')
+        var [filter] = events.filter(e => e.room === dst)
+
+        if(filter){
+          events = events.filter(e => e.room === filter.room)
+          var newEvents = [...filter.events,{event,value}]
+          var filter = {...filter,events:newEvents}
+          var events = [...events,filter]
+
+          await this.redis.set(
+            'events',
+            events
+          )
+        }
+        else{
+          await this.redis.push(
+            'events',[{room:dst,events:[{event,value}]}]
+          )
+        }
+      }
+    }
+    catch(e:any){
+      console.log(e.message)
+    }
+  }
+
+  async handleDisconnect(client:Socket){
+    try{
+      var users = await this.redis.fetch<User>('users',false)
+      var [user] = users.filter(user => user.id === client.id)
+      
+      if(user){
+        users = users.filter(u => u._id !== user._id)
+        users = [...users,{...user,active:false}]
+        await this.redis.set(
+          'users',users
+        )
+      }
+    }
+    catch(e:any){
+      console.log(e.message)
+    }
+  }
+
   constructor(private redis:RedisService){
     // using redis ervice
   }
 }
 
+
+
 interface Event{
-  event:string,
-  value:any
+  room:string,
+  events:{event:string,value:any}[]
 }
 
-interface Room{
+
+interface User{
+  _id:string,
   id:string,
-  room:string
+  active:boolean
 }

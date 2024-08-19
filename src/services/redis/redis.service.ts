@@ -28,7 +28,7 @@ import { Observable } from 'rxjs';
     }
   }
 
-  async fetch<T>(key:string,remove:boolean):Promise<T[]>{
+  async fetch<T>(key:string,remove?:boolean):Promise<T[]>{
     try{
       var target = await this.redis.get<T[]>(key)
 
@@ -40,6 +40,8 @@ import { Observable } from 'rxjs';
       console.log(e.message)
     }
   }
+
+  
 
   async set(key:string,value:any):Promise<void>{
     try{
