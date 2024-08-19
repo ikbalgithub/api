@@ -21,7 +21,7 @@ import { userSchema } from 'src/schemas/user.schema';
       var events = await this.redis.fetch<Event>('events')
 
       events.forEach(async e => {
-        if(rooms.includes(e.room)){
+        if([...rooms].includes(e.room)){
           var newEvents = events.filter(
             ev => ev.room !== e.room
           )
