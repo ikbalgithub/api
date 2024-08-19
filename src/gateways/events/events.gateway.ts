@@ -49,7 +49,7 @@ import { userSchema } from 'src/schemas/user.schema';
       )
     }
     catch(e:any){
-      console.log(e.message)
+      console.log(e)
     }
   }
   
