@@ -18,32 +18,21 @@ import { userSchema } from 'src/schemas/user.schema';
         users = [...users,{_id:params._id,id:client.id,active:true}]
       }
 
-      var events = await this.redis.fetch<Event>('events')
-
-      events.forEach(async e => {
-        if(params.paths.includes(e.room)){
-          var newEvents = events.filter(
-            ev => ev.room !== e.room
-          )
-          
-          e.events.forEach(({event,value}) => {
-            this.server.to(e.room).emit(
-              event,value
+      params.paths.forEach(async path => {
+        try{
+          var events = await this.redis.fetch<Event>(path,true)
+          events.forEach(event => {
+            this.server.to(path).emit(
+              event.room,
+              event.events
             )
           })
-         
-          try{
-            await this.redis.set(
-              'events',
-              newEvents
-            )
-          }
-          catch(e:any){
-            console.log(e.message)
-          }
+        }
+        catch(e:any){
+          console.log(e.message)
         }
       })
-
+      
       await this.redis.set(
         'users',users
       )
@@ -62,25 +51,9 @@ import { userSchema } from 'src/schemas/user.schema';
         event,value
       )
       else{
-        var events = await this.redis.fetch<Event>('events')
-        var [filter] = events.filter(e => e.room === dst)
-
-        if(filter){
-          events = events.filter(e => e.room === filter.room)
-          var newEvents = [...filter.events,{event,value}]
-          var filter = {...filter,events:newEvents}
-          var events = [...events,filter]
-
-          await this.redis.set(
-            'events',
-            events
-          )
-        }
-        else{
-          await this.redis.push(
-            'events',[{room:dst,events:[{event,value}]}]
-          )
-        }
+        this.redis.push(
+          dst,[{event,value}]
+        )
       }
     }
     catch(e:any){
