@@ -6,22 +6,22 @@ import { userSchema } from 'src/schemas/user.schema';
 @WebSocketGateway({cors:{origin:'*'}}) export class EventsGateway implements OnGatewayDisconnect{
   @WebSocketServer() server:Server
 
-  @SubscribeMessage('join') async join(client:Socket,_id:string,rooms:string[]){
+  @SubscribeMessage('join') async join(client:Socket,params:{_id:string,paths:string[]}){
     try{
-      await client.join([...rooms])
+      await client.join([...params.paths])
       var users = await this.redis.fetch<User>('users',false)
-      if(users.filter(user => user._id === _id).length > 0){
-        users = users.filter(user => user._id !== _id)
-        users = [...users,{_id,id:client.id,active:true}]
+      if(users.filter(user => user._id === params._id).length > 0){
+        users = users.filter(user => user._id !== params._id)
+        users = [...users,{_id:params._id,id:client.id,active:true}]
       }
       else{
-        users = [...users,{_id,id:client.id,active:true}]
+        users = [...users,{_id:params._id,id:client.id,active:true}]
       }
 
       var events = await this.redis.fetch<Event>('events')
 
       events.forEach(async e => {
-        if([...rooms].includes(e.room)){
+        if(params.paths.includes(e.room)){
           var newEvents = events.filter(
             ev => ev.room !== e.room
           )
