@@ -54,7 +54,15 @@ import path from 'path';
 
   async onJoined(path:string,remove:boolean):Promise<void>{
     try{
-      await this.redis.fetch<any>(path,true)
+      var events = await this.redis.fetch<Event>(
+        path,true
+      )
+
+      events.forEach(({event,value}) => {
+        this.server.to(path).emit(
+          event,value
+        )
+      })
     }
     catch(e:any){
       console.log(e.message)
