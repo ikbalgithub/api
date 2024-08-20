@@ -44,7 +44,7 @@ import path from 'path';
         [{event,value}]
       )
       this.server.to(dst).emit(
-        event,dst,callback.bind(this)
+        event,value,callback.bind(this)
       )
     }
     catch(e:any){
