@@ -2,100 +2,67 @@ import { Server,Socket } from 'socket.io'
 import { WebSocketServer,WebSocketGateway, SubscribeMessage, OnGatewayDisconnect } from '@nestjs/websockets';
 import { RedisService } from 'src/services/redis/redis.service';
 import { userSchema } from 'src/schemas/user.schema';
+import path from 'path';
 
 @WebSocketGateway({cors:{origin:'*'}}) export class EventsGateway implements OnGatewayDisconnect{
   @WebSocketServer() server:Server
 
-  @SubscribeMessage('join') async join(client:Socket,params:{_id:string,paths:string[]}){
+  @SubscribeMessage('join') async join(client:Socket,params:{paths:string[]}):Promise<void>{
     try{
       await client.join([...params.paths])
-      var users = await this.redis.fetch<User>('users',false)
-      if(users.filter(user => user._id === params._id).length > 0){
-        users = users.filter(user => user._id !== params._id)
-        users = [...users,{_id:params._id,id:client.id,active:true}]
-      }
-      else{
-        users = [...users,{_id:params._id,id:client.id,active:true}]
-      }
-
       params.paths.forEach(async path => {
         try{
-          var events = await this.redis.fetch<any>(path,true)
-          events.forEach(x => {
-            this.server.to(path).emit(
-              x.event,
-              x.value
-            )
-          })
+          await this.onJoined(
+            path,true
+          )
         }
         catch(e:any){
           console.log(e.message)
         }
       })
-      
-      await this.redis.set(
-        'users',users
-      )
     }
     catch(e:any){
       console.log(e)
     }
   }
-  
-  async emit(event:string,dst:string,value:any,_id:string):Promise<void>{
-    try{
-      var accepted = false
-      var users = await this.redis.fetch<User>('users',false)
-      var [user] = users.filter(u => u._id === _id)
 
-      if(event === 'incomingMessage') await this.redis.push(
-        dst,[{event,value}]
-      )
-
-      if(user && user.active) this.server.to(dst).emit(
-        event,value,async cb => {
-          if(event === 'incomingMessage'){
-            try{
-              await this.redis.fetch<any>(dst,true)
-              console.log('message deleted from list')
-            }
-            catch(e:any){
-              console.log(e.message)
-            }
-          }
-        }
-      )
-      else{
-        if(event !== 'incomingMessage'){
-          this.redis.push(
-            dst,[{event,value}]
-          )
-        }
+  async emit(event:string,dst:string,value:any){
+    var callback = async () => {
+      try{
+        await this.redis.fetch<Event>(
+          dst,true
+        )
       }
+      catch(e:any){
+        console.log(e.message)
+      }
+    }
+    
+    try{
+      await this.redis.push(
+        dst,
+        [{event,value}]
+      )
+      this.server.to(dst).emit(
+        event,dst,callback.bind(this)
+      )
+    }
+    catch(e:any){
+      console.log(e.messagse)
+    }
+  }
+
+  async onJoined(path:string,remove:boolean):Promise<void>{
+    try{
+      await this.redis.fetch<any>(path,true)
     }
     catch(e:any){
       console.log(e.message)
     }
   }
 
-
-
   async handleDisconnect(client:Socket){
-    try{
-      var users = await this.redis.fetch<User>('users',false)
-      var [user] = users.filter(user => user.id === client.id)
-      
-      if(user){
-        users = users.filter(u => u._id !== user._id)
-        users = [...users,{...user,active:false}]
-        await this.redis.set(
-          'users',users
-        )
-      }
-    }
-    catch(e:any){
-      console.log(e.message)
-    }
+    // handle disconnect
   }
 
   constructor(private redis:RedisService){
@@ -103,16 +70,7 @@ import { userSchema } from 'src/schemas/user.schema';
   }
 }
 
-
-
 interface Event{
-  room:string,
-  events:{event:string,value:any}[]
-}
-
-
-interface User{
-  _id:string,
-  id:string,
-  active:boolean
+  event:string,
+  value:any
 }

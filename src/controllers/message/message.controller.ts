@@ -79,9 +79,9 @@ import { RedisService } from 'src/services/redis/redis.service'
       var result = await this.message.new({...dto,...params})
       var [populated] = await this.message.populate(result._id)
 
-      await this.gateway.emit('history/newMessage',`history/${dto.accept}`,result,dto.accept)
-      await this.gateway.emit('history/message',`history/${dto.accept}`,populated,dto.accept)
-      await this.gateway.emit('incomingMessage',`chat/${dto.accept}/${sender.toString()}`,result,dto.accept)
+      await this.gateway.emit('history/newMessage',`history/${dto.accept}`,result)
+      await this.gateway.emit('history/message',`history/${dto.accept}`,populated)
+      await this.gateway.emit('incomingMessage',`chat/${dto.accept}/${sender.toString()}`,result)
  
       response.send(
         result
@@ -100,8 +100,8 @@ import { RedisService } from 'src/services/redis/redis.service'
     try{
       var result = await this.message.updateOnRead(new Types.ObjectId(dto._id))
 
-      await this.gateway.emit('updated',`${dto.groupId}/${dto._id}`,request.user._id,dto._id)
-      await this.gateway.emit('history/updated',`history/${dto._id}`,request.user._id,dto._id)
+      await this.gateway.emit('updated',`${dto.groupId}/${dto._id}`,request.user._id)
+      await this.gateway.emit('history/updated',`history/${dto._id}`,request.user._id)
 
       response.send(
         result
