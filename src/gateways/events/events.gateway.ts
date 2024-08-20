@@ -43,9 +43,9 @@ import path from 'path';
         dst,
         [{event,value}]
       )
-      this.server.to(dst).emit(
-        event,value,callback.bind(this)
-      )
+      // this.server.to(dst).emit(
+      //   event,value,callback.bind(this)
+      // )
     }
     catch(e:any){
       console.log(e.messagse)
