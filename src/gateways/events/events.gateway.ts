@@ -28,14 +28,7 @@ import path from 'path';
 
   async emit(event:string,dst:string,value:any){
     var callback = async () => {
-      try{
-        await this.redis.fetch<Event>(
-          dst,true
-        )
-      }
-      catch(e:any){
-        console.log(e.message)
-      }
+      console.log('ok')
     }
     
     try{
@@ -43,9 +36,9 @@ import path from 'path';
         dst,
         [{event,value}]
       )
-      // this.server.to(dst).emit(
-      //   event,value,callback.bind(this)
-      // )
+      this.server.to(dst).emit(
+        event,value,callback.bind(this)
+      )
     }
     catch(e:any){
       console.log(e.messagse)
