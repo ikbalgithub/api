@@ -26,10 +26,16 @@ import path from 'path';
     }
   }
 
-  async emit(event:string,dst:string,value:any){
-    var callback = async () => {
-      console.log('ok')
+  @SubscribeMessage('ack') async ack(path:string):Promise<void>{
+    try{
+      await this.redis.fetch<any>(path,true)
     }
+    catch(e:any){
+      console.log(e.message)
+    }
+  }
+
+  async emit(event:string,dst:string,value:any){
     
     try{
       await this.redis.push(
@@ -37,7 +43,10 @@ import path from 'path';
         [{event,value}]
       )
       this.server.to(dst).emit(
-        event,value,callback.bind(this)
+        event,value
+      )
+      this.server.to(dst).emit(
+        'ack',dst
       )
     }
     catch(e:any){
