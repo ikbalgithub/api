@@ -21,10 +21,10 @@ import { userSchema } from 'src/schemas/user.schema';
       params.paths.forEach(async path => {
         try{
           var events = await this.redis.fetch<any>(path,true)
-          events.forEach(event => {
+          events.forEach(x => {
             this.server.to(path).emit(
-              event.event,
-              event.value
+              x.event,
+              x.value
             )
           })
         }
@@ -44,11 +44,26 @@ import { userSchema } from 'src/schemas/user.schema';
   
   async emit(event:string,dst:string,value:any,_id:string):Promise<void>{
     try{
+      var accepted = false
       var users = await this.redis.fetch<User>('users',false)
       var [user] = users.filter(u => u._id === _id)
 
+      if(event === 'incomingMessage') await this.redis.push(
+        dst,[{event,value}]
+      )
+
       if(user && user.active) this.server.to(dst).emit(
-        event,value
+        event,value,async cb => {
+          if(event === 'incomingMessage'){
+            try{
+              await this.redis.fetch<any>(dst,true)
+              console.log('message deleted from list')
+            }
+            catch(e:any){
+              console.log(e.message)
+            }
+          }
+        }
       )
       else{
         this.redis.push(
@@ -60,6 +75,8 @@ import { userSchema } from 'src/schemas/user.schema';
       console.log(e.message)
     }
   }
+
+
 
   async handleDisconnect(client:Socket){
     try{
