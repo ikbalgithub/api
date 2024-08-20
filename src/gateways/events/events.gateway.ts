@@ -66,9 +66,11 @@ import { userSchema } from 'src/schemas/user.schema';
         }
       )
       else{
-        this.redis.push(
-          dst,[{event,value}]
-        )
+        if(event !== 'incomingMessage'){
+          this.redis.push(
+            dst,[{event,value}]
+          )
+        }
       }
     }
     catch(e:any){
