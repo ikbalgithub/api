@@ -68,7 +68,7 @@ import { Post,Put,Body,Res,Logger,Get,Param,UseGuards,Request } from '@nestjs/co
 
     try{
       var searchResult = await this.userSvc.findByUsername(q,_id)
-      var profiles = searchResult.map(({profile}) => profile[0])
+      var profiles = searchResult.map(({profile}) => profile)
       var _ids = profiles.map(({usersRef}) => usersRef)
       
       var messages = await this.messageSvc.recently(

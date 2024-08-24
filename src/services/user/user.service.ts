@@ -80,6 +80,9 @@ import { Aggregate,UpdateWriteOpResult } from 'mongoose'
         foreignField:'usersRef',
         as:'profile'
       }},
+      {$unwind:{
+        path:"$profile"
+      }},
       {$project:{
         username:0,
         password:0,
