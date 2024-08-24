@@ -1,6 +1,6 @@
 import { Response } from 'express'
 import { isEqual } from 'lodash'
-import { Model,Types } from 'mongoose';
+import { Types } from 'mongoose';
 import { Common } from '../../../index.d'
 import { AuthGuard } from '../../guards/auth.guard'
 import { Controller } from '@nestjs/common';
@@ -66,50 +66,78 @@ import { Post,Put,Body,Res,Logger,Get,Param,UseGuards,Request } from '@nestjs/co
   @Get('search/:q') @UseGuards(AuthGuard) async search(@Request() request,@Res() response:Response,@Param('q') q):Promise<void>{
     var _id = new Types.ObjectId(request.user._id)
 
+
     try{
-      var searchResult = await this.userSvc.findByUsername(q,_id)
-      var profiles = searchResult.map(({profile}) => profile)
-      var _ids = profiles.map(({usersRef}) => usersRef)
-      
-      var messages = await this.messageSvc.recently(
-        _ids,_id
+      var [result] = await this.userSvc.findByUsername(q,_id)
+      var [message] = await this.messageSvc.recently(
+        result.profile.usersRef,_id
       )
 
-
-      var result = profiles.map((profile) => {
-        var [filter] = messages.filter(m => {
-          var isEqual1 = isEqual(
-            m.sender as Types.ObjectId,
-            profile.usersRef
-          )
-
-          var isEqual2 = isEqual(
-            m.accept as Types.ObjectId,
-            profile.usersRef
-          )
-
-          return isEqual1 || isEqual2
-        })
-
-        if(filter){
-          return {
-            ...profile,
-            message:filter
-          }
-        }
+      if(result){
+        if(message) response.status(200).send(
+          [
+            {
+              ...result,
+              message
+            }
+          ]
+        )
         else{
-          return profile
+          response.status(200).send(
+            [result]
+          )
         }
-      })
-
-      response.send(
-        result
-      )
+      }
     }
     catch(err){
       new Logger('Error').error(err.message)
       response.status(500).send(err.message)
     }
+
+    // try{
+    //   var searchResult = await this.userSvc.findByUsername(q,_id)
+    //   var profiles = searchResult.map(({profile,friends}) => profile[0])
+    //   var _ids = profiles.map(({usersRef}) => usersRef)
+      
+    //   var messages = await this.messageSvc.recently(
+    //     _ids,_id
+    //   )
+
+
+    //   var result = profiles.map((profile) => {
+    //     var [filter] = messages.filter(m => {
+    //       var isEqual1 = isEqual(
+    //         m.sender as Types.ObjectId,
+    //         profile.usersRef
+    //       )
+
+    //       var isEqual2 = isEqual(
+    //         m.accept as Types.ObjectId,
+    //         profile.usersRef
+    //       )
+
+    //       return isEqual1 || isEqual2
+    //     })
+
+    //     if(filter){
+    //       return {
+    //         ...profile,
+    //         message:filter
+    //       }
+    //     }
+    //     else{
+    //       return profile
+    //     }
+    //   })
+
+    //   response.send(
+    //     result
+    //   )
+    // }
+    // catch(err){
+    //   new Logger('Error').error(err.message)
+    //   response.status(500).send(err.message)
+    // }
   }
 
   constructor(

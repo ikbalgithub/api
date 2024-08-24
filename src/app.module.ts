@@ -5,6 +5,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { User,userSchema } from './schemas/user.schema'
 import { Message,messageSchema } from './schemas/message.schema'
 import { Profile,profileSchema } from './schemas/profile.schema'
+import { Friend,friendSchema } from './schemas/friend.schema'
 import { AppService } from './app.service';
 import { UserService } from './services/user/user.service';
 import { RabbitmqController } from './controllers/rabbitmq/rabbitmq.controller';
@@ -18,7 +19,6 @@ import { EventsGateway } from './gateways/events/events.gateway';
 import { ProfileService } from './services/profile/profile.service';
 import { OauthController } from './controllers/oauth/oauth.controller';
 import { ProfileController } from './controllers/profile/profile.controller';
-import { ClientsModule, Transport } from '@nestjs/microservices';
 import { RedisService } from './services/redis/redis.service';
 import { RedisClientOptions } from 'redis';
 import * as redisStore from 'cache-manager-redis-store'
@@ -42,6 +42,10 @@ import { CacheModule } from '@nestjs/cache-manager';
         {
           name:Profile.name,
           schema:profileSchema
+        },
+        {
+          name:Friend.name,
+          schema:friendSchema
         }
       ]
     ),
