@@ -105,19 +105,15 @@ import { Aggregate,UpdateWriteOpResult } from 'mongoose'
     // )
   }
 
-  recently(_ids:any[],user:Types.ObjectId):Promise<Last_Message[]>{
+  recently(_id:Types.ObjectId,user:Types.ObjectId):Promise<Last_Message[]>{
     return this.message.aggregate([
       {$match:{
         $or:[
           {
-            sender:{
-              $in:_ids
-            }
+            sender:Types.ObjectId
           },
           {
-            accept:{
-              $in:_ids
-            }
+            accept:Types.ObjectId
           }
         ]
       }},
