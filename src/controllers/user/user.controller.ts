@@ -74,7 +74,7 @@ import { Post,Put,Body,Res,Logger,Get,Param,UseGuards,Request } from '@nestjs/co
       )
 
       if(result){
-        response.status(200).send(
+        if(message) response.status(200).send(
           [
             {
               ...result,
@@ -82,11 +82,11 @@ import { Post,Put,Body,Res,Logger,Get,Param,UseGuards,Request } from '@nestjs/co
             }
           ]
         )
-      }
-      else{
-        response.status(200).send(
-          []
-        )
+        else{
+          response.status(200).send(
+            [result]
+          )
+        }
       }
     }
     catch(err){
