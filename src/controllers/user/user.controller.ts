@@ -70,7 +70,7 @@ import { Post,Put,Body,Res,Logger,Get,Param,UseGuards,Request } from '@nestjs/co
     try{
       var [result] = await this.userSvc.findByUsername(q,_id)
       var [message] = await this.messageSvc.recently(
-        result.profile.usersRef,_id
+        result?.profile.usersRef,_id
       )
 
       if(result){
@@ -87,6 +87,11 @@ import { Post,Put,Body,Res,Logger,Get,Param,UseGuards,Request } from '@nestjs/co
             [result]
           )
         }
+      }
+      else{
+        response.status(200).send(
+          []
+        )
       }
     }
     catch(err){
