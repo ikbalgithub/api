@@ -62,7 +62,7 @@ import { Aggregate,UpdateWriteOpResult } from 'mongoose'
     ])
   }
 
-  findByUsername(username:string,user:Types.ObjectId):Aggregate<{profile:Profile}[]>{
+  findByUsername(username:string,from:Types.ObjectId):Aggregate<{profile:Profile,friends:boolean}[]>{
     return this.user.aggregate([
       {$match:{
         username:{
@@ -71,7 +71,7 @@ import { Aggregate,UpdateWriteOpResult } from 'mongoose'
           )
         },
         _id:{
-          $ne:user
+          $ne:from
         }
       }},
       {$lookup:{
@@ -79,6 +79,29 @@ import { Aggregate,UpdateWriteOpResult } from 'mongoose'
         localField:'_id',
         foreignField:'usersRef',
         as:'profile'
+      }},
+      {$lookup:{
+        from:'friends',
+        localField:'_id',
+        foreignField:'reference',
+        as:'friends'
+      }},
+      {$unwind:{
+        path:"$friends"
+      }},
+      {$addFields:{
+        friends:{
+          $gt:[
+           {$size:{
+             $filter:{
+               input:"$friends.list",
+               as:"item",
+               cond:{$eq:["$$item.with",from]}
+             }
+           }},
+           0
+          ]
+        }
       }},
       {$project:{
         username:0,

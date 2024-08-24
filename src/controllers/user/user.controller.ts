@@ -1,6 +1,6 @@
 import { Response } from 'express'
 import { isEqual } from 'lodash'
-import { Model,Types } from 'mongoose';
+import { Types } from 'mongoose';
 import { Common } from '../../../index.d'
 import { AuthGuard } from '../../guards/auth.guard'
 import { Controller } from '@nestjs/common';
@@ -68,7 +68,7 @@ import { Post,Put,Body,Res,Logger,Get,Param,UseGuards,Request } from '@nestjs/co
 
     try{
       var searchResult = await this.userSvc.findByUsername(q,_id)
-      var profiles = searchResult.map(({profile}) => profile[0])
+      var profiles = searchResult.map(({profile,friends}) => profile[0])
       var _ids = profiles.map(({usersRef}) => usersRef)
       
       var messages = await this.messageSvc.recently(

@@ -36,7 +36,6 @@ import path from 'path';
   }
 
   async emit(event:string,dst:string,value:any){
-    
     try{
       await this.redis.push(
         dst,
