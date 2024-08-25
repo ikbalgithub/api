@@ -73,7 +73,7 @@ import { Post,Put,Body,Res,Logger,Get,Param,UseGuards,Request } from '@nestjs/co
         result?.profile.usersRef,_id
       )
 
-      response.status(200).send(
+      if(result) response.status(200).send(
         [result]
       )
 
