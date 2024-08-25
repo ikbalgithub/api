@@ -83,10 +83,34 @@ import { Aggregate,UpdateWriteOpResult } from 'mongoose'
       {$unwind:{
         path:'$profile'
       }},
+      {$lookup:{
+        from:'friends',
+        localField:'_id',
+        foreignField:'reference',
+        as:'friends'
+      }},
+      {$unwind:{
+        path:'$friends'
+      }},
+      {$addFields:{
+        friendship:{
+          $gt:[
+            {$size:{
+              $filter:{
+                input:'$friends.list',
+                as:'x',
+                cond: { $eq: ["$$x.with", from] }
+              }
+            }}
+            ,0
+          ]
+        }
+      }},
       {$project:{
         username:0,
         password:0,
-        oauthReferences:0
+        oauthReferences:0,
+        friends:0
       }}
     ])
   }
