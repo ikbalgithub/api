@@ -68,33 +68,70 @@ import { Post,Put,Body,Res,Logger,Get,Param,UseGuards,Request } from '@nestjs/co
 
 
     try{
-      var [result] = await this.userSvc.findByUsername(q,_id)
-      var [message] = await this.messageSvc.recently(
-        result?.profile.usersRef,_id
+      var searchResult = await this.userSvc.findByUsername(q,_id)
+      var references = searchResult.map(({profile}) => profile.usersRef)
+      var messages = await this.messageSvc.recently(references,_id)
+
+      var result = searchResult.map(({profile,friendship}) => {
+        var [filter] = messages.filter(message => {
+          var eq1 = profile.usersRef.equals(
+            message.sender
+          )
+
+          var eq2 = profile.usersRef.equals(
+            message.accept
+          )
+
+          return eq1 || eq2
+        })
+
+        if(filter) return {
+          profile,
+          friendship,
+          message:filter
+        }
+
+        if(!filter) return {
+          profile,
+          friendship
+        }
+      })
+
+      response.status(200).send(
+        result
       )
 
-      if(result){
-        if(message){
-          response.status(200).send(
-            [
-              {
-                ...result,
-                message
-              }
-            ]
-          )
-        }
-        else[
-          response.status(200).send(
-            [result]
-          )
-        ]
-      }
-      else{
-        response.status(200).send(
-          []
-        )
-      }
+      // var result = searchResult.map(async({profile,...rest}) => {
+      //   var message = null
+
+      //   try{
+      //     var [m] = await this.messageSvc.recently(
+      //       profile.usersRef,_id
+      //     )
+
+      //     if(m){
+      //       message = m
+      //     }
+      //   }
+      //   catch(err:any){
+      //     new Logger('Error').error(err.message)
+      //     response.status(500).send(err.message)
+      //   }
+
+      //   if(!message) return {
+      //     profile,
+      //     ...rest
+      //   }
+
+      //   if(message) return {
+      //     profile,
+      //     ...rest,
+      //     message
+      //   }
+      // })
+      
+
+      
 
       // if(result){
       //   if(message) response.status(200).send(

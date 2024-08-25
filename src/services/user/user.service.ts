@@ -62,7 +62,7 @@ import { Aggregate,UpdateWriteOpResult } from 'mongoose'
     ])
   }
 
-  findByUsername(username:string,from:Types.ObjectId):Aggregate<{profile:Profile,friends:boolean}[]>{
+  findByUsername(username:string,from:Types.ObjectId):Aggregate<{profile:Profile,friendship:boolean}[]>{
     return this.user.aggregate([
       {$match:{
         username:{
