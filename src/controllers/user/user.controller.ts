@@ -73,9 +73,28 @@ import { Post,Put,Body,Res,Logger,Get,Param,UseGuards,Request } from '@nestjs/co
         result?.profile.usersRef,_id
       )
 
-      if(result) response.status(200).send(
-        [result]
-      )
+      if(result){
+        if(message){
+          response.status(200).send(
+            [
+              {
+                ...result,
+                message
+              }
+            ]
+          )
+        }
+        else[
+          response.status(200).send(
+            [result]
+          )
+        ]
+      }
+      else{
+        response.status(200).send(
+          []
+        )
+      }
 
       // if(result){
       //   if(message) response.status(200).send(
