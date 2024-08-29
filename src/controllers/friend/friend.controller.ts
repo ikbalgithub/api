@@ -4,6 +4,10 @@ import { Types } from 'mongoose';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { FriendService } from 'src/services/friend/friend.service';
 
+class RequestDto{
+  @IsNotEmpty() to:Types.ObjectId
+}
+
 @Controller('friend') export class FriendController {
   @Post('/request') 
   @UseGuards(AuthGuard) 
@@ -31,8 +35,4 @@ import { FriendService } from 'src/services/friend/friend.service';
   constructor(private friendSvc:FriendService){
     // inject friend service
   }
-}
-
-class RequestDto{
-  @IsNotEmpty() to:Types.ObjectId
 }
