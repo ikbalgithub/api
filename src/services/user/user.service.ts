@@ -94,15 +94,6 @@ import { Aggregate,UpdateWriteOpResult } from 'mongoose'
       }},
       {$addFields:{
         friends:{
-          $filter:{
-            input:'$friends.list',
-            as:'friend',
-            cond: { $eq: ["$$x.with", from] }
-          }
-        }
-      }},
-      {$addFields:{
-        friends:{
           list:{
             $filter:{
               as:'e',
