@@ -5,20 +5,22 @@ import { AuthGuard } from 'src/guards/auth.guard';
 import { FriendService } from 'src/services/friend/friend.service';
 
 class RequestDto{
-  @IsNotEmpty() to:Types.ObjectId
+  @IsNotEmpty() to:string
 }
 
 @Controller('friend') export class FriendController {
   @Post('/request') 
   @UseGuards(AuthGuard) 
   async request(@Body() dto:RequestDto,@Request() request,@Res() response){
-    var _id = new Types.ObjectId(request.user._id)
-
     try{
       var result = await this.friendSvc.request(
         {
-          from:_id,
-          to:dto.to
+          from:new Types.ObjectId(
+            request.user._id
+          ),
+          to:new Types.ObjectId(
+            dto.to
+          )
         }
       )
 
