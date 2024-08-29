@@ -6,8 +6,8 @@ import { Friend } from 'src/schemas/friend.schema';
 @Injectable() export class FriendService {
   constructor(@InjectModel(Friend.name) private friend: Model<Friend>){}
   async request(params:{from:Types.ObjectId,to:Types.ObjectId}){
-    var pending = {with:params.to,status:'pending'}
-    var requested = {with:params.from,status:'requested'}
+    var pending = {with:params.to,status:'requested'}
+    var requested = {with:params.from,status:'pending'}
 
     return this.friend.bulkWrite(
       [
