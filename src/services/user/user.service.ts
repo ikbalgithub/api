@@ -93,19 +93,39 @@ import { Aggregate,UpdateWriteOpResult } from 'mongoose'
         path:'$friends'
       }},
       {$addFields:{
-        friendship:{
-          $gt:[
-            {$size:{
-              $filter:{
-                input:'$friends.list',
-                as:'x',
-                cond: { $eq: ["$$x.with", from] }
-              }
-            }}
-            ,0
-          ]
+        friends:{
+          $filter:{
+            input:'$friends.list',
+            as:'friend',
+            cond: { $eq: ["$$x.with", from] }
+          }
         }
       }},
+      {$addFields:{
+        friends:{
+          list:{
+            $filter:{
+              as:'e',
+              input:'$friends.list',
+              cond:{ $eq: ["$$e.with", from] }
+            }
+          }
+        }
+      }},
+      {$addFields:{
+        friendship:{
+          $cond: {
+            if: {
+              $gt: [{$size: "$friends.list"},0],
+            },
+            then: {
+              $arrayElemAt: ["$friends.list.status", 0],
+            },
+            else: false,
+          },
+        }
+      }}
+      ,
       {$project:{
         username:0,
         password:0,
