@@ -8,11 +8,12 @@ export class Friend{
   
   @Prop() reference:Types.ObjectId
   
-  @Prop() list:{with:Types.ObjectId,from:number}[]
+  @Prop() list:Friendship[]
  }
 
+export const friendSchema = SchemaFactory.createForClass(Friend)
 
-
-export const friendSchema = SchemaFactory.createForClass(
-  Friend
-)
+interface Friendship{
+  with:Types.ObjectId,
+  status:string
+}

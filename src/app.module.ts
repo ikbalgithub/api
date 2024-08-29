@@ -23,6 +23,8 @@ import { RedisService } from './services/redis/redis.service';
 import { RedisClientOptions } from 'redis';
 import * as redisStore from 'cache-manager-redis-store'
 import { CacheModule } from '@nestjs/cache-manager';
+import { FriendController } from './controllers/friend/friend.controller';
+import { FriendService } from './services/friend/friend.service';
 @Module({
   imports: [
     ConfigModule.forRoot(),
@@ -65,7 +67,8 @@ import { CacheModule } from '@nestjs/cache-manager';
     MessageController,
     OauthController,
     ProfileController,
-    RabbitmqController
+    RabbitmqController,
+    FriendController
   ],
   providers: [
     AppService,
@@ -75,6 +78,7 @@ import { CacheModule } from '@nestjs/cache-manager';
     EventsGateway,
     ProfileService,
     RedisService,
+    FriendService,
   ]
 })
 export class AppModule implements NestModule{
