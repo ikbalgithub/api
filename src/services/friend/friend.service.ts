@@ -13,13 +13,13 @@ import { Friend } from 'src/schemas/friend.schema';
       [
         {
           updateMany:{
-            filter:{reference:params.to},
+            filter:{reference:params.from},
             update:{$push:{list:{...pending}}}
           }
         },
         {
           updateMany:{
-            filter:{reference:params.from},
+            filter:{reference:params.to},
             update:{$push:{list:{...requested}}}
           }
         }
