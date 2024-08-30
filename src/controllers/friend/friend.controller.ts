@@ -34,6 +34,47 @@ class RequestDto{
     }
   }
 
+  @Post('/accept')
+  @UseGuards(AuthGuard)
+  async accepts(@Body() dto:any,@Request() request,@Res() response){
+    try{
+      var [user1] = await this.friendSvc.setAsAccepted(
+        new Types.ObjectId(request.user._id),
+        new Types.ObjectId(dto._id)
+      )
+
+      var [user2] = await this.friendSvc.setAsAccepted(
+        new Types.ObjectId(dto._id),
+        new Types.ObjectId(request.user._id)
+      )
+
+      var result = await this.friendSvc.accept(
+        [
+          {
+            _id:new Types.ObjectId(
+              request.user._id
+            ),
+            list:user1.list
+          },
+          {
+            _id:new Types.ObjectId(
+              dto._id,
+            ),
+            list:user2.list
+          }
+        ]
+      )
+
+      response.status(200).send(
+        result
+      )
+    }
+    catch(err:any){
+      new Logger('ERROR').error(err.message)
+      response.status(500).send(err.message)
+    }
+  }
+
   constructor(private friendSvc:FriendService){
     // inject friend service
   }

@@ -90,7 +90,7 @@ import { Aggregate,UpdateWriteOpResult } from 'mongoose'
         as:'friends'
       }},
       {$unwind:{
-        path:'$friends'
+        pcccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc ath:'$friends'
       }},
       {$addFields:{
         friends:{

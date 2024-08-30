@@ -26,4 +26,87 @@ import { Friend } from 'src/schemas/friend.schema';
       ]
     )
   }
+
+  async accept(params:{_id:Types.ObjectId,list:{status:string,with:Types.ObjectId}[]}[]){
+    return this.friend.bulkWrite(
+      [
+        {
+          updateMany:{
+            filter:{reference:params[0]._id},
+            update:{$set:{list:params[0].list}}
+          }
+        },
+        {
+          updateMany:{
+            filter:{reference:params[1]._id},
+            update:{$set:{list:params[1].list}}
+          }
+        }
+      ]
+    )
+  }
+
+  async setAsAccepted(reference:Types.ObjectId,_id:Types.ObjectId):Promise<Friend[]>{
+    return this.friend.aggregate(
+      [
+        {
+          $match:{
+            reference
+          }
+        },
+        {
+          $addFields:{
+            exclude:{
+              $filter:{
+                as:'e',
+                input:'$list',
+                cond:{$ne:['$$e.with',_id]}
+              }
+            }
+          }
+        },
+        {
+          $addFields:{
+            include:{
+              $filter:{
+                as:'e',
+                input:'$list',
+                cond:{$eq:['$$e.with',_id]}
+              }
+            }
+          }
+        },
+        {
+          $addFields:{
+            include:{
+              $map:{
+                as:'e',
+                input:'$include',
+                in:{
+                  with:_id,
+                  status:'accepted'
+                }
+              }
+            }     
+          }
+        },
+        {
+          $addFields:{
+            list:{
+              $concatArrays:[
+                '$exclude',
+                '$include'
+              ]
+            }
+          }
+        },
+        {
+          $project:{
+            exclude:0,
+            include:0
+          }
+        }
+      ]
+    )
+  }
 }
