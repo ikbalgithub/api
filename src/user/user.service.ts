@@ -7,8 +7,4 @@ import { Model } from 'mongoose';
   
   constructor(){}
 
-  async findByUsername(username:string):Promise<any[]>{
-    
-  }
-
 }
