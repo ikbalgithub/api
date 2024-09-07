@@ -24,6 +24,4 @@ import { UserService } from './user.service';
       id:'1234'
     }
   }
-
-  @Q
 }
