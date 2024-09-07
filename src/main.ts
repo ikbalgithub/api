@@ -12,7 +12,7 @@ import { Transport,MicroserviceOptions } from '@nestjs/microservices';
   app.enableCors(
     {
       credentials:true,
-      origin: ['api-production-bdf9.up.railway.app'],
+      origin: ['https://api-production-bdf9.up.railway.app'],
     }
   )
 
