@@ -25,6 +25,9 @@ import * as redisStore from 'cache-manager-redis-store'
 import { CacheModule } from '@nestjs/cache-manager';
 import { FriendController } from './controllers/friend/friend.controller';
 import { FriendService } from './services/friend/friend.service';
+import { GraphQLModule } from '@nestjs/graphql';
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
+import { UserModule } from './user/user.module';
 @Module({
   imports: [
     ConfigModule.forRoot(),
@@ -55,11 +58,18 @@ import { FriendService } from './services/friend/friend.service';
       secret:process.env.JWT_SECRET_KEY,
       global:true,
     }),
+    GraphQLModule.forRoot<ApolloDriverConfig>({
+      driver:ApolloDriver,
+      playground:true,
+      autoSchemaFile:'schema.gql',
+      include:[UserModule]
+    }),
     CacheModule.register<RedisClientOptions>({
       isGlobal:true,
       store:redisStore,
       url:'redis://default:idrQa2casLBSTccK475rLtHtifZlS4me@redis-19926.c8.us-east-1-3.ec2.redns.redis-cloud.com:19926/0',
-    })
+    }),
+    UserModule
   ],
   controllers: [
     AppController,
