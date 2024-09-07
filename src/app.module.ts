@@ -61,8 +61,9 @@ import { UserModule } from './user/user.module';
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver:ApolloDriver,
       playground:true,
+      introspection: true,
       autoSchemaFile:'schema.gql',
-      include:[UserModule]
+      include:[UserModule],
     }),
     CacheModule.register<RedisClientOptions>({
       isGlobal:true,

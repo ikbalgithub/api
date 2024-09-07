@@ -7,5 +7,5 @@ type User {
 }
 
 type Query {
-  test: User!
+  example: User!
 }
