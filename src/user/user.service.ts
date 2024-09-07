@@ -5,20 +5,10 @@ import { Model } from 'mongoose';
 
 @Injectable() export class UserService {
   
-  constructor(@InjectModel('User') private user: Model<User>){}
+  constructor(){}
 
   async findByUsername(username:string):Promise<any[]>{
-    return this.user.aggregate(
-      [
-        {
-          $match:{
-            $regex: new RegExp(
-              `^${username}`, "i"
-            )
-          }
-        }
-      ]
-    )
+    
   }
 
 }
