@@ -3,7 +3,10 @@
 # ------------------------------------------------------
 
 type User {
-  id: ID!
+  _id: ID!
+  oauthReference: String
+  username: String
+  password: String
 }
 
 type Query {
