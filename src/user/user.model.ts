@@ -6,11 +6,11 @@ import { Field, ID, ObjectType, } from '@nestjs/graphql';
   _id: Types.ObjectId
 
   @Field({nullable:true})
-  oauthReference?:string
+  oauthReference:string
   
   @Field({nullable:true}) 
-  username?:string
+  username:string
  
   @Field({nullable:true})
-  password?:string
+  password:string
 }

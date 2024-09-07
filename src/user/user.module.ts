@@ -7,13 +7,13 @@ import { Types } from 'mongoose';
 
 @Schema()
 export class User{
-  @Prop() _id:Types.ObjectId
+  @Prop({required:true}) _id:Types.ObjectId
   
-  @Prop() oauthReference?:string
+  @Prop({required:false}) oauthReference:string
   
-  @Prop() username?:string
+  @Prop({required:false}) username:string
  
-  @Prop() password?:string
+  @Prop({required:false}) password:string
 }
 
 @Module({
