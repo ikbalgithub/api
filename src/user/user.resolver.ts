@@ -22,7 +22,7 @@ import { UserService } from './user.service';
   @Query(r => User) async test(){
     try{
       var r = await promiseTest(
-        true
+        false
       )
 
       return r
