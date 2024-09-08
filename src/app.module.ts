@@ -65,10 +65,7 @@ import { ProfileModule } from './profile/profile.module';
       introspection: true,
       autoSchemaFile:'schema.gql',
       include:[UserModule,ProfileModule],
-      context:({req}) => ({
-        headers:req.headers,
-        user:req.user
-      })
+      context: ({req,res}) => ({req,res}),
     }),
     CacheModule.register<RedisClientOptions>({
       isGlobal:true,

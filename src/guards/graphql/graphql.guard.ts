@@ -1,11 +1,13 @@
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
+import { GqlExecutionContext } from '@nestjs/graphql';
 import { JwtService } from '@nestjs/jwt';
 
 
 @Injectable() export class GraphqlGuard implements CanActivate {
   
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const request = context.switchToRpc().getContext()
+    const ctx = GqlExecutionContext.create(context)
+    const request = ctx.getContext().req
     const secret = process.env.JWT_SECRET_KEY
     const headers = request.headers
     const authorization = headers?.authorization
