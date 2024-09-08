@@ -5,7 +5,7 @@ import { UserService } from './user.service';
 @Resolver(of => User) export class UserResolver {
   constructor(private service:UserService) {}
 
-  @Query(r => User) async findByName(){
+  @Query(r => [User]) async findByName(){
     return await this.service.findByUsername(
       'u1'
     )
