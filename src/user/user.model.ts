@@ -8,7 +8,7 @@ import { Field, ID, ObjectType, } from '@nestjs/graphql';
   @Field({nullable:true})
   oauthReference:string
   
-  @Field({nullable:true}) 
+  @Field({nullable:false}) 
   username:string
  
   @Field({nullable:true})
