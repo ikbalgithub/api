@@ -3,12 +3,12 @@ import { User } from './user.model';
 import { UserService } from './user.service';
 import { GraphQLError } from 'graphql';
 
-@Resolver(r => [User]) export class UserResolver {
-  constructor(private service:UserService) {}
+@Resolver() export class UserResolver {
+  constructor(private readonly userService:UserService) {}
 
   @Query(r => [User]) async findByUsername(@Args('u') u:string){
     try{
-      return await this.service.findByUsername(
+      return await this.userService.findByUsername(
         u
       )
     }

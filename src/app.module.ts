@@ -28,6 +28,7 @@ import { FriendService } from './services/friend/friend.service';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { UserModule } from './user/user.module';
+import { ProfileModule } from './profile/profile.module';
 @Module({
   imports: [
     ConfigModule.forRoot(),
@@ -70,7 +71,8 @@ import { UserModule } from './user/user.module';
       store:redisStore,
       url:'redis://default:idrQa2casLBSTccK475rLtHtifZlS4me@redis-19926.c8.us-east-1-3.ec2.redns.redis-cloud.com:19926/0',
     }),
-    UserModule
+    UserModule,
+    ProfileModule
   ],
   controllers: [
     AppController,
