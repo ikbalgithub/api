@@ -14,8 +14,5 @@ import { Profile } from 'src/profile/profile.model';
  
   @Field({nullable:true})
   password:string
-
-  @Field({nullable:true})
-  profile:Profile
 }
 
