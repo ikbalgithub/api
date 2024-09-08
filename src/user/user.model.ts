@@ -16,6 +16,5 @@ import { Profile } from 'src/profile/profile.model';
   password:string
 
   @Field({nullable:true})
-  profile:Profile
+  profile:{}
 }
-
