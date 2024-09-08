@@ -25,10 +25,10 @@ import { GraphQLError } from 'graphql';
         false
       )
 
-      return r
+      return r ? r : []
     }
     catch(err:any){
-      return err.message
+      throw new GraphQLError(err.message)
     }
   }
 }
