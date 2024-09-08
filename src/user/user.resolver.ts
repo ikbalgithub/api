@@ -1,12 +1,20 @@
-import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Context, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { User } from './user.model';
 import { UserService } from './user.service';
 import { GraphQLError } from 'graphql';
+import { UseGuards } from '@nestjs/common';
+import { GraphqlGuard } from 'src/guards/graphql/graphql.guard';
 
 @Resolver() export class UserResolver {
   constructor(private readonly userService:UserService) {}
 
-  @Query(r => [User]) async findByUsername(@Args('u') u:string){
+  @Query(r => [User]) @UseGuards(GraphqlGuard) async findByUsername(@Context() ctx, @Args('u') u:string){
+    console.log(
+      {
+        ctx
+      }
+    )
+    
     try{
       return await this.userService.findByUsername(
         u
