@@ -64,7 +64,7 @@ import { ProfileModule } from './profile/profile.module';
       playground:true,
       introspection: true,
       autoSchemaFile:'schema.gql',
-      include:[UserModule],
+      include:[UserModule,ProfileModule],
     }),
     CacheModule.register<RedisClientOptions>({
       isGlobal:true,
