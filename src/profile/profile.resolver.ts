@@ -4,6 +4,6 @@ import { ProfileService } from './profile.service';
 import { GraphQLError } from 'graphql';
 
 @Resolver() export class ProfileResolver {
-  constructor(private readonly profileService:ProfileService) {}
+  constructor() {}
 
 }
