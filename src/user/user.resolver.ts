@@ -16,21 +16,6 @@ import { GraphQLError } from 'graphql';
       throw new GraphQLError(err.message)
     }
   }
-
-  @Query(r => User) async test(){
-    try{
-      var r = await promiseTest(
-        false
-      )
-
-      return r
-    }
-    catch(err:any){
-      throw new GraphQLError(
-        err.message
-      )
-    }
-  }
 }
 
 function promiseTest(testValue:boolean){
