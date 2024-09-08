@@ -11,7 +11,7 @@ import { GraphqlGuard } from 'src/guards/graphql/graphql.guard';
   @Query(r => [User]) @UseGuards(GraphqlGuard) async findByUsername(@Context() ctx, @Args('u') u:string){
     console.log(
       {
-        ctx
+        ...ctx.req.user
       }
     )
     
