@@ -22,13 +22,13 @@ import { GraphQLError } from 'graphql';
   @Query(r => User) async test(){
     try{
       var r = await promiseTest(
-        true
+        false
       )
 
       return r
     }
     catch(err:any){
-      throw new GraphQLError(err.message)
+      throw new Error(err.message)
     }
   }
 }
