@@ -6,7 +6,7 @@ import { GraphQLError } from 'graphql';
 @Resolver(r => [User]) export class UserResolver {
   constructor(private service:UserService) {}
 
-  @Query(r => [User]) async findByUsername(u:string){
+  @Query(r => [User]) async findByUsername(@Args() u:string){
     try{
       return await this.service.findByUsername(
         u
