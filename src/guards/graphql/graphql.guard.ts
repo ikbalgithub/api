@@ -5,8 +5,7 @@ import { JwtService } from '@nestjs/jwt';
 @Injectable() export class GraphqlGuard implements CanActivate {
   
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const ctx = context.switchToRpc().getContext()
-    const request = ctx.getRequest()
+    const request = context.switchToRpc().getContext()
     const secret = process.env.JWT_SECRET_KEY
     const headers = request.headers
     const authorization = headers.authorization
