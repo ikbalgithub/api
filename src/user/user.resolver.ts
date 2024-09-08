@@ -15,7 +15,7 @@ import { UserService } from './user.service';
     }
     catch(err:any){
       console.log(err.message)
-      return err.message
+      throw new Error('Terjadi kesalahan saat mengambil data');
     }
   }
 
