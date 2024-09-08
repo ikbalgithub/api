@@ -22,7 +22,7 @@ import { GraphQLError } from 'graphql';
   @Query(r => User) async test(){
     try{
       var r = await promiseTest(
-        false
+        true
       )
 
       return r
