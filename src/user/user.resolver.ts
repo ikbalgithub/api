@@ -28,7 +28,9 @@ import { GraphQLError } from 'graphql';
       return r
     }
     catch(err:any){
-      throw new Error('request error')
+      throw new GraphQLError(
+        'request error'
+      )
     }
   }
 }
