@@ -16,6 +16,15 @@ import { User } from './user.module';
             )
           }
         }},
+        {$lookup:{
+          from:'profiles',
+          localField:'_id',
+          foreignField:'usersRef',
+          as:'profile'
+        }},
+        {$unwind:{
+          path:'$profile'
+        }},
         {$project:{
           username:0,
           password:0,

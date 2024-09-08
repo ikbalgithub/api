@@ -1,5 +1,6 @@
 import { Types } from 'mongoose'
 import { Field, ID, ObjectType, } from '@nestjs/graphql';
+import { Profile } from 'src/profile/profile.model';
 
 @ObjectType() export class User {
   @Field(r => ID)
@@ -8,9 +9,13 @@ import { Field, ID, ObjectType, } from '@nestjs/graphql';
   @Field({nullable:true})
   oauthReference:string
   
-  @Field({nullable:false}) 
+  @Field({nullable:true}) 
   username:string
  
   @Field({nullable:true})
   password:string
+
+  @Field({nullable:true})
+  profile:Profile
 }
+
