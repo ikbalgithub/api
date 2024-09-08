@@ -2,7 +2,7 @@ import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { User } from './user.model';
 import { UserService } from './user.service';
 
-@Resolver(of => User) export class UserResolver {
+@Resolver(r => User) export class UserResolver {
   constructor(private service:UserService) {}
 
   @Query(r => [User]) async findByUsername(){
@@ -28,7 +28,7 @@ import { UserService } from './user.service';
       return r
     }
     catch(err:any){
-
+      return err.message
     }
   }
 }
