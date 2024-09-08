@@ -15,6 +15,11 @@ import { User } from './user.module';
               `^${username}`,"i"
             )
           }
+        }},
+        {$project:{
+          username:0,
+          password:0,
+          oauthReference:0
         }}
       ]
     )

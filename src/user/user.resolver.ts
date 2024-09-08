@@ -17,16 +17,3 @@ import { GraphQLError } from 'graphql';
     }
   }
 }
-
-function promiseTest(testValue:boolean){
-  return new Promise((resolve,reject) => {
-    if(testValue) resolve(
-      {
-        _id:'1234'
-      }
-    )
-    if(!testValue) reject(
-      'test error'
-    )
-  })
-}
