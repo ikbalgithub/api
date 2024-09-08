@@ -14,6 +14,6 @@ import { Field, ID, ObjectType, } from '@nestjs/graphql';
   @Field({nullable:false})
   surname:string
 
-  @Field({nullable:false})
+  @Field(r => ID,{nullable:false})
   usersRef:Types.ObjectId
 }
