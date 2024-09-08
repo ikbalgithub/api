@@ -12,7 +12,7 @@ import { GraphQLError } from 'graphql';
         'u1'
       )
 
-      return r
+      return r ? r : []
     }
     catch(err:any){
       throw new GraphQLError(err.message)
