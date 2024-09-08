@@ -8,7 +8,7 @@ import { JwtService } from '@nestjs/jwt';
     const request = context.switchToRpc().getContext()
     const secret = process.env.JWT_SECRET_KEY
     const headers = request.headers
-    const authorization = headers.authorization
+    const authorization = headers?.authorization
     var restricted:boolean = false
 
     if(!authorization){
