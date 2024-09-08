@@ -7,7 +7,6 @@ import { JwtService } from '@nestjs/jwt';
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToRpc().getContext()
     const secret = process.env.JWT_SECRET_KEY
-    console.log(request)
     const headers = request.headers
     const authorization = headers?.authorization
     var restricted:boolean = false
