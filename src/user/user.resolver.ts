@@ -1,8 +1,9 @@
 import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { User } from './user.model';
 import { UserService } from './user.service';
+import { GraphQLError } from 'graphql';
 
-@Resolver(r => User) export class UserResolver {
+@Resolver(r => [User]) export class UserResolver {
   constructor(private service:UserService) {}
 
   @Query(r => [User]) async findByUsername(){
@@ -14,8 +15,7 @@ import { UserService } from './user.service';
       return r
     }
     catch(err:any){
-      console.log(err.message)
-      throw new Error('Terjadi kesalahan saat mengambil data');
+      throw new GraphQLError(err.message)
     }
   }
 
