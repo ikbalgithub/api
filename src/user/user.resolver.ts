@@ -8,7 +8,7 @@ import { GraphQLError } from 'graphql';
 
   @Query(r => [User]) async findByUsername(u:string){
     try{
-      return await this.findByUsername(
+      return await this.service.findByUsername(
         u
       )
     }
