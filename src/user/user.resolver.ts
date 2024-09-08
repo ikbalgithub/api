@@ -6,13 +6,11 @@ import { GraphQLError } from 'graphql';
 @Resolver(r => [User]) export class UserResolver {
   constructor(private service:UserService) {}
 
-  @Query(r => [User]) async findByUsername(){
+  @Query(r => [User]) async findByUsername(u:string){
     try{
-      var r = await this.service.findByUsername(
-        'u1'
+      return await this.findByUsername(
+        u
       )
-
-      return r ? r : []
     }
     catch(err:any){
       throw new GraphQLError(err.message)
