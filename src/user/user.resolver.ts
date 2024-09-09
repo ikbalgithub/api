@@ -14,9 +14,24 @@ import { MessageService } from 'src/message/message.service'
 
   @Query(r => [Search]) @UseGuards(GraphqlGuard) async findByUsername(@Context() ctx, @Args('u') u:string){
     try{
-      return await this.userService.findByUsername(
-        u,new Types.ObjectId(ctx.req.user._id)
-      )
+      var _id = new Types.ObjectId(ctx.req.user._id)
+      var result =  await this.userService.findByUsername(u,_id)
+      var references = result.map(({profile}) => profile.usersRef)
+      var messages = await this.messageService.getLast(references,_id)
+
+      return result.map(({profile}) => {
+        var [filter] = messages.filter(message => {
+          var eq1 = profile.usersRef.equals(
+            message.sender
+          )
+
+          var eq2 = profile.usersRef.equals(
+            message.accept
+          )
+
+          return eq1 || eq2
+        })
+      })
     }
     catch(err:any){
       throw new GraphQLError(err.message)

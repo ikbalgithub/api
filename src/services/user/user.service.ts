@@ -67,7 +67,8 @@ import { Aggregate,UpdateWriteOpResult } from 'mongoose'
       {$match:{
         username:{
           $regex: new RegExp(
-            `^${username}`, "i"
+            `^${username}`,
+            "i"
           )
         },
         _id:{
