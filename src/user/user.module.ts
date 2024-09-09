@@ -3,6 +3,7 @@ import { UserResolver } from './user.resolver';
 import { UserService } from './user.service';
 import { MongooseModule, Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Types } from 'mongoose';
+import { MessageModule } from 'src/message/message.module';
 
 
 @Schema()

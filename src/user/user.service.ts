@@ -28,32 +28,6 @@ import { User } from './user.module';
         {$unwind:{
           path:'$profile'
         }},
-        {$lookup:{
-          from:'messages',
-          as:'messages'
-        }},
-        {
-          $addFields:{
-            messages:{
-              $filter:{
-                as:'message',
-                input:'$messages',
-                cond:{
-                  $or:[
-                    {
-                      sender:'$$ROOT._id',
-                      accept:user
-                    },
-                    {
-                      accept:user,
-                      sender:'$$ROOT._id'
-                    }
-                  ]
-                }
-              }
-            }
-          }
-        },
         {$project:{
           username:0,
           password:0,
