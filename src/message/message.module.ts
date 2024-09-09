@@ -6,6 +6,7 @@ import { MessageService } from './message.service';
     MessageService
   ],
   exports:[
+    MessageService
   ]
 })
 export class MessageModule {}
