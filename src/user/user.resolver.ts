@@ -1,11 +1,11 @@
-import { Args, Context, Int, Mutation, ObjectType, Query, Resolver } from '@nestjs/graphql';
+import { Args, Context, Field, Int, Mutation, ObjectType, Query, Resolver } from '@nestjs/graphql';
 import { User } from './user.model';
 import { UserService } from './user.service';
 import { GraphQLError } from 'graphql';
 import { UseGuards } from '@nestjs/common';
 import { GraphqlGuard } from 'src/guards/graphql/graphql.guard';
 import { Types } from 'mongoose';
-import { Profile } from 'src/schemas/profile.schema';
+import { Profile } from 'src/profile/profile.model';
 
 @Resolver() export class UserResolver {
   constructor(private readonly userService:UserService) {}
@@ -23,6 +23,7 @@ import { Profile } from 'src/schemas/profile.schema';
 }
 
 @ObjectType() class Search extends User{
+  @Field(r => Profile,{nullable:false})
   profile:Profile
 }
 
