@@ -10,7 +10,7 @@ import { Message } from 'src/message/message.model';
 import { MessageService } from 'src/message/message.service'
 
 @Resolver() export class UserResolver {
-  constructor(private readonly userService:UserService) {}
+  constructor(private readonly userService:UserService,private readonly messageService:MessageService) {}
 
   @Query(r => [Search]) @UseGuards(GraphqlGuard) async findByUsername(@Context() ctx, @Args('u') u:string){
     try{
