@@ -45,10 +45,15 @@ import { MessageService } from 'src/message/message.service'
   }
 }
 
+@ObjectType() class Last extends Message{
+  @Field({nullable:false})
+  unreadCounter:number
+}
+
 @ObjectType() class Search extends User{
   @Field(r => Profile,{nullable:false})
   profile:Profile
-  @Field(r => Message,{nullable:true})
+  @Field(r => Last,{nullable:true})
   message:Message
 }
 

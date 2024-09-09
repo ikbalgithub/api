@@ -6,7 +6,7 @@ import { Aggregate, Model, Types } from 'mongoose';
 @Injectable() export class MessageService {
   constructor(@InjectModel('Message') private message: Model<Message>){}
 
-  getLast(references:Types.ObjectId[],user:Types.ObjectId):Aggregate<Message[]>{
+  getLast(references:Types.ObjectId[],user:Types.ObjectId):Aggregate<(Message&{unreadCounter:number})[]>{
     var sender = { $in:references }
     var accept = { $in:references }
 
