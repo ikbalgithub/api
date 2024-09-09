@@ -19,7 +19,7 @@ import { MessageService } from 'src/message/message.service'
       var references = result.map(({profile}) => profile.usersRef)
       var messages = await this.messageService.getLast(references,_id)
 
-      return result.map(({profile}) => {
+      return result.map(({_id,profile}) => {
         var [filter] = messages.filter(message => {
           var eq1 = profile.usersRef.equals(
             message.sender
@@ -33,6 +33,7 @@ import { MessageService } from 'src/message/message.service'
         })
 
         return {
+          _id,
           profile,
           message:filter
         }
