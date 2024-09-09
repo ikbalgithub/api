@@ -23,7 +23,7 @@ import { Types } from 'mongoose';
         schema:SchemaFactory.createForClass(Message)
       }
     ])
-  ]
+  ],
   providers:[
     MessageService
   ],
