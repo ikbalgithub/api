@@ -42,8 +42,6 @@ import { MessageService } from 'src/message/message.service'
 @ObjectType() class Search extends User{
   @Field(r => Profile,{nullable:false})
   profile:Profile
-  @Field(r => [Message],{nullable:true})
-  messages:Message[]
 }
 
 
