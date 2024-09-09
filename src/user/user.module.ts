@@ -19,6 +19,7 @@ export class User{
 
 @Module({
   imports:[
+    MessageModule,
     MongooseModule.forFeature(
       [
         {
