@@ -7,7 +7,7 @@ import { GraphqlGuard } from 'src/guards/graphql/graphql.guard';
 import { Types } from 'mongoose';
 import { Profile } from 'src/profile/profile.model';
 import { Message } from 'src/message/message.model';
-import { MessageService } from 'src/services/message/message.service';
+import { MessageService } from 'src/message/message.service'
 
 @Resolver() export class UserResolver {
   constructor(private readonly userService:UserService) {}
