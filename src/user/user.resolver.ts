@@ -6,6 +6,7 @@ import { UseGuards } from '@nestjs/common';
 import { GraphqlGuard } from 'src/guards/graphql/graphql.guard';
 import { Types } from 'mongoose';
 import { Profile } from 'src/profile/profile.model';
+import { Message } from 'src/message/message.model';
 
 @Resolver() export class UserResolver {
   constructor(private readonly userService:UserService) {}
@@ -25,6 +26,8 @@ import { Profile } from 'src/profile/profile.model';
 @ObjectType() class Search extends User{
   @Field(r => Profile,{nullable:false})
   profile:Profile
+  @Field(r => [Message],{nullable:true})
+  messages:Message[]
 }
 
 
