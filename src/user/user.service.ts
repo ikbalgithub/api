@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { User } from './user.module';
 
 @Injectable() export class UserService {
   constructor(@InjectModel('User') private user: Model<User>){}
 
-  async findByUsername(username:string){
+  async findByUsername(username:string,user:Types.ObjectId){
     return this.user.aggregate(
       [
         {$match:{
@@ -14,6 +14,9 @@ import { User } from './user.module';
             $regex: new RegExp(
               `^${username}`,"i"
             )
+          },
+          _id:{
+            $ne:user
           }
         }},
         {$lookup:{
