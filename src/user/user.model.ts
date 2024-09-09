@@ -15,12 +15,5 @@ import { Message } from 'src/message/message.model';
  
   @Field({nullable:true})
   password:string
-
-  @Field(r => Profile,{nullable:true})
-  profile:Profile
-}
-
-@ObjectType() export class Search extends User{
-
 }
 
