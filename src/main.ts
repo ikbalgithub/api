@@ -14,6 +14,7 @@ import { Transport,MicroserviceOptions } from '@nestjs/microservices';
       credentials:true,
       origin: [
         'https://api-production-bdf9.up.railway.app',
+        'https://4200-idx-messenger-1724914463934.cluster-e3wv6awer5h7kvayyfoein2u4a.cloudworkstations.dev',
         'https://ngx-messenger.vercel.app'
       ],
     }
