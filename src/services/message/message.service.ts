@@ -17,10 +17,8 @@ import { Aggregate,UpdateWriteOpResult } from 'mongoose'
   }
 
   getRecently<Filter>(filter:Filter):Aggregate<Last_Message[]>{
-    var $or = Object.keys(filter).map(key => ({
-      [key]:filter[key]
-    }))
-    
+    var $or = Object.keys(filter).map(k => ({[k]:filter[k]}))
+
     return this.message.aggregate([
       {$match:{
         $or

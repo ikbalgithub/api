@@ -6,6 +6,59 @@ import { Aggregate, Model, Types } from 'mongoose';
 @Injectable() export class MessageService {
   constructor(@InjectModel('Message') private message: Model<Message>){}
 
+  getRecently(filter:{sender:Types.ObjectId,accept:Types.ObjectId}){
+    var $or = Object.keys(filter).map(k => ({[k]:filter[k]}))
+
+    return this.message.aggregate([
+      {$match:{
+        $or
+      }}, 
+      {$group:{
+        _id:"$groupId",
+        sender:{$last:'$sender'}, 
+        value:{$last:'$value'},
+        groupId:{$last:'$groupId'}, 
+        accept:{$last:'$accept'},
+        sendAt:{$last:'$sendAt'}, 
+        read:{$last:'$read'}, 
+        contentType:{$last:'$contentType'}, 
+        description:{$last:'$description'}, 
+        unreadCounter:{
+          $sum:{
+            $cond:{
+              if:{
+                $eq:[
+                  '$read', 
+                  false
+                ]
+              }, 
+              then:1, 
+              else:0
+            }
+          }
+        }
+      }}, 
+      {$lookup:{
+        from:"profiles",
+        as:"sender.profile",
+        localField:"sender",
+        foreignField:"usersRef"
+      }},
+      {$lookup:{
+        from:"profiles",
+        as:"accept.profile",
+        localField:"accept",
+        foreignField:"usersRef"
+      }},
+      {$unwind:{
+        path:"$sender.profile"
+      }},
+      {$unwind:{
+        path:"$accept.profile"
+      }}
+    ])
+  }
+
   getLast(references:Types.ObjectId[],user:Types.ObjectId):Aggregate<(Message&{unreadCounter:number})[]>{
     var sender = { $in:references }
     var accept = { $in:references }
