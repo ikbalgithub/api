@@ -65,7 +65,7 @@ import { MessageModule } from './message/message.module';
       playground:true,
       introspection: true,
       autoSchemaFile:'schema.gql',
-      include:[UserModule,ProfileModule],
+      include:[UserModule,ProfileModule,MessageModule],
       context: ({req,res}) => ({req,res}),
     }),
     CacheModule.register<RedisClientOptions>({

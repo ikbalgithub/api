@@ -2,7 +2,7 @@ import { Types } from 'mongoose'
 import { Field, ID, ObjectType, } from '@nestjs/graphql';
 
 @ObjectType() export class Profile {
-  @Field(r => ID)
+  @Field(r => ID,{nullable:true})
   _id: Types.ObjectId
   
   @Field({nullable:false})
@@ -14,6 +14,6 @@ import { Field, ID, ObjectType, } from '@nestjs/graphql';
   @Field({nullable:false})
   surname:string
 
-  @Field(r => ID,{nullable:false})
+  @Field(r => ID,{nullable:true})
   usersRef:Types.ObjectId
 }

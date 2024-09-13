@@ -2,13 +2,60 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type User {
+type Profile {
+  _id: ID
+  profileImage: String!
+  firstName: String!
+  surname: String!
+  usersRef: ID
+}
+
+type LastMessage {
+  _id: ID!
+  sender: ID!
+  value: String!
+  groupId: ID
+  accept: ID
+  sendAt: Float
+  read: Boolean
+  contentType: String
+  description: String
+  unreadCounter: Float!
+}
+
+type I {
   _id: ID!
   oauthReference: String
   username: String
   password: String
+  profile: Profile!
+  message: LastMessage
+}
+
+type Sender {
+  _id: ID!
+  profile: Profile!
+}
+
+type Accept {
+  _id: ID!
+  profile: Profile!
+}
+
+type Last {
+  _id: ID!
+  sender: Sender!
+  value: String!
+  groupId: ID
+  accept: Accept!
+  sendAt: Float
+  read: Boolean
+  contentType: String
+  description: String
+  unreadCounter: Int!
 }
 
 type Query {
-  example: User!
+  fetchHistory: [Last!]!
+  findByUsername(u: String!): [I!]!
 }

@@ -1,4 +1,4 @@
-import { Args, Context, Field, Int, InterfaceType, Mutation, ObjectType, Query, Resolver } from '@nestjs/graphql';
+import { Args, Context, Field, ID, Int, InterfaceType, Mutation, ObjectType, Query, Resolver } from '@nestjs/graphql';
 import { GraphQLError } from 'graphql';
 import { UseGuards } from '@nestjs/common';
 import { GraphqlGuard } from 'src/guards/graphql/graphql.guard';
@@ -7,10 +7,10 @@ import { Profile } from 'src/profile/profile.model';
 import { Message } from 'src/message/message.model';
 import { MessageService } from 'src/message/message.service'
 
-@Resolver() export class UserResolver {
+@Resolver() export class MessageResolver {
   constructor(private readonly messageService:MessageService) {}
 
-  @Query(r => [Last]) @UseGuards(GraphqlGuard) async findByUsername(@Context() ctx){
+  @Query(r => [Last]) @UseGuards(GraphqlGuard) async fetchHistory(@Context() ctx){
     try{
       return await this.messageService.getRecently(
         {
@@ -30,11 +30,15 @@ import { MessageService } from 'src/message/message.service'
 }
 
 @ObjectType() class Sender{
+  @Field(r => ID)
+  _id:Types.ObjectId
   @Field(r => Profile,{nullable:false})
   profile:Profile
 }
 
 @ObjectType() class Accept{
+  @Field(r => ID)
+  _id:Types.ObjectId
   @Field(r => Profile,{nullable:false})
   profile:Profile
 }

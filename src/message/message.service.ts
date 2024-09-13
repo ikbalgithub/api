@@ -55,6 +55,14 @@ import { Aggregate, Model, Types } from 'mongoose';
       }},
       {$unwind:{
         path:"$accept.profile"
+      }},
+      {$addFields:{
+        'sender._id':'$sender.profile.usersRef',
+        'accept._id':'$accept.profile.usersRef'
+      }},
+      {$project:{
+        'sender.profile._id':0,
+        'sender.profile.usersRef':0
       }}
     ])
   }

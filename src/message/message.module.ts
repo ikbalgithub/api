@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { MessageService } from './message.service';
 import { MongooseModule, Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Types } from 'mongoose';
+import { MessageResolver } from './message.resolver';
 
 @Schema() export class Message{
   @Prop({required:true}) _id:Types.ObjectId
@@ -25,7 +26,8 @@ import { Types } from 'mongoose';
     ])
   ],
   providers:[
-    MessageService
+    MessageService,
+    MessageResolver
   ],
   exports:[
     MessageService
