@@ -10,7 +10,7 @@ import { MessageService } from 'src/message/message.service'
 @Resolver() export class MessageResolver {
   constructor(private readonly messageService:MessageService) {}
 
-  @Query(r => [Last]) @UseGuards(GraphqlGuard) async fetchHistory(@Context() ctx){
+  @Query(r => [M]) @UseGuards(GraphqlGuard) async fetchHistory(@Context() ctx){
     try{
       return await this.messageService.getRecently(
         {
@@ -43,9 +43,12 @@ import { MessageService } from 'src/message/message.service'
   profile:Profile
 }
 
-@ObjectType() class Last extends Message<Sender,Accept>{ 
+@ObjectType() class M extends Message<Sender,Accept>{ 
   @Field(r => Sender)
   sender:Sender
   @Field({nullable:false})
   sentByOwn:boolean
+  @Field({nullable:false})
+  unreadCounter:number
 }
+

@@ -6,6 +6,8 @@ import { Aggregate, Model, Types } from 'mongoose';
 @Injectable() export class MessageService {
   constructor(@InjectModel('Message') private message: Model<Message>){}
 
+  // fungsi ini bertujuan mengembalikan daftar riwayat interaksi terakhir
+
   getRecently(filter:{sender:Types.ObjectId,accept:Types.ObjectId}){
     var $or = Object.keys(filter).map(k => ({[k]:filter[k]}))
 
@@ -85,6 +87,8 @@ import { Aggregate, Model, Types } from 'mongoose';
     ])
   }
 
+  // fungsi ini bertujuan mencari tahu interakasi terakhir user dengan salah seorang user yang lain
+
   getLast(references:Types.ObjectId[],user:Types.ObjectId):Aggregate<(Message&{unreadCounter:number})[]>{
     var sender = { $in:references }
     var accept = { $in:references }
@@ -126,6 +130,36 @@ import { Aggregate, Model, Types } from 'mongoose';
             }
           }
         }
+      }}
+    ])
+  }
+
+  // fungsi ini bertujuan memperluas suatu objek pesan
+
+  populate(_id:Types.ObjectId){
+    return this.message.aggregate([
+      {$match:{
+        _id
+      }},
+      {$addFields:{
+        sentByOwn:false
+      }},,
+      {$lookup:{
+        from:"profiles",
+        as:"sender.profile",
+        localField:"accept",
+        foreignField:"usersRef"
+      }},
+      {$unwind:{
+        path:"$sender.profile"
+      }},
+      {$addFields:{
+        'sender._id':'$sender.profile.usersRef'
+      }},
+      {$project:{
+        'accept':0,
+        'sender.profile._id':0,
+        'sender.profile.usersRef':0
       }}
     ])
   }

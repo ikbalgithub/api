@@ -12,7 +12,7 @@ import { MessageService } from 'src/message/message.service'
 @Resolver() export class UserResolver {
   constructor(private readonly userService:UserService,private readonly messageService:MessageService) {}
 
-  @Query(r => [I]) @UseGuards(GraphqlGuard) async findByUsername(@Context() ctx, @Args('u') u:string){
+  @Query(r => [U]) @UseGuards(GraphqlGuard) async findByUsername(@Context() ctx, @Args('u') u:string){
     try{
       var _id = new Types.ObjectId(ctx.req.user._id)
       var result =  await this.userService.findByUsername(u,_id)
@@ -45,16 +45,16 @@ import { MessageService } from 'src/message/message.service'
   }
 }
 
-@ObjectType() class LastMessage extends Message<Types.ObjectId,Types.ObjectId>{
+@ObjectType() class Last extends Message<Types.ObjectId,Types.ObjectId>{
   @Field({nullable:false})
   unreadCounter:number
 }
 
-@ObjectType() class I extends User{
+@ObjectType() class U extends User{
   @Field(r => Profile,{nullable:false})
   profile:Profile
-  @Field(r => LastMessage,{nullable:true})
-  message:LastMessage
+  @Field(r => Last,{nullable:true})
+  message:Last
 }
 
 

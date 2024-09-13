@@ -10,7 +10,7 @@ type Profile {
   usersRef: ID
 }
 
-type LastMessage {
+type Last {
   _id: ID!
   sender: ID!
   value: String!
@@ -23,13 +23,13 @@ type LastMessage {
   unreadCounter: Float!
 }
 
-type I {
+type U {
   _id: ID!
   oauthReference: String
   username: String
   password: String
   profile: Profile!
-  message: LastMessage
+  message: Last
 }
 
 type Sender {
@@ -37,7 +37,7 @@ type Sender {
   profile: Profile!
 }
 
-type Last {
+type M {
   _id: ID!
   sender: Sender!
   value: String!
@@ -48,9 +48,10 @@ type Last {
   contentType: String
   description: String
   sentByOwn: Boolean!
+  unreadCounter: Float!
 }
 
 type Query {
-  fetchHistory: [Last!]!
-  findByUsername(u: String!): [I!]!
+  fetchHistory: [M!]!
+  findByUsername(u: String!): [U!]!
 }
