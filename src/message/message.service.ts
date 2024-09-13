@@ -37,7 +37,16 @@ import { Aggregate, Model, Types } from 'mongoose';
             }
           }
         }
-      }}, 
+      }},
+      {$addFields:{
+        sentByOwn:{
+          $cond:{
+            if:{$eq:['$sender',filter.sender]},
+            then:true,
+            else:false
+          }
+        }
+      }},
       {$lookup:{
         from:"profiles",
         as:"sender.profile",
@@ -57,10 +66,19 @@ import { Aggregate, Model, Types } from 'mongoose';
         path:"$accept.profile"
       }},
       {$addFields:{
-        'sender._id':'$sender.profile.usersRef',
-        'accept._id':'$accept.profile.usersRef'
+        'sender.profile':{
+          cond:{
+            if:{$eq:['$sentByOwn',true]},
+            then:'$sender.profile',
+            false:'$accept.profile'
+          }
+        }
+      }},
+      {$addFields:{
+        'sender._id':'$sender.profile.usersRef'
       }},
       {$project:{
+        'accept':0,
         'sender.profile._id':0,
         'sender.profile.usersRef':0
       }}

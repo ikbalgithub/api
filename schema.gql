@@ -37,22 +37,17 @@ type Sender {
   profile: Profile!
 }
 
-type Accept {
-  _id: ID!
-  profile: Profile!
-}
-
 type Last {
   _id: ID!
   sender: Sender!
   value: String!
   groupId: ID
-  accept: Accept!
+  accept: ID
   sendAt: Float
   read: Boolean
   contentType: String
   description: String
-  unreadCounter: Int!
+  sentByOwn: Boolean!
 }
 
 type Query {

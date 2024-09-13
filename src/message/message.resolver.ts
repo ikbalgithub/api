@@ -46,8 +46,6 @@ import { MessageService } from 'src/message/message.service'
 @ObjectType() class Last extends Message<Sender,Accept>{ 
   @Field(r => Sender)
   sender:Sender
-  @Field(r => Accept)
-  accept:Accept
-  @Field(r => Int)
-  unreadCounter:number
+  @Field({nullable:false})
+  sentByOwn:boolean
 }
