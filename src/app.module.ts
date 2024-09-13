@@ -8,7 +8,6 @@ import { Profile,profileSchema } from './schemas/profile.schema'
 import { Friend,friendSchema } from './schemas/friend.schema'
 import { AppService } from './app.service';
 import { UserService } from './services/user/user.service';
-import { RabbitmqController } from './controllers/rabbitmq/rabbitmq.controller';
 import { UserController } from './controllers/user/user.controller';
 import { LoggerMiddleware } from './middlewares/logger/logger.middleware'
 import { Module,NestModule,MiddlewareConsumer } from '@nestjs/common';
@@ -23,8 +22,6 @@ import { RedisService } from './services/redis/redis.service';
 import { RedisClientOptions } from 'redis';
 import * as redisStore from 'cache-manager-redis-store'
 import { CacheModule } from '@nestjs/cache-manager';
-import { FriendController } from './controllers/friend/friend.controller';
-import { FriendService } from './services/friend/friend.service';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { UserModule } from './user/user.module';
@@ -83,8 +80,6 @@ import { MessageModule } from './message/message.module';
     MessageController,
     OauthController,
     ProfileController,
-    RabbitmqController,
-    FriendController
   ],
   providers: [
     AppService,
@@ -94,7 +89,6 @@ import { MessageModule } from './message/message.module';
     EventsGateway,
     ProfileService,
     RedisService,
-    FriendService,
   ]
 })
 export class AppModule implements NestModule{
