@@ -19,13 +19,13 @@ import { MessageService } from 'src/message/message.service'
       var references = result.map(({profile}) => profile.usersRef)
       var messages = await this.messageService.getLast(references,_id)
 
-      return result.map(({_id,profile}) => {
+      return result.map(({profile,...rest}) => {
         var [filter] = messages.filter(message => {
-          var eq1 = profile.usersRef.equals(
+          var eq1 = _id.equals(
             message.sender
           )
 
-          var eq2 = profile.usersRef.equals(
+          var eq2 = _id.equals(
             message.accept
           )
 
@@ -33,7 +33,7 @@ import { MessageService } from 'src/message/message.service'
         })
 
         return {
-          _id,
+          ...rest,
           profile,
           message:filter
         }
@@ -45,10 +45,7 @@ import { MessageService } from 'src/message/message.service'
   }
 }
 
-@ObjectType() class Last extends Message<Types.ObjectId,Types.ObjectId>{
-  @Field({nullable:false})
-  unreadCounter:number
-}
+@ObjectType() class Last extends Message<Types.ObjectId,Types.ObjectId>{}
 
 @ObjectType() class U extends User{
   @Field(r => Profile,{nullable:false})

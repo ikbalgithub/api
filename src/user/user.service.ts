@@ -29,12 +29,14 @@ import { Profile } from 'src/profile/profile.module';
         {$unwind:{
           path:'$profile'
         }},
-        {$project:{
-          username:0,
-          password:0,
-          oauthReference:0
-        }}
       ]
     )
   }
+
+  async findByOauthReference(id:string){
+
+  }
+
+
 }
+

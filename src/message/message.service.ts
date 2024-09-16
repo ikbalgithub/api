@@ -108,28 +108,13 @@ import { Aggregate, Model, Types } from 'mongoose';
       }},
       {$group:{
         _id:'$groupId',
-        sender:{$last:'$sender'}, 
-        value:{$last:'$value'},
-        groupId:{$last:'$groupId'}, 
+        sender:{$last:'$sender'},
         accept:{$last:'$accept'},
+        groupId:{$last:'$groupId'}, 
         sendAt:{$last:'$sendAt'}, 
         read:{$last:'$read'}, 
         contentType:{$last:'$contentType'}, 
         description:{$last:'$description'}, 
-        unreadCounter:{
-          $sum:{
-            $cond:{
-              if:{
-                $eq:[
-                  '$read', 
-                  false
-                ]
-              }, 
-              then:1, 
-              else:0
-            }
-          }
-        }
       }}
     ])
   }

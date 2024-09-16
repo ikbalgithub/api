@@ -7,28 +7,28 @@ import { Profile } from 'src/profile/profile.model';
   @Field(r => ID) 
   _id:Types.ObjectId
     
-  @Field(r => ID,{nullable:false}) 
+  @Field(r => ID) 
   sender:T1
     
-  @Field({nullable:false}) 
+  @Field(r => String) 
   value:string
     
-  @Field(r => ID,{nullable:true}) 
+  @Field(r => ID) 
   groupId:Types.ObjectId
     
-  @Field(r => ID,{nullable:true}) 
+  @Field(r => ID) 
   accept:T2
     
-  @Field({nullable:true}) 
+  @Field(r => Number) 
   sendAt:number
     
-  @Field({nullable:true}) 
+  @Field(r => Boolean) 
   read:boolean
     
-  @Field({nullable:true}) 
+  @Field(r => String) 
   contentType:string
     
-  @Field({nullable:true}) 
+  @Field(r => String) 
   description:string
 }
   

@@ -3,24 +3,23 @@
 # ------------------------------------------------------
 
 type Profile {
-  _id: ID
+  _id: ID!
   profileImage: String!
   firstName: String!
   surname: String!
-  usersRef: ID
+  usersRef: ID!
 }
 
 type Last {
   _id: ID!
   sender: ID!
   value: String!
-  groupId: ID
-  accept: ID
-  sendAt: Float
-  read: Boolean
-  contentType: String
-  description: String
-  unreadCounter: Float!
+  groupId: ID!
+  accept: ID!
+  sendAt: Float!
+  read: Boolean!
+  contentType: String!
+  description: String!
 }
 
 type U {
@@ -41,12 +40,12 @@ type M {
   _id: ID!
   sender: Sender!
   value: String!
-  groupId: ID
-  accept: ID
-  sendAt: Float
-  read: Boolean
-  contentType: String
-  description: String
+  groupId: ID!
+  accept: ID!
+  sendAt: Float!
+  read: Boolean!
+  contentType: String!
+  description: String!
   sentByOwn: Boolean!
   unreadCounter: Float!
 }

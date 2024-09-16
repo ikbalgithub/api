@@ -15,7 +15,7 @@ import { Transport,MicroserviceOptions } from '@nestjs/microservices';
       origin: [
         'https://api-production-bdf9.up.railway.app',
         'https://3000-idx-api-1724452153719.cluster-mwrgkbggpvbq6tvtviraw2knqg.cloudworkstations.dev/graphql',
-        'https://4200-idx-messenger-1724914463934.cluster-e3wv6awer5h7kvayyfoein2u4a.cloudworkstations.dev',
+        'https://4200-idx-messenger-1726458761014.cluster-mwrgkbggpvbq6tvtviraw2knqg.cloudworkstations.dev',
         'https://ngx-messenger.vercel.app'
       ],
     }
