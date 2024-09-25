@@ -28,8 +28,20 @@ import { Transport,MicroserviceOptions } from '@nestjs/microservices';
     })
   )
 
-  await app.listen(
-    process.env.PORT || '3000'
-  );
+  await app.listen(process.env.PORT || '3000')
 
+  const tunnel = await require("localtunnel")(
+    {
+      port:'3000',
+      subdomain:'xapi'
+    }
+  )
+
+  tunnel.on('close',() => {
+    console.log('tunnels are closed')
+  })
+
+  tunnel.on('error',(err:any) => {
+    console.log(err.message)
+  })
 })()
