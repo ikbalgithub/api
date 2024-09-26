@@ -46,9 +46,7 @@ import { MessageService } from 'src/message/message.service'
 @ObjectType() class M extends Message<Sender,Accept>{ 
   @Field(r => Sender)
   sender:Sender
-  @Field({nullable:false})
-  sentByOwn:boolean
-  @Field({nullable:false})
-  unreadCounter:number
+  @Field(r => Accept)
+  accept:Accept
 }
 

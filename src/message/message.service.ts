@@ -25,29 +25,6 @@ import { Aggregate, Model, Types } from 'mongoose';
         read:{$last:'$read'}, 
         contentType:{$last:'$contentType'}, 
         description:{$last:'$description'}, 
-        unreadCounter:{
-          $sum:{
-            $cond:{
-              if:{
-                $eq:[
-                  '$read', 
-                  false
-                ]
-              }, 
-              then:1, 
-              else:0
-            }
-          }
-        }
-      }},
-      {$addFields:{
-        sentByOwn:{
-          $cond:{
-            if:{$eq:['$sender',filter.sender]},
-            then:true,
-            else:false
-          }
-        }
       }},
       {$lookup:{
         from:"profiles",
@@ -68,21 +45,10 @@ import { Aggregate, Model, Types } from 'mongoose';
         path:"$accept.profile"
       }},
       {$addFields:{
-        'sender.profile':{
-          cond:{
-            if:{$eq:['$sentByOwn',true]},
-            then:'$sender.profile',
-            false:'$accept.profile'
-          }
-        }
-      }},
-      {$addFields:{
         'sender._id':'$sender.profile.usersRef'
       }},
-      {$project:{
-        'accept':0,
-        'sender.profile._id':0,
-        'sender.profile.usersRef':0
+      {$addFields:{
+        'accept._id':'$accept.profile.usersRef'
       }}
     ])
   }
