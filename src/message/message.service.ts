@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Message } from './message.module';
-import { Aggregate, Model, Types } from 'mongoose';
+import { Aggregate,Model,Types,UpdateWriteOpResult } from 'mongoose';
 
 @Injectable() export class MessageService {
   constructor(@InjectModel('Message') private message: Model<Message>){}
 
-  // fungsi ini bertujuan mengembalikan daftar riwayat interaksi terakhir
+  // fungsi ini bertujuan mengambil riwayat interaksi user dengan setiap user yang lain
 
   getRecently(filter:{sender:Types.ObjectId,accept:Types.ObjectId}){
     var $or = Object.keys(filter).map(k => ({[k]:filter[k]}))
@@ -53,7 +53,7 @@ import { Aggregate, Model, Types } from 'mongoose';
     ])
   }
 
-  // fungsi ini bertujuan mencari tahu interakasi terakhir user dengan salah seorang user yang lain
+  // fungsi ini bertujuan mengambil riwayat interaksi terakhir user dengan salah seorang user yamg lain
 
   getLast(references:Types.ObjectId[],user:Types.ObjectId):Aggregate<(Message&{unreadCounter:number})[]>{
     var sender = { $in:references }
@@ -85,33 +85,26 @@ import { Aggregate, Model, Types } from 'mongoose';
     ])
   }
 
-  // fungsi ini bertujuan memperluas suatu objek pesan
+  // fungsi ini bertujuan mengembalikan riwayat interaksi user dengan salah seorang user yang lain 
 
-  populate(_id:Types.ObjectId){
+  getAll<Filter>($or:[Filter,Filter]):Aggregate<Message[]>{
     return this.message.aggregate([
       {$match:{
-        _id
-      }},
-      {$addFields:{
-        sentByOwn:false
-      }},,
-      {$lookup:{
-        from:"profiles",
-        as:"sender.profile",
-        localField:"accept",
-        foreignField:"usersRef"
-      }},
-      {$unwind:{
-        path:"$sender.profile"
-      }},
-      {$addFields:{
-        'sender._id':'$sender.profile.usersRef'
-      }},
-      {$project:{
-        'accept':0,
-        'sender.profile._id':0,
-        'sender.profile.usersRef':0
+        $or
       }}
     ])
+  }
+
+  // fungsi ini bertujuan mengupdate sebagian atau seluruh field dari dokumen pada collection
+
+  update<Filter,Update>(filter:Filter,update:Update):Promise<UpdateWriteOpResult>{
+    return this.message.updateMany(
+      {
+        ...filter
+      },
+      {
+        ...update
+      }
+    )
   }
 }

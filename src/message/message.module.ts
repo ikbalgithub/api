@@ -1,8 +1,9 @@
+import { Types } from 'mongoose';
 import { Module } from '@nestjs/common';
 import { MessageService } from './message.service';
-import { MongooseModule, Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Types } from 'mongoose';
 import { MessageResolver } from './message.resolver';
+import { MongooseModule, Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { EventsGateway } from '../gateways/events/events.gateway'
 
 @Schema() export class Message{
   @Prop({required:true}) _id:Types.ObjectId

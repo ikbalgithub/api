@@ -2,9 +2,10 @@ import { Server,Socket } from 'socket.io'
 import { WebSocketServer,WebSocketGateway, SubscribeMessage, OnGatewayDisconnect } from '@nestjs/websockets';
 import { RedisService } from 'src/services/redis/redis.service';
 import { userSchema } from 'src/schemas/user.schema';
-import path from 'path';
 
-@WebSocketGateway({cors:{origin:'*'}}) export class EventsGateway implements OnGatewayDisconnect{
+const origin = 'https://4200-idx-messenger-1726458761014.cluster-mwrgkbggpvbq6tvtviraw2knqg.cloudworkstations.dev'
+
+@WebSocketGateway({cors:{origin}}) export class EventsGateway implements OnGatewayDisconnect{
   @WebSocketServer() server:Server
 
   @SubscribeMessage('join') async join(client:Socket,params:{paths:string[]}):Promise<void>{
@@ -49,7 +50,7 @@ import path from 'path';
       )
     }
     catch(e:any){
-      console.log(e.messagse)
+      console.log(e.message)
     }
   }
 

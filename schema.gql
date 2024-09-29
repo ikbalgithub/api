@@ -10,6 +10,18 @@ type Profile {
   usersRef: ID!
 }
 
+type Message {
+  _id: ID!
+  sender: ID!
+  value: String!
+  groupId: ID!
+  accept: ID!
+  sendAt: Float!
+  read: Boolean!
+  contentType: String!
+  description: String!
+}
+
 type Last {
   _id: ID!
   sender: ID!
@@ -36,21 +48,33 @@ type Sender {
   profile: Profile!
 }
 
+type Accept {
+  _id: ID!
+  profile: Profile!
+}
+
 type M {
   _id: ID!
   sender: Sender!
   value: String!
   groupId: ID!
-  accept: ID!
+  accept: Accept!
   sendAt: Float!
   read: Boolean!
   contentType: String!
   description: String!
-  sentByOwn: Boolean!
-  unreadCounter: Float!
+}
+
+type Update {
+  modifiedCount: Float!
 }
 
 type Query {
   fetchHistory: [M!]!
+  fetchDetail(_id: String!): [Message!]!
   findByUsername(u: String!): [U!]!
+}
+
+type Mutation {
+  updateMessage(_id: String!, groupId: String!): Update!
 }
