@@ -1,4 +1,3 @@
-import { Args, Context, Field, ID, Int, InterfaceType, Mutation, ObjectType, Query, Resolver } from '@nestjs/graphql';
 import { GraphQLError } from 'graphql';
 import { UseGuards } from '@nestjs/common';
 import { GraphqlGuard } from 'src/guards/graphql/graphql.guard';
@@ -7,14 +6,15 @@ import { Profile } from 'src/profile/profile.model';
 import { Message } from 'src/message/message.model';
 import { MessageService } from 'src/message/message.service'
 import { OidPipe } from '../pipes/oid/oid.pipe'
-import { EventsGateway } from '../gateways/events/events.gateway'
+import { EventsGateway } from 'src/events/events.gateway';
+import * as gql from '@nestjs/graphql';
 
-@Resolver() export class MessageResolver {
-  constructor(private message:MessageService,private gateway:EventsGateway) {}
+@gql.Resolver() export class MessageResolver {
+  constructor(private messageService:MessageService,private eventsGateway:EventsGateway) {}
 
-  @Query(r => [M]) @UseGuards(GraphqlGuard) async fetchHistory(@Context() ctx){
+  @gql.Query(r => [M]) @UseGuards(GraphqlGuard) async fetchHistory(@gql.Context() ctx){
     try{
-      return await this.message.getRecently(
+      return await this.messageService.getRecently(
         {
           sender:new Types.ObjectId(
             ctx.req.user._id
@@ -30,11 +30,11 @@ import { EventsGateway } from '../gateways/events/events.gateway'
     }
   }
   
-  @Query(r => [Message<string,string>]) @UseGuards(GraphqlGuard) async fetchDetail(@Context() ctx, @Args('_id',OidPipe) _id:string){
+  @gql.Query(r => [Message<string,string>]) @UseGuards(GraphqlGuard) async fetchDetail(@gql.Context() ctx, @gql.Args('_id',OidPipe) _id:string){
     const user = new Types.ObjectId(ctx.req.user._id)
 
     try{
-      return await this.message.getAll(
+      return await this.messageService.getAll(
          [
           {
             sender: user,
@@ -52,9 +52,9 @@ import { EventsGateway } from '../gateways/events/events.gateway'
     }
   }
 
-  @Mutation(r => Update) @UseGuards(GraphqlGuard) async updateMessage(@Context() ctx,@Args('_id',OidPipe) _id:string,@Args('groupId',OidPipe) gId:string){
+  @gql.Mutation(r => Update) @UseGuards(GraphqlGuard) async updateMessage(@gql.Context() ctx,@gql.Args('_id',OidPipe) _id:string,@gql.Args('groupId',OidPipe) gId:string){
     try{
-      var update = await this.message.update<{sender:string},{read:boolean}>(
+      var update = await this.messageService.update<{sender:string},{read:boolean}>(
         {
           sender:_id
         },
@@ -63,8 +63,8 @@ import { EventsGateway } from '../gateways/events/events.gateway'
         }
       )
 
-      //await this.gateway.emit('updated',`${gId.toString()}/${_id.toString()}`,ctx.req.user._id)
-      //await this.gateway.emit('history/updated',`history/${_id.toString()}`,ctx.req.user._id)
+      await this.eventsGateway.emit('updated',`${gId.toString()}/${_id.toString()}`,ctx.req.user._id)
+      await this.eventsGateway.emit('history/updated',`history/${_id.toString()}`,ctx.req.user._id)
 
       return {
         modifiedCount:update.modifiedCount
@@ -76,28 +76,28 @@ import { EventsGateway } from '../gateways/events/events.gateway'
   }
 }
 
-@ObjectType() class Sender{
-  @Field(r => ID)
+@gql.ObjectType() class Sender{
+  @gql.Field(r => gql.ID)
   _id:Types.ObjectId
-  @Field(r => Profile,{nullable:false})
+  @gql.Field(r => Profile,{nullable:false})
   profile:Profile
 }
 
-@ObjectType() class Accept{
-  @Field(r => ID)
+@gql.ObjectType() class Accept{
+  @gql.Field(r => gql.ID)
   _id:Types.ObjectId
-  @Field(r => Profile,{nullable:false})
+  @gql.Field(r => Profile,{nullable:false})
   profile:Profile
 }
 
-@ObjectType() class M extends Message<Sender,Accept>{ 
-  @Field(r => Sender)
+@gql.ObjectType() class M extends Message<Sender,Accept>{ 
+  @gql.Field(r => Sender)
   sender:Sender
-  @Field(r => Accept)
+  @gql.Field(r => Accept)
   accept:Accept
 }
 
-@ObjectType() class Update{
-  @Field(r => Number)
+@gql.ObjectType() class Update{
+  @gql.Field(r => Number)
   modifiedCount:Number
 }

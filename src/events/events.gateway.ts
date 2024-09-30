@@ -1,11 +1,10 @@
 import { Server,Socket } from 'socket.io'
-import { WebSocketServer,WebSocketGateway, SubscribeMessage, OnGatewayDisconnect } from '@nestjs/websockets';
-import { RedisService } from 'src/services/redis/redis.service';
-import { userSchema } from 'src/schemas/user.schema';
+import { RedisService } from 'src/redis/redis.service';
+import { SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 
 const origin = 'https://4200-idx-messenger-1726458761014.cluster-mwrgkbggpvbq6tvtviraw2knqg.cloudworkstations.dev'
 
-@WebSocketGateway({cors:{origin}}) export class EventsGateway implements OnGatewayDisconnect{
+@WebSocketGateway({cors:{origin}}) export class EventsGateway {  
   @WebSocketServer() server:Server
 
   @SubscribeMessage('join') async join(client:Socket,params:{paths:string[]}):Promise<void>{
@@ -60,23 +59,19 @@ const origin = 'https://4200-idx-messenger-1726458761014.cluster-mwrgkbggpvbq6tv
         path,true
       )
 
-      // events.forEach(({event,value}) => {
-      //   this.server.to(path).emit(
-      //     event,value
-      //   )
-      // })
+      events.forEach(({event,value}) => {
+        this.server.to(path).emit(
+          event,value
+        )
+      })
     }
     catch(e:any){
       console.log(e.message)
     }
   }
-
-  async handleDisconnect(client:Socket){
-    // handle disconnect
-  }
-
+  
   constructor(private redis:RedisService){
-    // using redis ervice
+    // inject redis service
   }
 }
 

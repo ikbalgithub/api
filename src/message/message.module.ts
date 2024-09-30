@@ -3,7 +3,7 @@ import { Module } from '@nestjs/common';
 import { MessageService } from './message.service';
 import { MessageResolver } from './message.resolver';
 import { MongooseModule, Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { EventsGateway } from '../gateways/events/events.gateway'
+import { EventsModule } from 'src/events/events.module';
 
 @Schema() export class Message{
   @Prop({required:true}) _id:Types.ObjectId
@@ -17,12 +17,17 @@ import { EventsGateway } from '../gateways/events/events.gateway'
   @Prop({required:true}) description:string
 }
 
+const schema = SchemaFactory.createForClass(
+  Message
+)
+
 @Module({
   imports:[
+    EventsModule,
     MongooseModule.forFeature([
       {
         name:'Message',
-        schema:SchemaFactory.createForClass(Message)
+        schema:schema
       }
     ])
   ],

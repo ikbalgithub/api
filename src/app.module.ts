@@ -27,6 +27,8 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { UserModule } from './user/user.module';
 import { ProfileModule } from './profile/profile.module';
 import { MessageModule } from './message/message.module';
+import { EventsModule } from './events/events.module';
+import { RedisModule } from './redis/redis.module';
 @Module({
   imports: [
     ConfigModule.forRoot(),
@@ -65,14 +67,11 @@ import { MessageModule } from './message/message.module';
       include:[UserModule,ProfileModule,MessageModule],
       context: ({req,res}) => ({req,res}),
     }),
-    CacheModule.register<RedisClientOptions>({
-      isGlobal:true,
-      store:redisStore,
-      url:'redis://default:idrQa2casLBSTccK475rLtHtifZlS4me@redis-19926.c8.us-east-1-3.ec2.redns.redis-cloud.com:19926/0',
-    }),
     UserModule,
     ProfileModule,
-    MessageModule
+    MessageModule,
+    EventsModule,
+    RedisModule
   ],
   controllers: [
     AppController,
